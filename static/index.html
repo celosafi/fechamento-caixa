@@ -263,10 +263,9 @@ async function expXLSX(){
   active.forEach(cx=>{const d=cx.dados,t=calcTot(cx);totDeb+=(d.deb||0);totCred+=(d.cred||0);totPix+=(d.pix||0)+(d.pixManual||0);totDin+=t.dinLiquido;totApur+=t.totalComprovado;totFil+=(d.totalFilipeta||0);totDif+=t.difGeral;totTagLib+=(d.tagsLib||0);totTagDev+=((d.devtag||0)*5);totResgate+=(d.devsaldo||0);});
   const totCartoes=totDeb+totCred+totPix,totDevol=totTagDev+totResgate;
   const nOk=active.filter(cx=>calcTot(cx).difGeral===0).length,nPos=active.filter(cx=>calcTot(cx).difGeral>0).length,nNeg=active.filter(cx=>calcTot(cx).difGeral<0).length;
-  // ── DASHBOARD ──────────────────────────────────────────────────────────────
   const ws1=wb.addWorksheet('Dashboard',{properties:{tabColor:{argb:P.navy}}});
-  ws1.views=[{showGridLines:false,showRowColHeaders:false}];
-  [1,6,2,18,13,13,14,14,1].forEach((w,i)=>ws1.getColumn(i+1).width=w);
+  ws1.views=[{showGridLines:false}];
+  [1,6,18,13,13,14,14,1].forEach((w,i)=>ws1.getColumn(i+1).width=w);
   ws1.getRow(1).height=6;for(let c=2;c<=7;c++)ws1.getCell(1,c).fill=F(P.navy);
   ws1.getRow(2).height=28;ws1.mergeCells(2,2,2,7);
   setCell(ws1,2,2,`⚡  FECHAMENTO DE CAIXA  —  ${ev}  —  ${dt}`,{fill:F(P.navy),font:ft(true,P.white,13),align:al('center')});
@@ -319,7 +318,6 @@ async function expXLSX(){
   setCell(ws1,dr,2,'▶  TOTAL GERAL',{fill:F(P.navyBg),font:ft(true,P.navy,10),align:al('center'),border:bdMed()});
   [[4,brl(totCartoes),'FFE3F2FD',P.blue],[5,brl(totDin),'FFE8F5E9',P.green],[6,brl(totApur),'FFE3F2FD',P.blue],[7,brl(totDif),totDif>=0?'FFE8F5E9':'FFFFEBEE',totDif>=0?P.green:P.red]].forEach(([c,v,bg,fc])=>{setCell(ws1,dr,c,v,{fill:F(bg),font:ft(true,fc,10),align:al('right'),border:bdMed()});});
   ws1.getRow(dr+1).height=5;ws1.mergeCells(dr+1,2,dr+1,7);ws1.getCell(dr+1,2).fill=F(P.navy);
-  // ── FECHAMENTO ─────────────────────────────────────────────────────────────
   const ws2=wb.addWorksheet('Fechamento',{properties:{tabColor:{argb:P.blue}}});
   ws2.views=[{showGridLines:false}];
   const cw2=[5,18,13,13,13,10,14,14,14,12,10,12,14];
@@ -354,7 +352,6 @@ async function expXLSX(){
   const t2fc=[null,null,P.blue,P.blue,P.teal,P.text2,P.green,P.blue,P.text,totDif>=0?P.green:P.red,P.amber,P.red,P.red];
   for(let i=2;i<nc2;i++){setCell(ws2,dr2,i+1,t2[i],{fill:F(t2bg[i]||P.navyBg),font:ft(true,t2fc[i]||P.navy,11),align:al('right'),border:bdMed()});}
   ws2.views=[{state:'frozen',ySplit:4,showGridLines:false}];
-  // ── DETALHAMENTO DINHEIRO ──────────────────────────────────────────────────
   const ws3=wb.addWorksheet('Detalhamento Dinheiro',{properties:{tabColor:{argb:'FF2E7D32'}}});
   ws3.views=[{showGridLines:false}];
   [5,18,13,10,10,10,10,10,10,10,10,10,14,12,13,13].forEach((w,i)=>ws3.getColumn(i+1).width=w);
@@ -388,7 +385,6 @@ async function expXLSX(){
     setCell(ws3,dr3,i+3,brl(v),{fill:F(bg),font:ft(true,fc,11),align:al('right'),border:bdMed()});
   });
   ws3.views=[{state:'frozen',ySplit:4,showGridLines:false}];
-  // ── download ───────────────────────────────────────────────────────────────
   const buf=await wb.xlsx.writeBuffer();
   const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
   const url=URL.createObjectURL(blob);
