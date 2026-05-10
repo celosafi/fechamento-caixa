@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fechamento Caixa">
 <title>Fechamento de Caixa</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 <style>
 :root{--cf:#1a3a5c;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -243,7 +243,159 @@ function foto(idx){const fi=document.getElementById('fi');fi.onchange=e=>{const 
 async function procFoto(file,idx){const zona=document.getElementById('zona'),st=document.getElementById('stocr');zona.className='zona proc';zona.innerHTML=`<div class="zona-ic"><span class="spin"></span></div><div class="zona-lb" style="color:#1565c0;">Lendo filipeta...</div>`;st.style.display='block';st.className='stbox l';st.innerHTML=`<span class="spin"></span> Analisando imagem...`;const r=new FileReader();r.onload=async ev=>{let b64,mt='image/jpeg';try{const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=ev.target.result;});const MAX=1200,cvs=document.createElement('canvas');const scale=Math.min(1,MAX/Math.max(img.width,img.height));cvs.width=Math.round(img.width*scale);cvs.height=Math.round(img.height*scale);cvs.getContext('2d').drawImage(img,0,0,cvs.width,cvs.height);let q=0.85,dataUrl;do{dataUrl=cvs.toDataURL('image/jpeg',q);q-=0.1;}while(dataUrl.length*0.75>4*1024*1024&&q>0.3);b64=dataUrl.split(',')[1];}catch{b64=ev.target.result.split(',')[1];mt=file.type||'image/jpeg';}try{const res=await fetch('/api/ocr',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:b64,media_type:mt})});const p=await res.json();if(p.error)throw new Error(p.error);preencherCampos(p,idx);zona.className='zona suc';zona.innerHTML=`<div class="zona-ic">✅</div><div class="zona-lb" style="color:#2e7d32;">Filipeta lida!</div><div class="zona-sub" style="cursor:pointer;" onclick="foto(${idx})">Ler outra</div>`;st.className='stbox s';st.innerHTML=`✅ Dados preenchidos. Confira antes de salvar.`;}catch(e){zona.className='zona err';zona.innerHTML=`<div class="zona-ic">❌</div><div class="zona-lb" style="color:#c62828;">Erro na leitura</div><div class="zona-sub" style="cursor:pointer;" onclick="foto(${idx})">Tentar novamente</div>`;st.className='stbox e';st.innerHTML=`❌ ${e.message||'Tente com foto mais nítida.'}`;}};r.readAsDataURL(file);}
 function preencherCampos(p,idx){const cx=ST.caixas[idx];const s=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null&&v!==undefined&&v!==0){el.value=v;el.classList.add('vrd');}};if(cx.tipo==='D')s('f-din',p.dinheiro);s('f-deb',p.debito);s('f-cred',p.credito);s('f-pix',p.pix);if(cx.tipo!=='V')s('f-tag',p.liberacao_tag);s('f-devtag',p.tag_devolvida);s('f-devsaldo',p.resgate_saldo);s('f-total-filipeta',p.total);if(p.liberacao_tag!=null&&p.liberacao_tag>0)s('f-tags-lib',Math.round(p.liberacao_tag/5));calc();}
 function expCSV(){const ev=document.getElementById('inp-evento').value||'Evento',dt=document.getElementById('inp-data').value||'';let c=`FECHAMENTO — ${ev} — ${dt}\n`;c+='Caixa,Tipo,Nome,Débito,Crédito,PIX,PIX Manual,Ajuste,Din.Líquido,Total Apurado,Total Filipeta,Dif.Geral,TAG lib(un),TAG dev(un),Resgate Saldo\n';let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0;ST.caixas.forEach(cx=>{const d=cx.dados,t=calcTot(cx),isV=cx.tipo==='V';if(d){td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;}const devtagUn=d?Math.round((d.devtag||0)/5):0;c+=`${cx.num},${isV?'Volante':cx.tipo==='D'?'Din+Cartão':'Cartão'},${cx.nome||''},${d?d.deb||0:''},${d?d.cred||0:''},${d?d.pix||0:''},${d?d.pixManual||0:''},${d?d.ajuste||0:''},${cx.tipo==='D'&&d?t.dinLiquido:''},${d?t.totalComprovado:''},${d?d.totalFilipeta||0:''},${d?t.difGeral:''},${d?d.tagsLib||0:''},${d?devtagUn:''},${d?d.devsaldo||0:''}\n`;});c+=`TOTAL,,,${td.toFixed(2)},${tc.toFixed(2)},${tp.toFixed(2)},${tpm.toFixed(2)},,${tdinLiq.toFixed(2)},${tcomp.toFixed(2)},,${tdifGeral.toFixed(2)}\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download=`Fechamento_${ev}_${dt}.csv`.replace(/\s+/g,'_');a.click();}
-function expXLSX(){if(typeof XLSX==='undefined'){alert('Aguarde.');return;}const ev=document.getElementById('inp-evento').value||'Evento',dt=document.getElementById('inp-data').value||'';const wb=XLSX.utils.book_new();const aoa=[[`FECHAMENTO — ${ev} — ${dt}`,'','','','','','','','','','','','',''],['CX','NOME','TIPO','DÉBITO','CRÉDITO','PIX','PIX MANUAL','AJUSTE','DIN.LÍQUIDO','TOTAL APURADO','TOTAL FILIPETA','DIF.GERAL','TAG LIB(un)','TAG DEV(un)','RESGATE SALDO']];let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0;ST.caixas.forEach(cx=>{const d=cx.dados,t=calcTot(cx),isV=cx.tipo==='V';if(d){td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;}const devtagUn=d?Math.round((d.devtag||0)/5):0;aoa.push([cx.num,cx.nome||'',isV?'Volante':cx.tipo==='D'?'Dinheiro':'Cartão',d?d.deb||0:'',d?d.cred||0:'',d?d.pix||0:'',d?d.pixManual||0:'',d?d.ajuste||0:'',cx.tipo==='D'&&d?t.dinLiquido:'',d?t.totalComprovado:'',d?d.totalFilipeta||0:'',d?t.difGeral:'',d?d.tagsLib||0:'',d?devtagUn:'',d?d.devsaldo||0:'']);});aoa.push(['TOTAL','','',td,tc,tp,tpm,'',tdinLiq,tcomp,'',tdifGeral,'','','']);const ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=[{wch:6},{wch:20},{wch:10},{wch:12},{wch:12},{wch:11},{wch:12},{wch:10},{wch:13},{wch:14},{wch:14},{wch:12},{wch:11},{wch:11},{wch:14}];ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:14}}];XLSX.utils.book_append_sheet(wb,ws,'Fechamento');const aoa2=[['CX','NOME','DIN.SIS','TROCO','S1','S2','S3','S4','S5','R1','R2','R3','DIN.ESP','FÍSICO','DIN.LÍQ','DIF.DIN']];ST.caixas.forEach(cx=>{const d=cx.dados||{},t=calcTot(cx);if(cx.tipo!=='D'){aoa2.push([cx.num,cx.nome||'','—','','','','','','','','','','','','','']);return;}const sang=(d.s1||0)+(d.s2||0)+(d.s3||0)+(d.s4||0)+(d.s5||0),din=d.din||0,troco=d.trocoInicial||0,fisico=d.fisico||0,dinEsp=din-troco+sang;aoa2.push([cx.num,cx.nome||'',din,troco,d.s1||0,d.s2||0,d.s3||0,d.s4||0,d.s5||0,d.r1||0,d.r2||0,d.r3||0,dinEsp,fisico,t.dinLiquido,t.difDin]);});XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa2),'Detalhamento');XLSX.writeFile(wb,`Fechamento_${ev}_${dt}.xlsx`.replace(/\s+/g,'_'));}
+async function expXLSX(){
+  if(typeof ExcelJS==='undefined'){alert('Aguarde a biblioteca carregar.');return;}
+  const ev=document.getElementById('inp-evento').value||'Evento';
+  const dt=document.getElementById('inp-data').value||'';
+  const wb=new ExcelJS.Workbook();
+  wb.creator='Fechamento de Caixa';wb.created=new Date();
+  const P={navy:'FF1A3A5C',navyBg:'FFD6E4F0',blue:'FF1976D2',blueBg:'FFE3F2FD',green:'FF388E3C',greenBg:'FFE8F5E9',red:'FFE53935',redBg:'FFFFEBEE',amber:'FFF9A825',amberBg:'FFFFFDE7',teal:'FF00796B',tealBg:'FFE0F2F1',white:'FFFFFFFF',gray1:'FFF8FAFC',gray3:'FFDEE5EE',text:'FF1A2332',text2:'FF607080'};
+  const F=h=>({type:'pattern',pattern:'solid',fgColor:{argb:h}});
+  const ft=(bold,color,size,italic)=>({name:'Calibri',bold:!!bold,color:{argb:color||P.text},size:size||10,italic:!!italic});
+  const al=(h,v,wrap)=>({horizontal:h||'center',vertical:v||'middle',wrapText:!!wrap});
+  const bdThin=()=>{const s={style:'thin',color:{argb:'FFCCCCCC'}};return{top:s,bottom:s,left:s,right:s};};
+  const bdMed=()=>{const s={style:'medium',color:{argb:'FF888888'}};return{top:s,bottom:s,left:s,right:s};};
+  function brl(v){if(v===null||v===undefined||v==='')return '';const neg=v<0,n=Math.abs(Math.round(v));const s=n.toLocaleString('pt-BR');return neg?`R$ -${s}`:`R$ ${s}`;}
+  function brlUn(v){return Math.round(v).toLocaleString('pt-BR')+' un';}
+  function setCell(ws,row,col,val,opts={}){const cell=ws.getCell(row,col);cell.value=val;if(opts.fill)cell.fill=opts.fill;if(opts.font)cell.font=opts.font;if(opts.align)cell.alignment=opts.align;if(opts.border)cell.border=opts.border;return cell;}
+  const active=ST.caixas.filter(cx=>cx.dados&&calcTot(cx).totalComprovado!==0);
+  let totDeb=0,totCred=0,totPix=0,totDin=0,totApur=0,totFil=0,totDif=0,totTagLib=0,totTagDev=0,totResgate=0;
+  active.forEach(cx=>{const d=cx.dados,t=calcTot(cx);totDeb+=(d.deb||0);totCred+=(d.cred||0);totPix+=(d.pix||0)+(d.pixManual||0);totDin+=t.dinLiquido;totApur+=t.totalComprovado;totFil+=(d.totalFilipeta||0);totDif+=t.difGeral;totTagLib+=(d.tagsLib||0);totTagDev+=((d.devtag||0)*5);totResgate+=(d.devsaldo||0);});
+  const totCartoes=totDeb+totCred+totPix,totDevol=totTagDev+totResgate;
+  const nOk=active.filter(cx=>calcTot(cx).difGeral===0).length,nPos=active.filter(cx=>calcTot(cx).difGeral>0).length,nNeg=active.filter(cx=>calcTot(cx).difGeral<0).length;
+  // ── DASHBOARD ──────────────────────────────────────────────────────────────
+  const ws1=wb.addWorksheet('Dashboard',{properties:{tabColor:{argb:P.navy}}});
+  ws1.views=[{showGridLines:false,showRowColHeaders:false}];
+  [1,6,2,18,13,13,14,14,1].forEach((w,i)=>ws1.getColumn(i+1).width=w);
+  ws1.getRow(1).height=6;for(let c=2;c<=7;c++)ws1.getCell(1,c).fill=F(P.navy);
+  ws1.getRow(2).height=28;ws1.mergeCells(2,2,2,7);
+  setCell(ws1,2,2,`⚡  FECHAMENTO DE CAIXA  —  ${ev}  —  ${dt}`,{fill:F(P.navy),font:ft(true,P.white,13),align:al('center')});
+  ws1.getRow(3).height=14;ws1.mergeCells(3,2,3,7);
+  setCell(ws1,3,2,`${active.length} caixas lançados  |  Sistema automático de fechamento`,{fill:F('FF1E4B7A'),font:ft(false,'FF90CAF9',9,true),align:al('center')});
+  ws1.getRow(4).height=5;for(let c=2;c<=7;c++)ws1.getCell(4,c).fill=F(P.navy);
+  function kpi(row,col,label,val,hdrBg,valBg,valFc,icon){
+    ws1.getRow(row).height=13;ws1.getRow(row+1).height=28;
+    ws1.mergeCells(row,col,row,col+1);
+    setCell(ws1,row,col,`${icon} ${label}`,{fill:F(hdrBg),font:ft(true,'FFBBDEFB',8),align:al('center')});
+    ws1.mergeCells(row+1,col,row+1,col+1);
+    setCell(ws1,row+1,col,val,{fill:F(valBg),font:ft(true,valFc,15),align:al('center')});
+    const s={style:'thin',color:{argb:'FFCCCCCC'}};ws1.getCell(row+1,col).border={bottom:s,left:s,right:s};
+  }
+  function divider(row){ws1.getRow(row).height=4;ws1.mergeCells(row,2,row,7);ws1.getCell(row,2).fill=F(P.gray3);}
+  kpi(5,2,'TOTAL APURADO',brl(totApur),P.green,'FFE8F5E9',P.green,'💰');
+  kpi(5,4,'TOTAL FILIPETA',brl(totFil),'FF2060A0','FFDBEDF9',P.navy,'🧾');
+  kpi(5,6,'DIF. GERAL',brl(totDif),totDif>=0?P.green:P.red,totDif>=0?'FFE8F5E9':'FFFFEBEE',totDif>=0?P.green:P.red,totDif>=0?'✅':'⚠️');
+  divider(7);
+  kpi(8,2,'DÉBITO',brl(totDeb),'FF4A90D9','FFDDEEFF','FF1565C0','💳');
+  kpi(8,4,'CRÉDITO',brl(totCred),'FF1A3A8C','FFBBD4F5','FF1A3A8C','💳');
+  kpi(8,6,'PIX',brl(totPix),'FF1E7E6B',P.tealBg,P.teal,'📱');
+  divider(10);
+  kpi(11,2,'DINHEIRO APURADO',brl(totDin),P.green,'FFE8F5E9',P.green,'💵');
+  kpi(11,4,'TAGs LIBERADAS',brlUn(totTagLib),P.amber,'FFFFFDE7',P.amber,'🏷️');
+  kpi(11,6,'TOTAL DEVOLUÇÕES',brl(totDevol),P.red,'FFFFEBEE',P.red,'↩️');
+  divider(13);
+  ws1.getRow(14).height=20;ws1.mergeCells(14,2,14,7);
+  setCell(ws1,14,2,`STATUS:   ✅ Zerados: ${nOk}   |   📈 Sobra: ${nPos}   |   📉 Falta: ${nNeg}   |   🏷️ TAGs lib.: ${Math.round(totTagLib)} un   |   TAG dev.: ${brl(totTagDev)}`,{fill:F('FF1E4B7A'),font:ft(true,P.white,9),align:al('center')});
+  ws1.getRow(15).height=4;ws1.mergeCells(15,2,15,7);ws1.getCell(15,2).fill=F(P.gray3);
+  ws1.getRow(16).height=18;ws1.mergeCells(16,2,16,7);
+  setCell(ws1,16,2,'RESULTADO POR CAIXA',{fill:F(P.blue),font:ft(true,P.white,10),align:al('center')});
+  ws1.getRow(17).height=20;
+  [['CX','2A4A6A'],['OPERADOR','2A4A6A'],['DEB+CRED+PIX','2A5298'],['DINHEIRO','2E7030'],['TOTAL APURADO','1565C0'],['DIF. GERAL','2A4A6A']].forEach(([h,bg],i)=>{setCell(ws1,17,i+2,h,{fill:F('FF'+bg),font:ft(true,P.white,9),align:al('center'),border:bdThin()});});
+  let dr=18;
+  active.forEach(cx=>{
+    const d=cx.dados,t=calcTot(cx),nome=cx.nome||'—',dif=t.difGeral;
+    const cartoes=(d.deb||0)+(d.cred||0)+(d.pix||0)+(d.pixManual||0);
+    const baseBg=dr%2===0?P.gray1:P.white,difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
+    ws1.getRow(dr).height=17;
+    setCell(ws1,dr,2,cx.num,{fill:F('FFE3F2FD'),font:ft(true,P.blue,10),align:al('center'),border:bdThin()});
+    setCell(ws1,dr,3,nome,{fill:F(baseBg),font:ft(false,P.text2,10),align:al('center'),border:bdThin()});
+    setCell(ws1,dr,4,brl(cartoes),{fill:F(baseBg),font:ft(false,P.blue,10),align:al('right'),border:bdThin()});
+    setCell(ws1,dr,5,brl(t.dinLiquido),{fill:F(baseBg),font:ft(false,P.green,10),align:al('right'),border:bdThin()});
+    setCell(ws1,dr,6,brl(t.totalComprovado),{fill:F('FFE3F2FD'),font:ft(true,P.blue,10),align:al('right'),border:bdThin()});
+    setCell(ws1,dr,7,brl(dif),{fill:F(difBg),font:ft(true,difFc,10),align:al('right'),border:bdThin()});
+    dr++;
+  });
+  ws1.getRow(dr).height=22;ws1.mergeCells(dr,2,dr,3);
+  setCell(ws1,dr,2,'▶  TOTAL GERAL',{fill:F(P.navyBg),font:ft(true,P.navy,10),align:al('center'),border:bdMed()});
+  [[4,brl(totCartoes),'FFE3F2FD',P.blue],[5,brl(totDin),'FFE8F5E9',P.green],[6,brl(totApur),'FFE3F2FD',P.blue],[7,brl(totDif),totDif>=0?'FFE8F5E9':'FFFFEBEE',totDif>=0?P.green:P.red]].forEach(([c,v,bg,fc])=>{setCell(ws1,dr,c,v,{fill:F(bg),font:ft(true,fc,10),align:al('right'),border:bdMed()});});
+  ws1.getRow(dr+1).height=5;ws1.mergeCells(dr+1,2,dr+1,7);ws1.getCell(dr+1,2).fill=F(P.navy);
+  // ── FECHAMENTO ─────────────────────────────────────────────────────────────
+  const ws2=wb.addWorksheet('Fechamento',{properties:{tabColor:{argb:P.blue}}});
+  ws2.views=[{showGridLines:false}];
+  const cw2=[5,18,13,13,13,10,14,14,14,12,10,12,14];
+  cw2.forEach((w,i)=>ws2.getColumn(i+1).width=w);const nc2=cw2.length;
+  ws2.getRow(1).height=6;ws2.getRow(2).height=30;ws2.getRow(3).height=6;
+  for(let c=1;c<=nc2;c++){ws2.getCell(1,c).fill=F(P.navy);ws2.getCell(3,c).fill=F(P.navy);}
+  ws2.mergeCells(2,1,2,nc2);
+  setCell(ws2,2,1,`FECHAMENTO DE CAIXA  —  ${ev}  —  ${dt}`,{fill:F(P.navy),font:ft(true,P.white,13),align:al('center')});
+  ws2.getRow(4).height=32;
+  ['CX','OPERADOR','DÉBITO','CRÉDITO','PIX','AJUSTE','DIN. LÍQUIDO','TOTAL\nAPURADO','TOTAL\nFILIPETA','DIF.\nGERAL','TAG\nLIB(un)','TAG DEV\n(R$)','RESGATE\nSALDO'].forEach((h,i)=>{setCell(ws2,4,i+1,h,{fill:F('FF2A4A6A'),font:ft(true,P.white,10),align:al('center',null,true),border:bdThin()});});
+  let dr2=5;
+  active.forEach(cx=>{
+    const d=cx.dados,t=calcTot(cx),nome=cx.nome||'—',dif=t.difGeral;
+    const tagDevRS=(d.devtag||0)*5,resgate=d.devsaldo||0,tagLibV=d.tagsLib||0;
+    const baseBg=dr2%2===0?P.gray1:P.white,difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
+    ws2.getRow(dr2).height=19;
+    [[cx.num,'FFE3F2FD',P.blue,true,'center'],[nome,baseBg,P.text2,false,'center',true],
+     [brl(d.deb||0),baseBg,P.text,false,'right'],[brl(d.cred||0),baseBg,P.text,false,'right'],
+     [brl((d.pix||0)+(d.pixManual||0)),baseBg,P.text,false,'right'],[brl(d.ajuste||0),baseBg,P.text,false,'right'],
+     [brl(t.dinLiquido),baseBg,P.green,false,'right'],[brl(t.totalComprovado),'FFE3F2FD',P.blue,true,'right'],
+     [brl(d.totalFilipeta||0),baseBg,P.text,false,'right'],[brl(dif),difBg,difFc,true,'right'],
+     [tagLibV>0?brlUn(tagLibV).replace(' un',''):null,tagLibV>0?'FFFFFDE7':baseBg,tagLibV>0?P.amber:P.text2,false,'right'],
+     [tagDevRS>0?brl(tagDevRS):null,tagDevRS>0?'FFFFEBEE':baseBg,tagDevRS>0?P.red:P.text2,true,'right'],
+     [resgate>0?brl(resgate):null,resgate>0?'FFFFEBEE':baseBg,resgate>0?P.red:P.text2,true,'right']
+    ].forEach(([v,bg,fc,bold,align,italic],i)=>{setCell(ws2,dr2,i+1,v||null,{fill:F(bg),font:ft(bold,fc,10,italic),align:al(align),border:bdThin()});});
+    dr2++;
+  });
+  ws2.getRow(dr2).height=22;ws2.mergeCells(dr2,1,dr2,2);
+  setCell(ws2,dr2,1,'▶  TOTAL GERAL',{fill:F(P.navyBg),font:ft(true,P.navy,11),align:al('center'),border:bdMed()});
+  const t2=[null,null,brl(totDeb),brl(totCred),brl(totPix),brl(0),brl(totDin),brl(totApur),brl(totFil),brl(totDif),Math.round(totTagLib).toLocaleString('pt-BR'),brl(totTagDev),brl(totResgate)];
+  const t2bg=[null,null,'FFE3F2FD','FFE3F2FD',P.tealBg,'FFF8FAFC','FFE8F5E9','FFE3F2FD','FFF8FAFC',totDif>=0?'FFE8F5E9':'FFFFEBEE','FFFFFDE7','FFFFEBEE','FFFFEBEE'];
+  const t2fc=[null,null,P.blue,P.blue,P.teal,P.text2,P.green,P.blue,P.text,totDif>=0?P.green:P.red,P.amber,P.red,P.red];
+  for(let i=2;i<nc2;i++){setCell(ws2,dr2,i+1,t2[i],{fill:F(t2bg[i]||P.navyBg),font:ft(true,t2fc[i]||P.navy,11),align:al('right'),border:bdMed()});}
+  ws2.views=[{state:'frozen',ySplit:4,showGridLines:false}];
+  // ── DETALHAMENTO DINHEIRO ──────────────────────────────────────────────────
+  const ws3=wb.addWorksheet('Detalhamento Dinheiro',{properties:{tabColor:{argb:'FF2E7D32'}}});
+  ws3.views=[{showGridLines:false}];
+  [5,18,13,10,10,10,10,10,10,10,10,10,14,12,13,13].forEach((w,i)=>ws3.getColumn(i+1).width=w);
+  ws3.getRow(1).height=6;ws3.getRow(2).height=28;ws3.getRow(3).height=6;
+  for(let c=1;c<=16;c++){ws3.getCell(1,c).fill=F('FF163B2A');ws3.getCell(3,c).fill=F('FF163B2A');}
+  ws3.mergeCells(2,1,2,16);
+  setCell(ws3,2,1,`DETALHAMENTO — DINHEIRO POR CAIXA  —  ${ev}  —  ${dt}`,{fill:F('FF163B2A'),font:ft(true,P.white,13),align:al('center')});
+  ws3.getRow(4).height=32;
+  ['CX','OPERADOR','DIN.\nSISTEMA','TROCO','S1','S2','S3','S4','S5','R1','R2','R3','DIN.\nESPERADO','FÍSICO','DIN.\nLÍQUIDO','DIF.\nDINHEIRO'].forEach((h,i)=>{setCell(ws3,4,i+1,h,{fill:F('FF2A6040'),font:ft(true,P.white,10),align:al('center',null,true),border:bdThin()});});
+  let dr3=5;const detTots={din:0,troco:0,s1:0,s2:0,s3:0,s4:0,s5:0,r1:0,r2:0,r3:0,esp:0,fis:0,liq:0,dif:0};
+  ST.caixas.filter(cx=>cx.tipo==='D'&&cx.dados).forEach(cx=>{
+    const d=cx.dados,t=calcTot(cx);if(!t.dinLiquido&&!d.din)return;
+    const dif=t.difDin,sang=(d.s1||0)+(d.s2||0)+(d.s3||0)+(d.s4||0)+(d.s5||0),esp=(d.din||0)-(d.trocoInicial||0)+sang;
+    const baseBg=dr3%2===0?P.gray1:P.white,difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
+    ws3.getRow(dr3).height=19;
+    [cx.num,(cx.nome||'—'),(d.din||0),(d.trocoInicial||0),(d.s1||0),(d.s2||0),(d.s3||0),(d.s4||0),(d.s5||0),(d.r1||0),(d.r2||0),(d.r3||0),esp,(d.fisico||0),t.dinLiquido,dif].forEach((v,i)=>{
+      let bg=baseBg,fc=P.text,bold=false;
+      if(i===0){bg='FFD4EDDA';fc='FF1B5E20';bold=true;}
+      else if(i===15){bg=difBg;fc=difFc;bold=true;}
+      const cell=ws3.getCell(dr3,i+1);
+      cell.value=(i>=2)?brl(v):v;
+      cell.fill=F(bg);cell.font=ft(bold,fc,i===0?11:10);cell.alignment=al(i<=1?'center':'right');cell.border=bdThin();
+    });
+    detTots.din+=(d.din||0);detTots.troco+=(d.trocoInicial||0);detTots.s1+=(d.s1||0);detTots.s2+=(d.s2||0);detTots.s3+=(d.s3||0);detTots.s4+=(d.s4||0);detTots.s5+=(d.s5||0);detTots.r1+=(d.r1||0);detTots.r2+=(d.r2||0);detTots.r3+=(d.r3||0);detTots.esp+=esp;detTots.fis+=(d.fisico||0);detTots.liq+=t.dinLiquido;detTots.dif+=dif;
+    dr3++;
+  });
+  ws3.getRow(dr3).height=22;ws3.mergeCells(dr3,1,dr3,2);
+  setCell(ws3,dr3,1,'▶  TOTAL GERAL',{fill:F('FFE8F5E9'),font:ft(true,'FF163B2A',11),align:al('center'),border:bdMed()});
+  [detTots.din,detTots.troco,detTots.s1,detTots.s2,detTots.s3,detTots.s4,detTots.s5,detTots.r1,detTots.r2,detTots.r3,detTots.esp,detTots.fis,detTots.liq,detTots.dif].forEach((v,i)=>{
+    const isDif=(i===13),bg=isDif?(v>=0?'FFE8F5E9':'FFFFEBEE'):'FFE8F5E9',fc=isDif?(v>=0?P.green:P.red):'FF163B2A';
+    setCell(ws3,dr3,i+3,brl(v),{fill:F(bg),font:ft(true,fc,11),align:al('right'),border:bdMed()});
+  });
+  ws3.views=[{state:'frozen',ySplit:4,showGridLines:false}];
+  // ── download ───────────────────────────────────────────────────────────────
+  const buf=await wb.xlsx.writeBuffer();
+  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`Fechamento_${ev}_${dt}.xlsx`.replace(/\s+/g,'_');
+  a.click();URL.revokeObjectURL(url);
+}
 function bulkTipo(tipo){ST.caixas.slice(0,VOLANTE_START).forEach(cx=>{cx.tipo=tipo;});renderCfg();}
 const TROCO_CX=[0,7,8,9,10,11,12,19,20];
 function bulkTroco(){const v=parseFloat(document.getElementById('inp-bulk-troco').value)||0;TROCO_CX.forEach(i=>{ST.caixas[i].troco=v;});renderCfg();}
