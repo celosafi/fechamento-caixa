@@ -2,402 +2,702 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Fechamento Caixa">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fechamento de Caixa</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 <style>
-:root{--cf:#1a3a5c;}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;min-height:100vh;font-size:16px;}
-.topo{background:var(--cf);color:#fff;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.topo h1{font-size:19px;font-weight:600;}
-.topo-meta{display:flex;gap:8px;}
-.topo input{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:8px 11px;color:#fff;font-size:14px;}
-.topo input::placeholder{color:rgba(255,255,255,.6);}
-.nav{display:flex;background:#fff;border-bottom:1px solid #e0e0e0;position:sticky;top:57px;z-index:99;}
-.nav button{flex:1;padding:15px 6px;font-size:15px;border:none;background:none;color:#666;border-bottom:3px solid transparent;cursor:pointer;font-weight:500;}
-.nav button.on{color:var(--cf);border-bottom-color:var(--cf);}
-.pnl{display:none;padding:16px;max-width:600px;margin:0 auto;}
-.pnl.on{display:block;}
-.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.08);}
-.grade{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:16px;}
-.bcx{padding:12px 2px;border:1px solid #ddd;border-radius:8px;font-size:13px;cursor:pointer;background:#fff;text-align:center;line-height:1.5;}
-.bcx.ok{background:#e8f5e9;border-color:#4caf50;color:#2e7d32;}
-.bcx.on{border:2px solid var(--cf);font-weight:700;}
-.bcx.volante{background:#f3e8ff;border-color:#a78bfa;}
-.bcx.volante.ok{background:#d8b4fe;border-color:#7c3aed;color:#4c1d95;}
-.bcx .sub{font-size:11px;color:#999;}
-.bcx.ok .sub{color:#4caf50;}
-.bcx.volante .sub{color:#7c3aed;}
-.ftit{font-size:17px;font-weight:600;color:#1a1a1a;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;}
-.badge{font-size:12px;padding:4px 12px;border-radius:20px;font-weight:500;}
-.bd{background:#e3f2fd;color:#1565c0;}.bc{background:#f3e5f5;color:#6a1b9a;}.bv{background:#f3e8ff;color:#6d28d9;}
-.slbl{font-size:12px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.6px;margin:14px 0 9px;}
-.slbl.azul{color:#1565c0;}.slbl.verde{color:#2e7d32;}.slbl.vermelho{color:#c62828;}.slbl.laranja{color:#e65100;}
-.lf{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.lf label{font-size:16px;color:#555;flex:1;}
-.lf input{width:140px;padding:13px 12px;border:1px solid #ddd;border-radius:8px;font-size:20px;text-align:right;background:#fff;font-weight:600;}
-.lf input.vrd{border-color:#4caf50;background:#f9fff9;}
-.lf input:focus{outline:none;border-color:var(--cf);}
-.lf input.fisico-inp{background:#fffde7;border-color:#f59e0b;}
-hr{border:none;border-top:1px solid #f0f0f0;margin:14px 0;}
-.lt{display:flex;justify-content:space-between;align-items:center;padding:9px 0;}
-.lt .lb{font-size:16px;color:#666;}.lt .vl{font-size:24px;font-weight:700;color:#1a1a1a;}
-.ok-c{color:#2e7d32!important;}.err-c{color:#c62828!important;}.warn-c{color:#e65100!important;}
-.btn-p{width:100%;padding:17px;background:var(--cf);color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;margin-top:14px;}
-.btn-p:active{opacity:.85;}
-.zona{border:2px dashed #ccc;border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;margin-bottom:14px;background:#fafafa;}
-.zona.proc{border-color:#1976d2;background:#f0f7ff;}
-.zona.suc{border-color:#4caf50;background:#f0fff4;}
-.zona.err{border-color:#e53935;background:#fff5f5;}
-.zona-ic{font-size:42px;margin-bottom:8px;}
-.zona-lb{font-size:16px;color:#555;font-weight:500;}
-.zona-sub{font-size:13px;color:#999;margin-top:5px;}
-.spin{display:inline-block;width:20px;height:20px;border:2px solid #bbdefb;border-top-color:#1976d2;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:6px;}
-@keyframes sp{to{transform:rotate(360deg);}}
-.stbox{font-size:14px;padding:12px 15px;border-radius:8px;margin-bottom:12px;display:none;line-height:1.6;}
-.stbox.l{background:#e3f2fd;color:#1565c0;}.stbox.s{background:#e8f5e9;color:#2e7d32;}.stbox.e{background:#ffebee;color:#c62828;}
-.bloco{background:#f8f9fa;border-radius:12px;padding:14px;margin-top:10px;}
-.bloco .titulo{font-size:12px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;}
-.destaque{border-radius:10px;padding:12px 14px;margin-top:8px;}
-.destaque.azul{background:#e3f2fd;}.destaque.verde{background:#e8f5e9;}.destaque.vermelho{background:#ffebee;}.destaque.laranja{background:#fff3e0;}
-.destaque .dl{font-size:14px;color:#555;}.destaque .dv{font-size:26px;font-weight:800;}
-.mcard{background:#f8f9fa;border-radius:10px;padding:12px;}
-.mcard .lb{font-size:13px;color:#888;margin-bottom:4px;}
-.mcard .vl{font-size:20px;font-weight:700;color:#1a1a1a;}
-.mcard.verde-card{background:#e8f5e9;border:2px solid #4caf50;}
-.mcard.verde-card .lb{color:#2e7d32;}.mcard.verde-card .vl{color:#2e7d32;}
-.mcard.azul-card{background:#e3f2fd;border:2px solid #1565c0;}
-.mcard.azul-card .lb{color:#1565c0;}.mcard.azul-card .vl{color:#1565c0;}
-.mcard.amarelo-card{background:#fffde7;border:2px solid #f9a825;}
-.mcard.amarelo-card .lb{color:#f57f17;}.mcard.amarelo-card .vl{color:#f57f17;}
-.mcard.laranja-card{background:#fff3e0;border:2px solid #ef6c00;}
-.mcard.laranja-card .lb{color:#e65100;}.mcard.laranja-card .vl{color:#e65100;}
-.mcard.verm-card{background:#ffebee;border:2px solid #c62828;}
-.mcard.verm-card .lb{color:#c62828;}.mcard.verm-card .vl{color:#c62828;}
-.mcard.lilas-card{background:#f3e8ff;border:2px solid #7c3aed;}
-.mcard.lilas-card .lb{color:#6d28d9;}.mcard.lilas-card .vl{color:#4c1d95;}
-.mcard.tag-s{background:#fff8e1;border:2px solid #f59e0b;}
-.mcard.tag-s .lb{color:#b45309;}.mcard.tag-s .vl{color:#92400e;}
-.mcard.tot-cx{background:#e3f2fd;border:2px solid #1565c0;}
-.mcard.tot-cx .lb{color:#1565c0;}.mcard.tot-cx .vl{color:#1565c0;}
-.mcard.tot-vol{background:#f3e8ff;border:2px solid #7c3aed;}
-.mcard.tot-vol .lb{color:#6d28d9;}.mcard.tot-vol .vl{color:#4c1d95;}
-.tag-sc{background:#fff8e1;color:#92400e;font-weight:700;}
-.tbl{width:100%;border-collapse:collapse;font-size:13px;}
-.tbl th{text-align:left;font-weight:600;font-size:11px;color:#888;padding:8px;border-bottom:1px solid #eee;white-space:nowrap;}
-.tbl td{padding:9px 8px;border-bottom:1px solid #f5f5f5;color:#1a1a1a;}
-.tbl .n{text-align:right;}
-.tbl tfoot td{font-weight:700;border-top:2px solid #eee;padding-top:10px;}
-.dok{color:#2e7d32;font-weight:700;}.derr{color:#c62828;font-weight:700;}
-.cfg-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #f5f5f5;flex-wrap:wrap;}
-.cfg-row .cn{font-size:15px;font-weight:700;min-width:56px;color:#1a1a1a;}
-.cfg-row select,.cfg-row input{padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;}
-.info{background:#f0f4ff;border-radius:10px;padding:13px 16px;font-size:14px;color:#1565c0;line-height:1.7;margin-bottom:14px;}
-.btn-sec{padding:13px 20px;border:1px solid #ddd;border-radius:10px;font-size:15px;cursor:pointer;background:#fff;color:#333;font-weight:500;}
-.btn-xlsx{padding:13px 20px;border:none;border-radius:10px;font-size:15px;cursor:pointer;background:#1a5c2e;color:#fff;font-weight:600;}
-#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:999;align-items:center;justify-content:center;padding:20px;}
-#ov.show{display:flex;}
-.ov-box{background:#fff;border-radius:20px;width:100%;max-width:480px;padding:28px 24px;text-align:center;max-height:90vh;overflow-y:auto;}
-.ov-tit{font-size:22px;font-weight:700;color:var(--cf);margin-bottom:6px;}
-.ov-sub{font-size:15px;color:#888;margin-bottom:22px;}
-.ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
-.ov-item{background:#f4f6fa;border-radius:14px;padding:14px 10px;}
-.ov-item.full{grid-column:1/-1;}
-.ov-item.ov-verde{background:#e8f5e9;border:2px solid #4caf50;}
-.ov-item.ov-verde .ov-lbl{color:#2e7d32;}.ov-item.ov-verde .ov-val{color:#2e7d32;}
-.ov-item.ov-azul{background:#e3f2fd;border:2px solid #1565c0;}
-.ov-item.ov-azul .ov-lbl{color:#1565c0;}.ov-item.ov-azul .ov-val{color:#1565c0;}
-.ov-item.ov-laranja{background:#fff3e0;border:2px solid #ef6c00;}
-.ov-item.ov-laranja .ov-lbl{color:#e65100;}.ov-item.ov-laranja .ov-val{color:#e65100;font-size:28px;}
-.ov-item.ov-amarelo{background:#fffde7;border:2px solid #f9a825;}
-.ov-item.ov-amarelo .ov-lbl{color:#f57f17;}.ov-item.ov-amarelo .ov-val{color:#f57f17;}
-.ov-item.ov-verde2{background:#e8f5e9;border:2px solid #4caf50;}
-.ov-item.ov-verde2 .ov-lbl{color:#2e7d32;}.ov-item.ov-verde2 .ov-val{color:#2e7d32;font-size:22px;}
-.ov-item.ov-vermelho{background:#ffebee;border:2px solid #c62828;}
-.ov-item.ov-vermelho .ov-lbl{color:#c62828;}.ov-item.ov-vermelho .ov-val{color:#c62828;}
-.ov-lbl{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
-.ov-val{font-size:24px;font-weight:800;color:#1a1a1a;line-height:1.1;}
-.ov-btn{width:100%;padding:18px;background:var(--cf);color:#fff;border:none;border-radius:12px;font-size:18px;font-weight:700;cursor:pointer;}
-#barra{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--cf);z-index:200;padding:10px 18px 14px;box-shadow:0 -3px 12px rgba(0,0,0,.18);}
-#barra.show{display:block;}
-.bar-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.bar-item{text-align:center;flex:1;}
-.bar-lbl{font-size:11px;font-weight:600;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
-.bar-val{font-size:18px;font-weight:800;color:#fff;line-height:1.1;}
-.bar-item.tot .bar-val{font-size:22px;color:#ffe082;}
-.bar-prog{height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin-top:8px;overflow:hidden;}
-.bar-prog-fill{height:100%;background:#ffe082;border-radius:2px;transition:width .4s ease;}
-#pnl-lancamento{padding-bottom:90px;}
-.grade-sep{grid-column:1/-1;font-size:11px;font-weight:700;color:#7c3aed;text-transform:uppercase;letter-spacing:.6px;padding:6px 2px 2px;border-top:2px dashed #d8b4fe;margin-top:4px;}
-@media print{
-  @page{size:A4 landscape;margin:12mm 10mm;}
-  body{background:#fff!important;}
-  .topo,.nav,#pnl-config,#pnl-lancamento,#barra,#ov,.btn-sec,.btn-xlsx,.btn-print,#fi{display:none!important;}
-  #pnl-consolidado{display:block!important;padding:0;max-width:100%;}
-  #print-hdr{display:block!important;}
-  .card{box-shadow:none!important;border:1px solid #ddd;}
-  .tbl{font-size:11px!important;}
-  .tbl th,.tbl td{padding:5px 6px!important;}
-  .dok{color:#2e7d32!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .derr{color:#c62828!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+:root{--azul:#1a3a5c;--verde:#2e7d32;--vermelho:#c62828;--amarelo:#fffde7;--lilas:#f3e8ff;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Segoe UI,sans-serif;background:#f2f4f7;color:#222;font-size:15px}
+.topo{background:var(--azul);color:white;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.topo h1{font-size:19px}
+.topo input{padding:8px;border-radius:8px;border:1px solid #ffffff55;background:#ffffff22;color:white;width:110px}
+.topo input::placeholder{color:#ffffffaa}
+.nav{display:flex;background:white;border-bottom:1px solid #ddd;position:sticky;top:52px;z-index:9}
+.nav button{flex:1;padding:13px;border:0;background:white;font-weight:bold;color:#555;cursor:pointer}
+.nav button.on{color:var(--azul);border-bottom:3px solid var(--azul)}
+.pnl{display:none;max-width:780px;margin:auto;padding:15px}
+.pnl.on{display:block}
+.card{background:white;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 4px #0001}
+.info{background:#e3f2fd;color:#1565c0;border-radius:10px;padding:12px;margin-bottom:12px;line-height:1.5}
+.grade{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.cxbtn{padding:10px 4px;border:1px solid #ccc;border-radius:9px;background:white;cursor:pointer;font-weight:bold}
+.cxbtn.ok{background:#e8f5e9;color:var(--verde);border-color:#4caf50}
+.cxbtn.on{border:3px solid var(--azul)}
+.cxbtn.vol{background:var(--lilas);border-color:#a78bfa}
+.cxbtn.vol.ok{background:#d8b4fe;color:#4c1d95}
+.cfg{display:grid;grid-template-columns:70px 1fr 100px 1fr;gap:8px;align-items:center;border-bottom:1px solid #eee;padding:8px 0}
+.cfg input,.cfg select,.lf input{padding:10px;border:1px solid #ccc;border-radius:8px;font-size:15px}
+.lf{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:center;margin:8px 0}
+.lf label{font-weight:600;color:#444}
+.lf input{text-align:right;font-size:18px;font-weight:bold}
+.lf input.fisico{background:var(--amarelo);border-color:#f9a825}
+.titulo{font-size:18px;font-weight:bold;color:var(--azul);margin-bottom:12px;border-bottom:1px solid #eee;padding-bottom:8px}
+.sub{font-size:12px;text-transform:uppercase;color:#777;font-weight:bold;margin:16px 0 8px}
+.btn{width:100%;padding:14px;border:0;border-radius:10px;background:var(--azul);color:white;font-weight:bold;font-size:16px;cursor:pointer;margin-top:10px}
+.btn2{padding:11px 14px;border:0;border-radius:9px;background:#1a5c2e;color:white;font-weight:bold;cursor:pointer}
+.btn3{padding:11px 14px;border:1px solid #ccc;border-radius:9px;background:white;font-weight:bold;cursor:pointer}
+.zona{border:2px dashed #bbb;border-radius:12px;padding:18px;text-align:center;background:#fafafa;cursor:pointer;margin-bottom:12px}
+.result{background:#f8fafc;border-radius:10px;padding:12px;margin-top:12px}
+.result .linha{display:flex;justify-content:space-between;padding:6px 0}
+.result .total{font-size:20px;font-weight:bold}
+.verde{color:var(--verde)!important}
+.vermelho{color:var(--vermelho)!important}
+.tblwrap{overflow-x:auto;background:white;border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px;border-bottom:1px solid #eee;text-align:right;white-space:nowrap}
+th{background:#1a3a5c;color:white}
+td:first-child,th:first-child,td:nth-child(2),th:nth-child(2){text-align:left}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px}
+.mcard{background:white;border-radius:10px;padding:12px;border:1px solid #ddd}
+.mcard .lb{font-size:12px;color:#666;font-weight:bold;text-transform:uppercase}
+.mcard .vl{font-size:19px;font-weight:bold;margin-top:5px}
+@media(max-width:700px){
+.grade{grid-template-columns:repeat(4,1fr)}
+.cfg{grid-template-columns:1fr}
+.lf{grid-template-columns:1fr}
+.cards{grid-template-columns:1fr}
 }
-#print-hdr{display:none;margin-bottom:14px;}
-#print-hdr h2{font-size:18px;font-weight:700;color:#1a3a5c;margin-bottom:10px;}
 </style>
 </head>
 <body>
+
 <div class="topo">
-  <h1>📋 Fechamento de Caixa</h1>
-  <div class="topo-meta">
-    <input type="text" id="inp-data" placeholder="Data" style="width:80px;">
-    <input type="text" id="inp-evento" placeholder="Evento" style="width:130px;">
-  </div>
+<h1>📋 Fechamento de Caixa</h1>
+<div>
+<input id="inp-data" placeholder="Data">
+<input id="inp-evento" placeholder="Evento">
 </div>
+</div>
+
 <div class="nav">
-  <button class="on" onclick="aba('config')">⚙️ Config</button>
-  <button onclick="aba('lancamento')">📷 Lançamento</button>
-  <button onclick="aba('consolidado')">📊 Consolidado</button>
+<button class="on" onclick="aba('config')">⚙️ Config</button>
+<button onclick="aba('lancamento')">📷 Lançamento</button>
+<button onclick="aba('consolidado')">📊 Consolidado</button>
 </div>
+
 <div id="pnl-config" class="pnl on">
-  <div class="info">Configure o tipo e troco inicial de cada caixa antes de começar. Caixas 25–40 são Volantes (somente eletrônico).</div>
-  <div style="display:flex;gap:8px;margin-bottom:10px;">
-    <button onclick="bulkTipo('D')" style="flex:1;padding:12px;border:2px solid #1565c0;border-radius:10px;background:#e3f2fd;color:#1565c0;font-size:14px;font-weight:700;cursor:pointer;">💵 CX 1-24 Dinheiro</button>
-    <button onclick="bulkTipo('C')" style="flex:1;padding:12px;border:2px solid #6a1b9a;border-radius:10px;background:#f3e5f5;color:#6a1b9a;font-size:14px;font-weight:700;cursor:pointer;">💳 CX 1-24 Cartão</button>
-  </div>
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);">
-    <span style="font-size:14px;font-weight:600;color:#555;flex:1;">💰 Troco padrão (CX 1,8–13,20,21)</span>
-    <input type="number" id="inp-bulk-troco" placeholder="Ex: 250" style="width:110px;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:16px;text-align:right;">
-    <button onclick="bulkTroco()" style="padding:10px 16px;background:var(--cf);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">Aplicar</button>
-  </div>
-  <div class="card" id="lista-cfg"></div>
-  <button class="btn-p" onclick="aba('lancamento')">Confirmar e ir para lançamento →</button>
-  <button onclick="novoEvento()" style="width:100%;padding:15px;margin-top:10px;background:none;border:2px solid #c62828;border-radius:12px;color:#c62828;font-size:16px;font-weight:700;cursor:pointer;">🗑️ Novo evento</button>
+<div class="info">Configure os caixas. Caixas 25 a 40 são volantes e trabalham somente com eletrônico.</div>
+<div class="card">
+<button class="btn3" onclick="bulkTipo('D')">CX 1-24 Dinheiro + Cartão</button>
+<button class="btn3" onclick="bulkTipo('C')">CX 1-24 Somente Cartão</button>
+<div style="margin-top:10px;display:flex;gap:8px">
+<input id="inp-bulk-troco" type="number" placeholder="Troco padrão" style="flex:1;padding:11px;border-radius:8px;border:1px solid #ccc">
+<button class="btn2" onclick="bulkTroco()">Aplicar Troco</button>
 </div>
+</div>
+<div class="card" id="lista-cfg"></div>
+<button class="btn" onclick="aba('lancamento')">Ir para lançamento</button>
+<button class="btn" style="background:#c62828" onclick="novoEvento()">Apagar evento</button>
+</div>
+
 <div id="pnl-lancamento" class="pnl">
-  <div class="grade" id="grade"></div>
-  <div id="form-cx"><p style="font-size:13px;color:#888;text-align:center;padding:20px 0;">Selecione um caixa acima</p></div>
+<div class="grade" id="grade"></div>
+<div id="form-cx"><div class="card">Selecione um caixa.</div></div>
 </div>
+
 <div id="pnl-consolidado" class="pnl">
-  <div id="print-hdr"><h2 id="print-title">Fechamento de Caixa</h2></div>
-  <div id="cards" style="margin-bottom:14px;"></div>
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-    <span style="font-size:13px;font-weight:700;color:#1a1a1a;">Por caixa</span>
-    <div style="display:flex;gap:7px;">
-      <button class="btn-sec" onclick="expCSV()">CSV</button>
-      <button class="btn-xlsx" onclick="expXLSX()">📥 XLSX</button>
-      <button onclick="window.print()" style="padding:13px 20px;border:none;border-radius:10px;font-size:15px;cursor:pointer;background:#374151;color:#fff;font-weight:600;">🖨️ Imprimir</button>
-    </div>
-  </div>
-  <div class="card" style="overflow-x:auto;padding:0;">
-    <table class="tbl" id="tbl"></table>
-  </div>
+<div id="cards" class="cards"></div>
+<div style="display:flex;gap:8px;margin-bottom:10px">
+<button class="btn2" onclick="expXLSX()">📥 Exportar XLSX Corrigido</button>
+<button class="btn3" onclick="expCSV()">CSV</button>
 </div>
-<input type="file" id="fi" accept="image/*" capture="environment" style="display:none;">
-<div id="barra">
-  <div class="bar-row">
-    <div class="bar-item"><div class="bar-lbl">Débito</div><div class="bar-val" id="b-deb">R$ 0,00</div></div>
-    <div class="bar-item"><div class="bar-lbl">Crédito</div><div class="bar-val" id="b-cred">R$ 0,00</div></div>
-    <div class="bar-item"><div class="bar-lbl">PIX</div><div class="bar-val" id="b-pix">R$ 0,00</div></div>
-    <div class="bar-item tot"><div class="bar-lbl">Total acumulado</div><div class="bar-val" id="b-tot">R$ 0,00</div></div>
-    <div class="bar-item" style="flex:0 0 auto;background:rgba(255,255,255,.15);border-radius:10px;padding:8px 12px;min-width:52px;">
-      <div class="bar-lbl">CX</div>
-      <div class="bar-val" id="b-cnt" style="font-size:20px;">0/40</div>
-    </div>
-  </div>
-  <div class="bar-prog"><div class="bar-prog-fill" id="b-prog" style="width:0%"></div></div>
+<div class="tblwrap"><table id="tbl"></table></div>
 </div>
-<div id="ov">
-  <div class="ov-box">
-    <div class="ov-tit" id="ov-tit"></div>
-    <div class="ov-sub" id="ov-sub"></div>
-    <div class="ov-grid" id="ov-grid"></div>
-    <button class="ov-btn" onclick="fecharOv()">✓ Confirmar e continuar</button>
-  </div>
-</div>
+
+<input type="file" id="fi" accept="image/*" capture="environment" style="display:none">
+
 <script>
-const TOTAL_CX=40,VOLANTE_START=24;
-const ST={caixas:Array.from({length:TOTAL_CX},(_,i)=>({num:i+1,tipo:i>=VOLANTE_START?'V':'D',troco:0,nome:'',dados:null}))};
+const TOTAL_CX=40;
+const VOLANTE_START=24;
+const LS_KEY='fechamento_corrigido_v1';
+
+const ST={
+caixas:Array.from({length:TOTAL_CX},(_,i)=>({
+num:i+1,
+tipo:i>=VOLANTE_START?'V':'D',
+troco:0,
+nome:'',
+dados:null
+}))
+};
+
 let atv=null;
+
 const fmt=v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-const nv=id=>{const el=document.getElementById(id);return el&&el.value!==''?parseFloat(el.value)||0:0;};
-const LS_KEY='fechamento_v6';
-function salvarLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify({caixas:ST.caixas,data:document.getElementById('inp-data').value,evento:document.getElementById('inp-evento').value}));}catch(e){}}
-function restaurarLocal(){try{const raw=localStorage.getItem(LS_KEY);if(!raw)return;const s=JSON.parse(raw);if(s.caixas&&s.caixas.length===TOTAL_CX){s.caixas.forEach((c,i)=>{Object.assign(ST.caixas[i],c);});if(s.data)document.getElementById('inp-data').value=s.data;if(s.evento)document.getElementById('inp-evento').value=s.evento;const lc=ST.caixas.filter(c=>c.dados).length;if(lc>0)mostrarToast(`✅ Sessão restaurada — ${lc} caixas recuperados`);}}catch(e){}}
-function mostrarToast(msg){const t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1a3a5c;color:#fff;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.3);';document.body.appendChild(t);setTimeout(()=>t.remove(),3500);}
-function atualizarBarra(){const lc=ST.caixas.filter(c=>c.dados);const count=lc.length;if(count===0){document.getElementById('barra').classList.remove('show');return;}let td=0,tc=0,tp=0,ttot=0;lc.forEach(cx=>{const d=cx.dados,t=calcTot(cx);td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0)+(d.pixManual||0);ttot+=t.totalComprovado;});document.getElementById('b-deb').textContent=fmt(td);document.getElementById('b-cred').textContent=fmt(tc);document.getElementById('b-pix').textContent=fmt(tp);document.getElementById('b-tot').textContent=fmt(ttot);document.getElementById('b-prog').style.width=(count/TOTAL_CX*100)+'%';document.getElementById('b-cnt').textContent=count+'/'+TOTAL_CX;document.getElementById('barra').classList.add('show');}
-function aba(id){document.querySelectorAll('.nav button').forEach((b,i)=>b.classList.toggle('on',['config','lancamento','consolidado'][i]===id));document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));document.getElementById('pnl-'+id).classList.add('on');if(id==='lancamento'){renderGrade();atualizarBarra();}if(id==='consolidado'){renderCons();document.getElementById('barra').classList.remove('show');}if(id==='config')document.getElementById('barra').classList.remove('show');}
-function renderCfg(){document.getElementById('lista-cfg').innerHTML=ST.caixas.map((cx,i)=>{const isV=cx.tipo==='V';return`<div class="cfg-row" style="${isV?'background:#faf5ff;border-radius:8px;padding:8px 4px;':''}"><span class="cn" style="${isV?'color:#6d28d9;':''}">${isV?'🟣':''}CX ${cx.num}${isV?' Vol':''}</span>${!isV?`<select onchange="ST.caixas[${i}].tipo=this.value;renderCfg()" style="flex:1;min-width:130px;"><option value="D" ${cx.tipo==='D'?'selected':''}>Dinheiro + Cartão</option><option value="C" ${cx.tipo==='C'?'selected':''}>Somente Cartão</option></select>`:`<span style="flex:1;font-size:13px;color:#7c3aed;font-weight:600;">Somente Eletrônico</span>`}${cx.tipo==='D'?`<input type="number" value="${cx.troco||''}" placeholder="Troco" onchange="ST.caixas[${i}].troco=parseFloat(this.value)||0" style="width:80px;">`:``}<input type="text" placeholder="Nome do operador" value="${cx.nome}" onchange="ST.caixas[${i}].nome=this.value" style="flex:1;min-width:160px;"></div>`;}).join('');}
-function renderGrade(){let html='';ST.caixas.slice(0,VOLANTE_START).forEach((cx,i)=>{html+=`<button class="bcx ${cx.dados?'ok':''} ${atv===i?'on':''}" onclick="abrirCx(${i})"><div style="font-weight:600;">CX ${cx.num}</div><div class="sub">${cx.tipo==='D'?'💵':'💳'}</div>${cx.dados?'<div style="font-size:9px;color:#4caf50;">✓</div>':''}</button>`;});html+=`<div class="grade-sep" style="grid-column:1/-1;">🟣 Caixas Volantes (25–40)</div>`;ST.caixas.slice(VOLANTE_START).forEach((cx,i)=>{const idx=i+VOLANTE_START;html+=`<button class="bcx volante ${cx.dados?'ok':''} ${atv===idx?'on':''}" onclick="abrirCx(${idx})"><div style="font-weight:600;">CV ${cx.num}</div><div class="sub">💳</div>${cx.dados?'<div style="font-size:9px;color:#4c1d95;">✓</div>':''}</button>`;});document.getElementById('grade').innerHTML=html;}
-function abrirCx(i){atv=i;renderGrade();const cx=ST.caixas[i],d=cx.dados||{},is=cx.tipo==='D',isV=cx.tipo==='V';const label=isV?`Caixa Volante ${cx.num}`:`Caixa ${cx.num}`;const badgeCls=is?'bd':isV?'bv':'bc';const badgeTxt=is?'💵 Dinheiro':isV?'🟣 Volante':'💳 Cartão';let formHtml=`<div class="card"><div class="ftit">${label}${cx.nome?' — '+cx.nome:''}<span class="badge ${badgeCls}">${badgeTxt}</span></div><div class="zona" id="zona" onclick="foto(${i})"><div class="zona-ic">📷</div><div class="zona-lb">Fotografar filipeta</div><div class="zona-sub">Toque para abrir a câmera</div></div><div class="stbox" id="stocr"></div><div class="slbl azul">📄 Dados da filipeta (sistema Eye)</div>${is?`<div class="lf"><label>Dinheiro (sistema)</label><input type="number" id="f-din" value="${d.din??''}" placeholder="0" oninput="calc()"></div>`:''}<div class="lf"><label>Débito</label><input type="number" id="f-deb" value="${d.deb??''}" placeholder="0" oninput="calc()"></div><div class="lf"><label>Crédito</label><input type="number" id="f-cred" value="${d.cred??''}" placeholder="0" oninput="calc()"></div><div class="lf"><label>PIX (sistema)</label><input type="number" id="f-pix" value="${d.pix??''}" placeholder="0" oninput="calc()"></div>${!isV?`<div class="lf"><label>Liberação de TAG</label><input type="number" id="f-tag" value="${d.tag??''}" placeholder="0" oninput="calc()"></div>`:''}<div class="lf"><label style="font-weight:700;">Total filipeta</label><input type="number" id="f-total-filipeta" value="${d.totalFilipeta??''}" placeholder="0" oninput="calc()" style="border-color:#1a3a5c;font-weight:700;"></div><hr><div class="slbl laranja">📝 Lançamentos manuais</div><div class="lf"><label>PIX manual <span style="font-size:12px;color:#888;">(sistema travado)</span></label><input type="number" id="f-pix-manual" value="${d.pixManual??''}" placeholder="0" oninput="calc()" style="border-color:#e65100;"></div><div class="lf"><label>Ajuste <span style="font-size:12px;color:#888;">(desconto manual)</span></label><input type="number" id="f-ajuste" value="${d.ajuste??''}" placeholder="0" oninput="calc()" style="border-color:#e65100;"></div><hr><div class="slbl vermelho">↩️ Devoluções (somente relatório)</div><div class="lf"><label>TAG devolvida</label><input type="number" id="f-devtag" value="${d.devtag??''}" placeholder="0" oninput="calc()" style="border-color:#c62828;"></div><div class="lf"><label>Resgate de saldo</label><input type="number" id="f-devsaldo" value="${d.devsaldo??''}" placeholder="0" oninput="calc()" style="border-color:#c62828;"></div><div class="lf"><label>TAGs liberadas <span style="font-size:12px;color:#888;">(unidades)</span></label><input type="number" id="f-tags-lib" value="${d.tagsLib??''}" placeholder="0" oninput="calc()" style="border-color:#c62828;"></div>`;if(is){formHtml+=`<hr><div class="slbl verde">💵 Acerto dinheiro físico</div><div class="lf"><label>Troco inicial</label><input type="number" id="f-troco" value="${d.trocoInicial??cx.troco??''}" placeholder="0" oninput="calc()"></div><div class="lf"><label>Sangria 1</label><input type="number" id="f-s1" value="${d.s1??''}" placeholder="0" oninput="calc()"></div><div class="lf"><label>Sangria 2</label><input type="number" id="f-s2" value="${d.s2??''}" placeholder="0" oninput="calc()"></div><div class="lf"><label>Sangria 3</label><input type="number" id="f-s3" value="${d.s3??''}" placeholder="0" oninput="calc()"></div><div class="lf"><label>Sangria 4</label><input type="number" id="f-s4" value="${d.s4??''}" placeholder="0" oninput="calc()"></div><div class="lf"><label>Sangria 5</label><input type="number" id="f-s5" value="${d.s5??''}" placeholder="0" oninput="calc()"></div><div class="lf"><label>Reposição 1</label><input type="number" id="f-r1" value="${d.r1??''}" placeholder="0" oninput="calc()"></div><div class="lf"><label>Reposição 2</label><input type="number" id="f-r2" value="${d.r2??''}" placeholder="0" oninput="calc()"></div><div class="lf"><label>Reposição 3</label><input type="number" id="f-r3" value="${d.r3??''}" placeholder="0" oninput="calc()"></div><div class="lf"><label><strong>Contagem física</strong></label><input type="number" id="f-fisico" value="${d.fisico??''}" placeholder="0" oninput="calc()" class="fisico-inp"></div>`;}formHtml+=`<hr><div id="bloco-resultado"></div><button class="btn-p" onclick="salvar(${i})">💾 Salvar ${label}</button></div>`;document.getElementById('form-cx').innerHTML=formHtml;calc();}
-function calc(){if(atv===null)return;const cx=ST.caixas[atv],is=cx.tipo==='D',isV=cx.tipo==='V';const deb=nv('f-deb'),cred=nv('f-cred'),pix=nv('f-pix'),pixManual=nv('f-pix-manual'),ajuste=nv('f-ajuste'),totalFilipeta=nv('f-total-filipeta'),totalCartoes=deb+cred+pix+pixManual;let html='';if(is){const din=nv('f-din'),troco=nv('f-troco'),sang=nv('f-s1')+nv('f-s2')+nv('f-s3')+nv('f-s4')+nv('f-s5'),repos=nv('f-r1')+nv('f-r2')+nv('f-r3'),fisico=nv('f-fisico');const dinEsperado=din-troco+sang-repos,dinLiquido=fisico-troco+sang-repos,difDin=dinLiquido-din,totalComprovado=dinLiquido+totalCartoes-ajuste,difGeral=totalComprovado-totalFilipeta;const cD=difDin===0?'verde':difDin>0?'laranja':'vermelho',cG=difGeral>=0?'verde':'vermelho';html=`<div class="bloco"><div class="titulo">💵 Dinheiro</div><div class="lt"><span class="lb">Dinheiro esperado (sistema)</span><span class="vl">${fmt(dinEsperado)}</span></div><div class="lt"><span class="lb">Dinheiro líquido (físico − troco)</span><span class="vl">${fmt(dinLiquido)}</span></div><div class="destaque ${cD}"><div class="dl">Diferença dinheiro</div><div class="dv" style="color:${difDin===0?'#2e7d32':difDin>0?'#e65100':'#c62828'}">${fmt(difDin)}</div></div></div><div class="bloco" style="margin-top:10px;"><div class="titulo">📊 Fechamento geral</div><div class="lt"><span class="lb">Dinheiro líquido</span><span class="vl">${fmt(dinLiquido)}</span></div><div class="lt"><span class="lb">Cartões + PIX${pixManual>0?' + PIX manual':''}</span><span class="vl">${fmt(totalCartoes)}</span></div>${ajuste>0?`<div class="lt"><span class="lb" style="color:#e65100;">Ajuste (desconto)</span><span class="vl" style="color:#e65100;">− ${fmt(ajuste)}</span></div>`:''}<div class="destaque azul"><div class="dl">Total comprovado</div><div class="dv" style="color:#1565c0;">${fmt(totalComprovado)}</div></div><div class="lt" style="margin-top:8px;"><span class="lb">Total filipeta</span><span class="vl">${fmt(totalFilipeta)}</span></div><div class="destaque ${cG}" style="margin-top:8px;"><div class="dl">Diferença geral</div><div class="dv" style="color:${difGeral>=0?'#2e7d32':'#c62828'}">${fmt(difGeral)}</div></div></div>`;}else{const totalComprovado=totalCartoes-ajuste,difGeral=totalComprovado-totalFilipeta,cG=difGeral>=0?'verde':'vermelho';html=`<div class="bloco"><div class="titulo">📊 Fechamento${isV?' — Caixa Volante':''}</div><div class="lt"><span class="lb">Cartões + PIX${pixManual>0?' + PIX manual':''}</span><span class="vl">${fmt(totalCartoes)}</span></div>${ajuste>0?`<div class="lt"><span class="lb" style="color:#e65100;">Ajuste (desconto)</span><span class="vl" style="color:#e65100;">− ${fmt(ajuste)}</span></div>`:''}<div class="destaque azul"><div class="dl">Total comprovado</div><div class="dv" style="color:#1565c0;">${fmt(totalComprovado)}</div></div><div class="lt" style="margin-top:8px;"><span class="lb">Total filipeta</span><span class="vl">${fmt(totalFilipeta)}</span></div><div class="destaque ${cG}" style="margin-top:8px;"><div class="dl">Diferença geral</div><div class="dv" style="color:${difGeral>=0?'#2e7d32':'#c62828'}">${fmt(difGeral)}</div></div></div>`;}document.getElementById('bloco-resultado').innerHTML=html;}
-function calcTot(cx){if(!cx.dados)return{cartoes:0,dinLiquido:0,totalComprovado:0,difDin:0,difGeral:0};const d=cx.dados,is=cx.tipo==='D';const cartoes=(d.deb||0)+(d.cred||0)+(d.pix||0)+(d.pixManual||0),ajuste=d.ajuste||0,totalFilipeta=d.totalFilipeta||0;if(is){const sang=(d.s1||0)+(d.s2||0)+(d.s3||0)+(d.s4||0)+(d.s5||0),repos=(d.r1||0)+(d.r2||0)+(d.r3||0),troco=d.trocoInicial||0,fisico=d.fisico||0,din=d.din||0;const dinLiquido=fisico-troco+sang-repos,difDin=dinLiquido-din,totalComprovado=dinLiquido+cartoes-ajuste,difGeral=totalComprovado-totalFilipeta;return{cartoes,dinLiquido,totalComprovado,difDin,difGeral};}const totalComprovado=cartoes-ajuste;return{cartoes,dinLiquido:0,totalComprovado,difDin:0,difGeral:totalComprovado-totalFilipeta};}
-let _proxIdx=null;
-function salvar(i){const cx=ST.caixas[i],is=cx.tipo==='D';cx.dados={deb:nv('f-deb'),cred:nv('f-cred'),pix:nv('f-pix'),pixManual:nv('f-pix-manual'),ajuste:nv('f-ajuste'),tag:nv('f-tag'),devtag:nv('f-devtag'),devsaldo:nv('f-devsaldo'),tagsLib:nv('f-tags-lib'),totalFilipeta:nv('f-total-filipeta'),...(is?{din:nv('f-din'),trocoInicial:nv('f-troco'),s1:nv('f-s1'),s2:nv('f-s2'),s3:nv('f-s3'),s4:nv('f-s4'),s5:nv('f-s5'),r1:nv('f-r1'),r2:nv('f-r2'),r3:nv('f-r3'),fisico:nv('f-fisico')}:{})};renderGrade();_proxIdx=ST.caixas.findIndex((c,j)=>j>i&&!c.dados);mostrarOv(cx);}
-function mostrarOv(cx){const t=calcTot(cx),is=cx.tipo==='D',d=cx.dados||{};const totalDevol=(d.devtag||0)+(d.devsaldo||0);const label=cx.tipo==='V'?`Caixa Volante ${cx.num}`:`Caixa ${cx.num}`;document.getElementById('ov-tit').textContent=`${label}${cx.nome?' — '+cx.nome:''} ✓`;document.getElementById('ov-sub').textContent='Confira os valores antes de continuar';const itens=[];if(is)itens.push({l:'Dinheiro Líquido',v:fmt(t.dinLiquido),cls:'ov-verde'});itens.push({l:'Cartões + PIX',v:fmt(t.cartoes),cls:'ov-azul'});itens.push({l:'Total Apurado',v:fmt(t.totalComprovado),cls:'ov-laranja full'});itens.push({l:'Total Filipeta',v:fmt(d.totalFilipeta||0),cls:'ov-verde2 full'});if(totalDevol>0)itens.push({l:'↩️ Devoluções (info)',v:fmt(totalDevol),cls:'ov-vermelho full'});if(is)itens.push({l:'🏷️ TAGs lib.',v:d.tagsLib>0?`${d.tagsLib} un`:'—',cls:'ov-amarelo'});itens.push({l:'Dif. Geral',v:fmt(t.difGeral),cls:`${t.difGeral>=0?'ov-verde2':'ov-vermelho'} full`});document.getElementById('ov-grid').innerHTML=itens.map(it=>`<div class="ov-item ${it.cls}"><div class="ov-lbl">${it.l}</div><div class="ov-val">${it.v}</div></div>`).join('');document.getElementById('ov').classList.add('show');}
-function fecharOv(){document.getElementById('ov').classList.remove('show');salvarLocal();atualizarBarra();if(_proxIdx!==-1&&_proxIdx!==null)abrirCx(_proxIdx);else document.getElementById('form-cx').innerHTML=`<div style="text-align:center;padding:30px;"><div style="font-size:40px;">🎉</div><p style="font-size:16px;color:#555;margin-top:10px;">Todos os caixas lançados!<br>Acesse <strong>Consolidado</strong>.</p></div>`;_proxIdx=null;}
-function renderCons(){const lc=ST.caixas.filter(c=>c.dados);let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0,ttag=0,tdevtag=0,tlib=0,tdevol=0,tcompNorm=0,tcompVol=0,tdevsaldo=0;lc.forEach(cx=>{const d=cx.dados,t=calcTot(cx);td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;ttag+=(d.tag||0);tdevtag+=(d.devtag||0);tlib+=(d.tagsLib||0);tdevol+=(d.devtag||0)+(d.devsaldo||0);tdevsaldo+=(d.devsaldo||0);if(cx.num<=24)tcompNorm+=t.totalComprovado;else tcompVol+=t.totalComprovado;});const tFilipeta=lc.reduce((s,cx)=>s+(cx.dados.totalFilipeta||0),0),difCor=tdifGeral>=0?'#2e7d32':'#c62828',difBg=tdifGeral>=0?'#e8f5e9':'#ffebee',difBd=tdifGeral>=0?'#4caf50':'#c62828';let cardsHtml='';cardsHtml+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;"><div class="mcard verde-card"><div class="lb">Total Apurado</div><div class="vl">${fmt(tcomp)}</div></div><div class="mcard amarelo-card"><div class="lb">Total Filipeta</div><div class="vl">${fmt(tFilipeta)}</div></div></div>`;cardsHtml+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:9px;"><div class="mcard azul-card"><div class="lb">Total PIX</div><div class="vl">${fmt(tp+tpm)}</div></div><div class="mcard azul-card"><div class="lb">Total Débito</div><div class="vl">${fmt(td)}</div></div><div class="mcard azul-card"><div class="lb">Total Crédito</div><div class="vl">${fmt(tc)}</div></div></div>`;cardsHtml+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:9px;"><div class="mcard verde-card"><div class="lb">Total Dinheiro Apurado</div><div class="vl">${fmt(tdinLiq)}</div></div><div class="mcard amarelo-card"><div class="lb">TAGs Liberadas</div><div class="vl">${Math.round(ttag/5)} un</div></div><div class="mcard" style="background:${difBg};border:2px solid ${difBd};border-radius:10px;padding:12px;"><div class="lb" style="font-size:13px;color:${difCor};margin-bottom:4px;">Dif. Geral</div><div class="vl" style="font-size:20px;font-weight:700;color:${difCor};">${fmt(tdifGeral)}</div></div></div>`;cardsHtml+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:9px;"><div class="mcard verm-card"><div class="lb">TAGs Devolvidas</div><div class="vl">${fmt(tdevtag)}</div></div><div class="mcard verm-card"><div class="lb">Saldo Resgatado</div><div class="vl">${fmt(tdevsaldo)}</div></div><div class="mcard verm-card"><div class="lb">Total Devoluções</div><div class="vl">${fmt(tdevol)}</div></div></div>`;cardsHtml+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:9px;"><div class="mcard laranja-card"><div class="lb">CX 1–24 Apurado</div><div class="vl">${fmt(tcompNorm)}</div></div><div class="mcard lilas-card"><div class="lb">Volantes 25–40</div><div class="vl">${fmt(tcompVol)}</div></div><div></div></div>`;document.getElementById('cards').innerHTML=cardsHtml;const rows=ST.caixas.map(cx=>{const d=cx.dados,t=calcTot(cx),isV=cx.tipo==='V';const lib=d?(d.tagsLib||0):0,cdGeral=!d?'':t.difGeral>=0?'dok':'derr';return`<tr style="${isV?'background:#faf5ff;':''}"><td><b>${isV?'CV':'CX'} ${cx.num}</b>${cx.nome?'<br><span style="font-size:10px;color:#888;">'+cx.nome+'</span>':''}</td><td>${isV?'🟣':cx.tipo==='D'?'💵':'💳'}</td><td class="n">${d?fmt(d.deb||0):'—'}</td><td class="n">${d?fmt(d.cred||0):'—'}</td><td class="n">${d?fmt((d.pix||0)+(d.pixManual||0)):'—'}</td><td class="n">${cx.tipo==='D'&&d?fmt(t.dinLiquido):'—'}</td><td class="n">${d?fmt(t.totalComprovado):'—'}</td><td class="n ${cdGeral}">${d?fmt(t.difGeral):'—'}</td><td class="n" style="color:#c62828;font-weight:700;">${d&&((d.devtag||0)+(d.devsaldo||0))>0?fmt((d.devtag||0)+(d.devsaldo||0)):'—'}</td><td class="n tag-sc">${d?lib+' un':'—'}</td></tr>`;}).join('');document.getElementById('tbl').innerHTML=`<thead><tr><th>Caixa</th><th></th><th class="n">Déb</th><th class="n">Cred</th><th class="n">PIX</th><th class="n">Din.Líq</th><th class="n">Apurado</th><th class="n">Dif.Geral</th><th class="n" style="color:#c62828;">Devol.</th><th class="n tag-sc">TAGs lib.</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="2">Total</td><td class="n">${fmt(td)}</td><td class="n">${fmt(tc)}</td><td class="n">${fmt(tp+tpm)}</td><td class="n">${fmt(tdinLiq)}</td><td class="n">${fmt(tcomp)}</td><td class="n ${tdifGeral>=0?'dok':'derr'}">${fmt(tdifGeral)}</td><td class="n" style="color:#c62828;font-weight:700;">${fmt(tdevol)}</td><td class="n tag-sc">${tlib} un</td></tr></tfoot>`;}
-function foto(idx){const fi=document.getElementById('fi');fi.onchange=e=>{const f=e.target.files[0];if(!f)return;fi.value='';procFoto(f,idx);};fi.click();}
-async function procFoto(file,idx){const zona=document.getElementById('zona'),st=document.getElementById('stocr');zona.className='zona proc';zona.innerHTML=`<div class="zona-ic"><span class="spin"></span></div><div class="zona-lb" style="color:#1565c0;">Lendo filipeta...</div>`;st.style.display='block';st.className='stbox l';st.innerHTML=`<span class="spin"></span> Analisando imagem...`;const r=new FileReader();r.onload=async ev=>{let b64,mt='image/jpeg';try{const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=ev.target.result;});const MAX=1200,cvs=document.createElement('canvas');const scale=Math.min(1,MAX/Math.max(img.width,img.height));cvs.width=Math.round(img.width*scale);cvs.height=Math.round(img.height*scale);cvs.getContext('2d').drawImage(img,0,0,cvs.width,cvs.height);let q=0.85,dataUrl;do{dataUrl=cvs.toDataURL('image/jpeg',q);q-=0.1;}while(dataUrl.length*0.75>4*1024*1024&&q>0.3);b64=dataUrl.split(',')[1];}catch{b64=ev.target.result.split(',')[1];mt=file.type||'image/jpeg';}try{const res=await fetch('/api/ocr',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:b64,media_type:mt})});const p=await res.json();if(p.error)throw new Error(p.error);preencherCampos(p,idx);zona.className='zona suc';zona.innerHTML=`<div class="zona-ic">✅</div><div class="zona-lb" style="color:#2e7d32;">Filipeta lida!</div><div class="zona-sub" style="cursor:pointer;" onclick="foto(${idx})">Ler outra</div>`;st.className='stbox s';st.innerHTML=`✅ Dados preenchidos. Confira antes de salvar.`;}catch(e){zona.className='zona err';zona.innerHTML=`<div class="zona-ic">❌</div><div class="zona-lb" style="color:#c62828;">Erro na leitura</div><div class="zona-sub" style="cursor:pointer;" onclick="foto(${idx})">Tentar novamente</div>`;st.className='stbox e';st.innerHTML=`❌ ${e.message||'Tente com foto mais nítida.'}`;}};r.readAsDataURL(file);}
-function preencherCampos(p,idx){const cx=ST.caixas[idx];const s=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null&&v!==undefined&&v!==0){el.value=v;el.classList.add('vrd');}};if(cx.tipo==='D')s('f-din',p.dinheiro);s('f-deb',p.debito);s('f-cred',p.credito);s('f-pix',p.pix);if(cx.tipo!=='V')s('f-tag',p.liberacao_tag);s('f-devtag',p.tag_devolvida);s('f-devsaldo',p.resgate_saldo);s('f-total-filipeta',p.total);if(p.liberacao_tag!=null&&p.liberacao_tag>0)s('f-tags-lib',Math.round(p.liberacao_tag/5));calc();}
-function expCSV(){const ev=document.getElementById('inp-evento').value||'Evento',dt=document.getElementById('inp-data').value||'';let c=`FECHAMENTO — ${ev} — ${dt}\n`;c+='Caixa,Tipo,Nome,Débito,Crédito,PIX,PIX Manual,Ajuste,Din.Líquido,Total Apurado,Total Filipeta,Dif.Geral,TAG lib(un),TAG dev(un),Resgate Saldo\n';let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0;ST.caixas.forEach(cx=>{const d=cx.dados,t=calcTot(cx),isV=cx.tipo==='V';if(d){td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;}const devtagUn=d?Math.round((d.devtag||0)/5):0;c+=`${cx.num},${isV?'Volante':cx.tipo==='D'?'Din+Cartão':'Cartão'},${cx.nome||''},${d?d.deb||0:''},${d?d.cred||0:''},${d?d.pix||0:''},${d?d.pixManual||0:''},${d?d.ajuste||0:''},${cx.tipo==='D'&&d?t.dinLiquido:''},${d?t.totalComprovado:''},${d?d.totalFilipeta||0:''},${d?t.difGeral:''},${d?d.tagsLib||0:''},${d?devtagUn:''},${d?d.devsaldo||0:''}\n`;});c+=`TOTAL,,,${td.toFixed(2)},${tc.toFixed(2)},${tp.toFixed(2)},${tpm.toFixed(2)},,${tdinLiq.toFixed(2)},${tcomp.toFixed(2)},,${tdifGeral.toFixed(2)}\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download=`Fechamento_${ev}_${dt}.csv`.replace(/\s+/g,'_');a.click();}
-async function expXLSX(){
-  if(typeof ExcelJS==='undefined'){alert('Aguarde a biblioteca carregar.');return;}
-  const ev=document.getElementById('inp-evento').value||'Evento';
-  const dt=document.getElementById('inp-data').value||'';
-  const wb=new ExcelJS.Workbook();
-  wb.creator='Fechamento de Caixa';wb.created=new Date();
-  const P={navy:'FF1A3A5C',navyBg:'FFD6E4F0',blue:'FF1976D2',blueBg:'FFE3F2FD',green:'FF388E3C',greenBg:'FFE8F5E9',red:'FFE53935',redBg:'FFFFEBEE',amber:'FFF9A825',amberBg:'FFFFFDE7',teal:'FF00796B',tealBg:'FFE0F2F1',white:'FFFFFFFF',gray1:'FFF8FAFC',gray3:'FFDEE5EE',text:'FF1A2332',text2:'FF607080'};
-  const F=h=>({type:'pattern',pattern:'solid',fgColor:{argb:h}});
-  const ft=(bold,color,size,italic)=>({name:'Calibri',bold:!!bold,color:{argb:color||P.text},size:size||10,italic:!!italic});
-  const al=(h,v,wrap)=>({horizontal:h||'center',vertical:v||'middle',wrapText:!!wrap});
-  const bdThin=()=>{const s={style:'thin',color:{argb:'FFCCCCCC'}};return{top:s,bottom:s,left:s,right:s};};
-  const bdMed=()=>{const s={style:'medium',color:{argb:'FF888888'}};return{top:s,bottom:s,left:s,right:s};};
-  function brl(v){if(v===null||v===undefined||v==='')return '';const neg=v<0,n=Math.abs(Math.round(v));const s=n.toLocaleString('pt-BR');return neg?`R$ -${s}`:`R$ ${s}`;}
-  function brlUn(v){return Math.round(v).toLocaleString('pt-BR')+' un';}
-  function setCell(ws,row,col,val,opts={}){const cell=ws.getCell(row,col);cell.value=val;if(opts.fill)cell.fill=opts.fill;if(opts.font)cell.font=opts.font;if(opts.align)cell.alignment=opts.align;if(opts.border)cell.border=opts.border;return cell;}
-  const active=ST.caixas.filter(cx=>cx.dados&&calcTot(cx).totalComprovado!==0);
-  let totDeb=0,totCred=0,totPix=0,totDin=0,totApur=0,totFil=0,totDif=0,totTagLib=0,totTagDev=0,totResgate=0;
-  active.forEach(cx=>{const d=cx.dados,t=calcTot(cx);totDeb+=(d.deb||0);totCred+=(d.cred||0);totPix+=(d.pix||0)+(d.pixManual||0);totDin+=t.dinLiquido;totApur+=t.totalComprovado;totFil+=(d.totalFilipeta||0);totDif+=t.difGeral;totTagLib+=(d.tagsLib||0);totTagDev+=((d.devtag||0)*5);totResgate+=(d.devsaldo||0);});
-  const totCartoes=totDeb+totCred+totPix,totDevol=totTagDev+totResgate;
-  const nOk=active.filter(cx=>calcTot(cx).difGeral===0).length,nPos=active.filter(cx=>calcTot(cx).difGeral>0).length,nNeg=active.filter(cx=>calcTot(cx).difGeral<0).length;
-  const ws1=wb.addWorksheet('Dashboard',{properties:{tabColor:{argb:P.navy}}});
-  ws1.views=[{showGridLines:false}];
-  [1,6,18,13,13,14,14,1].forEach((w,i)=>ws1.getColumn(i+1).width=w);
-  ws1.getRow(1).height=6;for(let c=2;c<=7;c++)ws1.getCell(1,c).fill=F(P.navy);
-  ws1.getRow(2).height=28;ws1.mergeCells(2,2,2,7);
-  setCell(ws1,2,2,`⚡  FECHAMENTO DE CAIXA  —  ${ev}  —  ${dt}`,{fill:F(P.navy),font:ft(true,P.white,13),align:al('center')});
-  ws1.getRow(3).height=14;ws1.mergeCells(3,2,3,7);
-  setCell(ws1,3,2,`${active.length} caixas lançados  |  Sistema automático de fechamento`,{fill:F('FF1E4B7A'),font:ft(false,'FF90CAF9',9,true),align:al('center')});
-  ws1.getRow(4).height=5;for(let c=2;c<=7;c++)ws1.getCell(4,c).fill=F(P.navy);
-  function kpi(row,col,label,val,hdrBg,valBg,valFc,icon){
-    ws1.getRow(row).height=13;ws1.getRow(row+1).height=28;
-    ws1.mergeCells(row,col,row,col+1);
-    setCell(ws1,row,col,`${icon} ${label}`,{fill:F(hdrBg),font:ft(true,'FFBBDEFB',8),align:al('center')});
-    ws1.mergeCells(row+1,col,row+1,col+1);
-    setCell(ws1,row+1,col,val,{fill:F(valBg),font:ft(true,valFc,15),align:al('center')});
-    const s={style:'thin',color:{argb:'FFCCCCCC'}};ws1.getCell(row+1,col).border={bottom:s,left:s,right:s};
-  }
-  function divider(row){ws1.getRow(row).height=4;ws1.mergeCells(row,2,row,7);ws1.getCell(row,2).fill=F(P.gray3);}
-  kpi(5,2,'TOTAL APURADO',brl(totApur),P.green,'FFE8F5E9',P.green,'💰');
-  kpi(5,4,'TOTAL FILIPETA',brl(totFil),'FF2060A0','FFDBEDF9',P.navy,'🧾');
-  kpi(5,6,'DIF. GERAL',brl(totDif),totDif>=0?P.green:P.red,totDif>=0?'FFE8F5E9':'FFFFEBEE',totDif>=0?P.green:P.red,totDif>=0?'✅':'⚠️');
-  divider(7);
-  kpi(8,2,'DÉBITO',brl(totDeb),'FF4A90D9','FFDDEEFF','FF1565C0','💳');
-  kpi(8,4,'CRÉDITO',brl(totCred),'FF1A3A8C','FFBBD4F5','FF1A3A8C','💳');
-  kpi(8,6,'PIX',brl(totPix),'FF1E7E6B',P.tealBg,P.teal,'📱');
-  divider(10);
-  kpi(11,2,'DINHEIRO APURADO',brl(totDin),P.green,'FFE8F5E9',P.green,'💵');
-  kpi(11,4,'TAGs LIBERADAS',brlUn(totTagLib),P.amber,'FFFFFDE7',P.amber,'🏷️');
-  kpi(11,6,'TOTAL DEVOLUÇÕES',brl(totDevol),P.red,'FFFFEBEE',P.red,'↩️');
-  divider(13);
-  ws1.getRow(14).height=20;ws1.mergeCells(14,2,14,7);
-  setCell(ws1,14,2,`STATUS:   ✅ Zerados: ${nOk}   |   📈 Sobra: ${nPos}   |   📉 Falta: ${nNeg}   |   🏷️ TAGs lib.: ${Math.round(totTagLib)} un   |   TAG dev.: ${brl(totTagDev)}`,{fill:F('FF1E4B7A'),font:ft(true,P.white,9),align:al('center')});
-  ws1.getRow(15).height=4;ws1.mergeCells(15,2,15,7);ws1.getCell(15,2).fill=F(P.gray3);
-  ws1.getRow(16).height=18;ws1.mergeCells(16,2,16,7);
-  setCell(ws1,16,2,'RESULTADO POR CAIXA',{fill:F(P.blue),font:ft(true,P.white,10),align:al('center')});
-  ws1.getRow(17).height=20;
-  [['CX','2A4A6A'],['OPERADOR','2A4A6A'],['DEB+CRED+PIX','2A5298'],['DINHEIRO','2E7030'],['TOTAL APURADO','1565C0'],['DIF. GERAL','2A4A6A']].forEach(([h,bg],i)=>{setCell(ws1,17,i+2,h,{fill:F('FF'+bg),font:ft(true,P.white,9),align:al('center'),border:bdThin()});});
-  let dr=18;
-  active.forEach(cx=>{
-    const d=cx.dados,t=calcTot(cx),nome=cx.nome||'—',dif=t.difGeral;
-    const cartoes=(d.deb||0)+(d.cred||0)+(d.pix||0)+(d.pixManual||0);
-    const baseBg=dr%2===0?P.gray1:P.white,difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
-    ws1.getRow(dr).height=17;
-    setCell(ws1,dr,2,cx.num,{fill:F('FFE3F2FD'),font:ft(true,P.blue,10),align:al('center'),border:bdThin()});
-    setCell(ws1,dr,3,nome,{fill:F(baseBg),font:ft(false,P.text2,10),align:al('center'),border:bdThin()});
-    setCell(ws1,dr,4,brl(cartoes),{fill:F(baseBg),font:ft(false,P.blue,10),align:al('right'),border:bdThin()});
-    setCell(ws1,dr,5,brl(t.dinLiquido),{fill:F(baseBg),font:ft(false,P.green,10),align:al('right'),border:bdThin()});
-    setCell(ws1,dr,6,brl(t.totalComprovado),{fill:F('FFE3F2FD'),font:ft(true,P.blue,10),align:al('right'),border:bdThin()});
-    setCell(ws1,dr,7,brl(dif),{fill:F(difBg),font:ft(true,difFc,10),align:al('right'),border:bdThin()});
-    dr++;
-  });
-  ws1.getRow(dr).height=22;ws1.mergeCells(dr,2,dr,3);
-  setCell(ws1,dr,2,'▶  TOTAL GERAL',{fill:F(P.navyBg),font:ft(true,P.navy,10),align:al('center'),border:bdMed()});
-  [[4,brl(totCartoes),'FFE3F2FD',P.blue],[5,brl(totDin),'FFE8F5E9',P.green],[6,brl(totApur),'FFE3F2FD',P.blue],[7,brl(totDif),totDif>=0?'FFE8F5E9':'FFFFEBEE',totDif>=0?P.green:P.red]].forEach(([c,v,bg,fc])=>{setCell(ws1,dr,c,v,{fill:F(bg),font:ft(true,fc,10),align:al('right'),border:bdMed()});});
-  ws1.getRow(dr+1).height=5;ws1.mergeCells(dr+1,2,dr+1,7);ws1.getCell(dr+1,2).fill=F(P.navy);
-  const ws2=wb.addWorksheet('Fechamento',{properties:{tabColor:{argb:P.blue}}});
-  ws2.views=[{showGridLines:false}];
-  const cw2=[5,18,13,13,13,10,14,14,14,12,10,12,14];
-  cw2.forEach((w,i)=>ws2.getColumn(i+1).width=w);const nc2=cw2.length;
-  ws2.getRow(1).height=6;ws2.getRow(2).height=30;ws2.getRow(3).height=6;
-  for(let c=1;c<=nc2;c++){ws2.getCell(1,c).fill=F(P.navy);ws2.getCell(3,c).fill=F(P.navy);}
-  ws2.mergeCells(2,1,2,nc2);
-  setCell(ws2,2,1,`FECHAMENTO DE CAIXA  —  ${ev}  —  ${dt}`,{fill:F(P.navy),font:ft(true,P.white,13),align:al('center')});
-  ws2.getRow(4).height=32;
-  ['CX','OPERADOR','DÉBITO','CRÉDITO','PIX','AJUSTE','DIN. LÍQUIDO','TOTAL\nAPURADO','TOTAL\nFILIPETA','DIF.\nGERAL','TAG\nLIB(un)','TAG DEV\n(R$)','RESGATE\nSALDO'].forEach((h,i)=>{setCell(ws2,4,i+1,h,{fill:F('FF2A4A6A'),font:ft(true,P.white,10),align:al('center',null,true),border:bdThin()});});
-  let dr2=5;
-  active.forEach(cx=>{
-    const d=cx.dados,t=calcTot(cx),nome=cx.nome||'—',dif=t.difGeral;
-    const tagDevRS=(d.devtag||0)*5,resgate=d.devsaldo||0,tagLibV=d.tagsLib||0;
-    const baseBg=dr2%2===0?P.gray1:P.white,difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
-    ws2.getRow(dr2).height=19;
-    [[cx.num,'FFE3F2FD',P.blue,true,'center'],[nome,baseBg,P.text2,false,'center',true],
-     [brl(d.deb||0),baseBg,P.text,false,'right'],[brl(d.cred||0),baseBg,P.text,false,'right'],
-     [brl((d.pix||0)+(d.pixManual||0)),baseBg,P.text,false,'right'],[brl(d.ajuste||0),baseBg,P.text,false,'right'],
-     [brl(t.dinLiquido),baseBg,P.green,false,'right'],[brl(t.totalComprovado),'FFE3F2FD',P.blue,true,'right'],
-     [brl(d.totalFilipeta||0),baseBg,P.text,false,'right'],[brl(dif),difBg,difFc,true,'right'],
-     [tagLibV>0?brlUn(tagLibV).replace(' un',''):null,tagLibV>0?'FFFFFDE7':baseBg,tagLibV>0?P.amber:P.text2,false,'right'],
-     [tagDevRS>0?brl(tagDevRS):null,tagDevRS>0?'FFFFEBEE':baseBg,tagDevRS>0?P.red:P.text2,true,'right'],
-     [resgate>0?brl(resgate):null,resgate>0?'FFFFEBEE':baseBg,resgate>0?P.red:P.text2,true,'right']
-    ].forEach(([v,bg,fc,bold,align,italic],i)=>{setCell(ws2,dr2,i+1,v||null,{fill:F(bg),font:ft(bold,fc,10,italic),align:al(align),border:bdThin()});});
-    dr2++;
-  });
-  ws2.getRow(dr2).height=22;ws2.mergeCells(dr2,1,dr2,2);
-  setCell(ws2,dr2,1,'▶  TOTAL GERAL',{fill:F(P.navyBg),font:ft(true,P.navy,11),align:al('center'),border:bdMed()});
-  const t2=[null,null,brl(totDeb),brl(totCred),brl(totPix),brl(0),brl(totDin),brl(totApur),brl(totFil),brl(totDif),Math.round(totTagLib).toLocaleString('pt-BR'),brl(totTagDev),brl(totResgate)];
-  const t2bg=[null,null,'FFE3F2FD','FFE3F2FD',P.tealBg,'FFF8FAFC','FFE8F5E9','FFE3F2FD','FFF8FAFC',totDif>=0?'FFE8F5E9':'FFFFEBEE','FFFFFDE7','FFFFEBEE','FFFFEBEE'];
-  const t2fc=[null,null,P.blue,P.blue,P.teal,P.text2,P.green,P.blue,P.text,totDif>=0?P.green:P.red,P.amber,P.red,P.red];
-  for(let i=2;i<nc2;i++){setCell(ws2,dr2,i+1,t2[i],{fill:F(t2bg[i]||P.navyBg),font:ft(true,t2fc[i]||P.navy,11),align:al('right'),border:bdMed()});}
-  ws2.views=[{state:'frozen',ySplit:4,showGridLines:false}];
-  const ws3=wb.addWorksheet('Detalhamento Dinheiro',{properties:{tabColor:{argb:'FF2E7D32'}}});
-  ws3.views=[{showGridLines:false}];
-  [5,18,13,10,10,10,10,10,10,10,10,10,14,12,13,13].forEach((w,i)=>ws3.getColumn(i+1).width=w);
-  ws3.getRow(1).height=6;ws3.getRow(2).height=28;ws3.getRow(3).height=6;
-  for(let c=1;c<=16;c++){ws3.getCell(1,c).fill=F('FF163B2A');ws3.getCell(3,c).fill=F('FF163B2A');}
-  ws3.mergeCells(2,1,2,16);
-  setCell(ws3,2,1,`DETALHAMENTO — DINHEIRO POR CAIXA  —  ${ev}  —  ${dt}`,{fill:F('FF163B2A'),font:ft(true,P.white,13),align:al('center')});
-  ws3.getRow(4).height=32;
-  ['CX','OPERADOR','DIN.\nSISTEMA','TROCO','S1','S2','S3','S4','S5','R1','R2','R3','DIN.\nESPERADO','FÍSICO','DIN.\nLÍQUIDO','DIF.\nDINHEIRO'].forEach((h,i)=>{setCell(ws3,4,i+1,h,{fill:F('FF2A6040'),font:ft(true,P.white,10),align:al('center',null,true),border:bdThin()});});
-  let dr3=5;const detTots={din:0,troco:0,s1:0,s2:0,s3:0,s4:0,s5:0,r1:0,r2:0,r3:0,esp:0,fis:0,liq:0,dif:0};
-  ST.caixas.filter(cx=>cx.tipo==='D'&&cx.dados).forEach(cx=>{
-    const d=cx.dados,t=calcTot(cx);if(!t.dinLiquido&&!d.din)return;
-    const dif=t.difDin,sang=(d.s1||0)+(d.s2||0)+(d.s3||0)+(d.s4||0)+(d.s5||0),esp=(d.din||0)-(d.trocoInicial||0)+sang;
-    const baseBg=dr3%2===0?P.gray1:P.white,difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
-    ws3.getRow(dr3).height=19;
-    [cx.num,(cx.nome||'—'),(d.din||0),(d.trocoInicial||0),(d.s1||0),(d.s2||0),(d.s3||0),(d.s4||0),(d.s5||0),(d.r1||0),(d.r2||0),(d.r3||0),esp,(d.fisico||0),t.dinLiquido,dif].forEach((v,i)=>{
-      let bg=baseBg,fc=P.text,bold=false;
-      if(i===0){bg='FFD4EDDA';fc='FF1B5E20';bold=true;}
-      else if(i===15){bg=difBg;fc=difFc;bold=true;}
-      const cell=ws3.getCell(dr3,i+1);
-      cell.value=(i>=2)?brl(v):v;
-      cell.fill=F(bg);cell.font=ft(bold,fc,i===0?11:10);cell.alignment=al(i<=1?'center':'right');cell.border=bdThin();
-    });
-    detTots.din+=(d.din||0);detTots.troco+=(d.trocoInicial||0);detTots.s1+=(d.s1||0);detTots.s2+=(d.s2||0);detTots.s3+=(d.s3||0);detTots.s4+=(d.s4||0);detTots.s5+=(d.s5||0);detTots.r1+=(d.r1||0);detTots.r2+=(d.r2||0);detTots.r3+=(d.r3||0);detTots.esp+=esp;detTots.fis+=(d.fisico||0);detTots.liq+=t.dinLiquido;detTots.dif+=dif;
-    dr3++;
-  });
-  ws3.getRow(dr3).height=22;ws3.mergeCells(dr3,1,dr3,2);
-  setCell(ws3,dr3,1,'▶  TOTAL GERAL',{fill:F('FFE8F5E9'),font:ft(true,'FF163B2A',11),align:al('center'),border:bdMed()});
-  [detTots.din,detTots.troco,detTots.s1,detTots.s2,detTots.s3,detTots.s4,detTots.s5,detTots.r1,detTots.r2,detTots.r3,detTots.esp,detTots.fis,detTots.liq,detTots.dif].forEach((v,i)=>{
-    const isDif=(i===13),bg=isDif?(v>=0?'FFE8F5E9':'FFFFEBEE'):'FFE8F5E9',fc=isDif?(v>=0?P.green:P.red):'FF163B2A';
-    setCell(ws3,dr3,i+3,brl(v),{fill:F(bg),font:ft(true,fc,11),align:al('right'),border:bdMed()});
-  });
-  ws3.views=[{state:'frozen',ySplit:4,showGridLines:false}];
-  const buf=await wb.xlsx.writeBuffer();
-  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download=`Fechamento_${ev}_${dt}.xlsx`.replace(/\s+/g,'_');
-  a.click();URL.revokeObjectURL(url);
+const nv=id=>{
+const el=document.getElementById(id);
+return el&&el.value!==''?parseFloat(el.value)||0:0;
+};
+
+function salvarLocal(){
+localStorage.setItem(LS_KEY,JSON.stringify({
+caixas:ST.caixas,
+data:document.getElementById('inp-data').value,
+evento:document.getElementById('inp-evento').value
+}));
 }
-function bulkTipo(tipo){ST.caixas.slice(0,VOLANTE_START).forEach(cx=>{cx.tipo=tipo;});renderCfg();}
+
+function restaurarLocal(){
+try{
+const raw=localStorage.getItem(LS_KEY);
+if(!raw)return;
+const s=JSON.parse(raw);
+if(s.caixas&&s.caixas.length===TOTAL_CX){
+s.caixas.forEach((c,i)=>Object.assign(ST.caixas[i],c));
+document.getElementById('inp-data').value=s.data||'';
+document.getElementById('inp-evento').value=s.evento||'';
+}
+}catch(e){}
+}
+
+function aba(id){
+document.querySelectorAll('.nav button').forEach((b,i)=>b.classList.toggle('on',['config','lancamento','consolidado'][i]===id));
+document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
+document.getElementById('pnl-'+id).classList.add('on');
+if(id==='config')renderCfg();
+if(id==='lancamento')renderGrade();
+if(id==='consolidado')renderCons();
+salvarLocal();
+}
+
+function renderCfg(){
+document.getElementById('lista-cfg').innerHTML=ST.caixas.map((cx,i)=>{
+const vol=cx.tipo==='V';
+return `
+<div class="cfg">
+<b>${vol?'CV':'CX'} ${cx.num}</b>
+${vol?'<span>Volante - somente eletrônico</span>':`
+<select onchange="ST.caixas[${i}].tipo=this.value;renderCfg();salvarLocal()">
+<option value="D" ${cx.tipo==='D'?'selected':''}>Dinheiro + Cartão</option>
+<option value="C" ${cx.tipo==='C'?'selected':''}>Somente Cartão</option>
+</select>`}
+${cx.tipo==='D'?`<input type="number" placeholder="Troco" value="${cx.troco||''}" onchange="ST.caixas[${i}].troco=parseFloat(this.value)||0;salvarLocal()">`:'<span></span>'}
+<input placeholder="Operador" value="${cx.nome||''}" onchange="ST.caixas[${i}].nome=this.value;salvarLocal()">
+</div>`;
+}).join('');
+}
+
+function renderGrade(){
+let html='';
+ST.caixas.forEach((cx,i)=>{
+if(i===VOLANTE_START)html+=`<div style="grid-column:1/-1;font-weight:bold;color:#6d28d9;margin-top:8px">Caixas Volantes 25-40</div>`;
+html+=`<button class="cxbtn ${cx.dados?'ok':''} ${atv===i?'on':''} ${cx.tipo==='V'?'vol':''}" onclick="abrirCx(${i})">
+${cx.tipo==='V'?'CV':'CX'} ${cx.num}<br>
+<small>${cx.tipo==='D'?'💵+💳':cx.tipo==='C'?'💳':'🟣💳'}</small>
+</button>`;
+});
+document.getElementById('grade').innerHTML=html;
+}
+
+function abrirCx(i){
+atv=i;
+renderGrade();
+const cx=ST.caixas[i];
+const d=cx.dados||{};
+const isD=cx.tipo==='D';
+const isV=cx.tipo==='V';
+
+document.getElementById('form-cx').innerHTML=`
+<div class="card">
+<div class="titulo">${isV?'Caixa Volante':'Caixa'} ${cx.num} ${cx.nome?'— '+cx.nome:''}</div>
+
+<div class="zona" onclick="foto(${i})">📷 Fotografar filipeta</div>
+
+<div class="sub">Dados da filipeta</div>
+${isD?campo('Dinheiro sistema','f-din',d.din):''}
+${campo('Débito','f-deb',d.deb)}
+${campo('Crédito','f-cred',d.cred)}
+${campo('PIX sistema','f-pix',d.pix)}
+${!isV?campo('Liberação de TAG','f-tag',d.tag):''}
+${campo('Total filipeta','f-total-filipeta',d.totalFilipeta)}
+
+<div class="sub">Lançamentos manuais</div>
+${campo('PIX manual','f-pix-manual',d.pixManual)}
+${campo('Ajuste / desconto manual','f-ajuste',d.ajuste)}
+
+<div class="sub">Devoluções</div>
+${campo('TAG devolvida em R$','f-devtag',d.devtag)}
+${campo('Resgate de saldo','f-devsaldo',d.devsaldo)}
+${campo('TAGs liberadas unidades','f-tags-lib',d.tagsLib)}
+
+${isD?`
+<div class="sub">Dinheiro físico</div>
+${campo('Troco inicial','f-troco',d.trocoInicial??cx.troco)}
+${campo('Sangria 1','f-s1',d.s1)}
+${campo('Sangria 2','f-s2',d.s2)}
+${campo('Sangria 3','f-s3',d.s3)}
+${campo('Sangria 4','f-s4',d.s4)}
+${campo('Sangria 5','f-s5',d.s5)}
+${campo('Reposição 1','f-r1',d.r1)}
+${campo('Reposição 2','f-r2',d.r2)}
+${campo('Reposição 3','f-r3',d.r3)}
+<div class="lf"><label>Contagem física</label><input class="fisico" type="number" id="f-fisico" value="${d.fisico??''}" oninput="calc()"></div>
+`:''}
+
+<div id="resultado"></div>
+<button class="btn" onclick="salvar(${i})">Salvar Caixa</button>
+</div>`;
+calc();
+}
+
+function campo(label,id,val){
+return `<div class="lf"><label>${label}</label><input type="number" id="${id}" value="${val??''}" oninput="calc()"></div>`;
+}
+
+function calc(){
+if(atv===null)return;
+const cx=ST.caixas[atv];
+const t=calcAtual(cx);
+document.getElementById('resultado').innerHTML=`
+<div class="result">
+<div class="linha"><span>Cartões + PIX</span><b>${fmt(t.cartoes)}</b></div>
+<div class="linha"><span>Dinheiro líquido</span><b>${fmt(t.dinLiquido)}</b></div>
+<div class="linha"><span>Total apurado</span><b class="total">${fmt(t.totalComprovado)}</b></div>
+<div class="linha"><span>Total filipeta</span><b>${fmt(nv('f-total-filipeta'))}</b></div>
+<div class="linha"><span>Diferença geral</span><b class="${t.difGeral>=0?'verde':'vermelho'}">${fmt(t.difGeral)}</b></div>
+${cx.tipo==='D'?`<div class="linha"><span>Diferença dinheiro</span><b class="${t.difDin>=0?'verde':'vermelho'}">${fmt(t.difDin)}</b></div>`:''}
+</div>`;
+}
+
+function calcAtual(cx){
+const deb=nv('f-deb'),cred=nv('f-cred'),pix=nv('f-pix'),pixManual=nv('f-pix-manual'),ajuste=nv('f-ajuste'),totalFilipeta=nv('f-total-filipeta');
+const cartoes=deb+cred+pix+pixManual;
+let dinLiquido=0,difDin=0;
+if(cx.tipo==='D'){
+const din=nv('f-din'),troco=nv('f-troco'),fisico=nv('f-fisico');
+const sang=nv('f-s1')+nv('f-s2')+nv('f-s3')+nv('f-s4')+nv('f-s5');
+const repos=nv('f-r1')+nv('f-r2')+nv('f-r3');
+dinLiquido=fisico-troco+sang-repos;
+difDin=dinLiquido-din;
+}
+const totalComprovado=dinLiquido+cartoes-ajuste;
+const difGeral=totalComprovado-totalFilipeta;
+return{cartoes,dinLiquido,totalComprovado,difGeral,difDin};
+}
+
+function calcTot(cx){
+if(!cx.dados)return{cartoes:0,dinLiquido:0,totalComprovado:0,difGeral:0,difDin:0};
+const d=cx.dados;
+const cartoes=(d.deb||0)+(d.cred||0)+(d.pix||0)+(d.pixManual||0);
+let dinLiquido=0,difDin=0;
+if(cx.tipo==='D'){
+const sang=(d.s1||0)+(d.s2||0)+(d.s3||0)+(d.s4||0)+(d.s5||0);
+const repos=(d.r1||0)+(d.r2||0)+(d.r3||0);
+dinLiquido=(d.fisico||0)-(d.trocoInicial||0)+sang-repos;
+difDin=dinLiquido-(d.din||0);
+}
+const totalComprovado=dinLiquido+cartoes-(d.ajuste||0);
+const difGeral=totalComprovado-(d.totalFilipeta||0);
+return{cartoes,dinLiquido,totalComprovado,difGeral,difDin};
+}
+
+function salvar(i){
+const cx=ST.caixas[i];
+const isD=cx.tipo==='D';
+cx.dados={
+deb:nv('f-deb'),
+cred:nv('f-cred'),
+pix:nv('f-pix'),
+pixManual:nv('f-pix-manual'),
+ajuste:nv('f-ajuste'),
+tag:nv('f-tag'),
+devtag:nv('f-devtag'),
+devsaldo:nv('f-devsaldo'),
+tagsLib:nv('f-tags-lib'),
+totalFilipeta:nv('f-total-filipeta'),
+...(isD?{
+din:nv('f-din'),
+trocoInicial:nv('f-troco'),
+s1:nv('f-s1'),s2:nv('f-s2'),s3:nv('f-s3'),s4:nv('f-s4'),s5:nv('f-s5'),
+r1:nv('f-r1'),r2:nv('f-r2'),r3:nv('f-r3'),
+fisico:nv('f-fisico')
+}:{})
+};
+salvarLocal();
+renderGrade();
+const prox=ST.caixas.findIndex((c,j)=>j>i&&!c.dados);
+if(prox>=0)abrirCx(prox);
+else document.getElementById('form-cx').innerHTML='<div class="card">Todos os caixas lançados. Vá para Consolidado.</div>';
+}
+
+function renderCons(){
+const lc=ST.caixas.filter(c=>c.dados);
+let tot={deb:0,cred:0,pix:0,din:0,apur:0,fil:0,dif:0,dev:0,tag:0};
+lc.forEach(cx=>{
+const d=cx.dados,t=calcTot(cx);
+tot.deb+=d.deb||0;
+tot.cred+=d.cred||0;
+tot.pix+=(d.pix||0)+(d.pixManual||0);
+tot.din+=t.dinLiquido;
+tot.apur+=t.totalComprovado;
+tot.fil+=d.totalFilipeta||0;
+tot.dif+=t.difGeral;
+tot.dev+=(d.devtag||0)+(d.devsaldo||0);
+tot.tag+=d.tagsLib||0;
+});
+
+document.getElementById('cards').innerHTML=`
+${card('Total Apurado',fmt(tot.apur),'verde')}
+${card('Total Filipeta',fmt(tot.fil),'')}
+${card('Diferença Geral',fmt(tot.dif),tot.dif>=0?'verde':'vermelho')}
+${card('Débito',fmt(tot.deb),'')}
+${card('Crédito',fmt(tot.cred),'')}
+${card('PIX',fmt(tot.pix),'')}
+${card('Dinheiro',fmt(tot.din),'verde')}
+${card('Devoluções',fmt(tot.dev),'vermelho')}
+${card('TAGs Liberadas',tot.tag+' un','')}
+`;
+
+const rows=ST.caixas.map(cx=>{
+const d=cx.dados,t=calcTot(cx);
+return `<tr>
+<td>${cx.tipo==='V'?'CV':'CX'} ${cx.num}</td>
+<td>${cx.nome||''}</td>
+<td>${d?fmt(d.deb||0):'—'}</td>
+<td>${d?fmt(d.cred||0):'—'}</td>
+<td>${d?fmt((d.pix||0)+(d.pixManual||0)):'—'}</td>
+<td>${d?fmt(t.dinLiquido):'—'}</td>
+<td>${d?fmt(t.totalComprovado):'—'}</td>
+<td class="${d&&t.difGeral>=0?'verde':'vermelho'}">${d?fmt(t.difGeral):'—'}</td>
+<td>${d?fmt((d.devtag||0)+(d.devsaldo||0)):'—'}</td>
+<td>${d?(d.tagsLib||0)+' un':'—'}</td>
+</tr>`;
+}).join('');
+
+document.getElementById('tbl').innerHTML=`
+<thead><tr>
+<th>Caixa</th><th>Operador</th><th>Débito</th><th>Crédito</th><th>PIX</th><th>Dinheiro</th><th>Apurado</th><th>Dif.</th><th>Devol.</th><th>TAGs</th>
+</tr></thead><tbody>${rows}</tbody>`;
+}
+
+function card(lb,vl,cls){
+return `<div class="mcard"><div class="lb">${lb}</div><div class="vl ${cls}">${vl}</div></div>`;
+}
+
+function foto(idx){
+const fi=document.getElementById('fi');
+fi.onchange=e=>{
+const f=e.target.files[0];
+if(!f)return;
+procFoto(f,idx);
+fi.value='';
+};
+fi.click();
+}
+
+async function procFoto(file,idx){
+alert('Foto recebida. A leitura OCR depende do seu servidor /api/ocr estar funcionando.');
+}
+
+function expCSV(){
+const ev=document.getElementById('inp-evento').value||'Evento';
+const dt=document.getElementById('inp-data').value||'';
+let c='Caixa,Operador,Tipo,Débito,Crédito,PIX,Dinheiro,Total Apurado,Total Filipeta,Diferença,Devoluções,TAGs\n';
+ST.caixas.forEach(cx=>{
+if(!cx.dados)return;
+const d=cx.dados,t=calcTot(cx);
+c+=`${cx.num},${cx.nome||''},${cx.tipo},${d.deb||0},${d.cred||0},${(d.pix||0)+(d.pixManual||0)},${t.dinLiquido},${t.totalComprovado},${d.totalFilipeta||0},${t.difGeral},${(d.devtag||0)+(d.devsaldo||0)},${d.tagsLib||0}\n`;
+});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));
+a.download=`Fechamento_${ev}_${dt}.csv`.replace(/\s+/g,'_');
+a.click();
+}
+
+async function expXLSX(){
+if(typeof ExcelJS==='undefined'){alert('Aguarde a biblioteca carregar.');return;}
+
+const ev=document.getElementById('inp-evento').value||'Evento';
+const dt=document.getElementById('inp-data').value||'';
+
+const wb=new ExcelJS.Workbook();
+wb.creator='Fechamento de Caixa';
+wb.created=new Date();
+
+const moneyFmt='R$ #,##0.00;[Red]-R$ #,##0.00';
+const border={
+top:{style:'thin',color:{argb:'FFD0D0D0'}},
+left:{style:'thin',color:{argb:'FFD0D0D0'}},
+bottom:{style:'thin',color:{argb:'FFD0D0D0'}},
+right:{style:'thin',color:{argb:'FFD0D0D0'}}
+};
+const fill=argb=>({type:'pattern',pattern:'solid',fgColor:{argb}});
+const font=(bold=false,color='FF1A1A1A',size=10)=>({name:'Calibri',bold,color:{argb:color},size});
+const align=(horizontal='center',wrap=false)=>({horizontal,vertical:'middle',wrapText:wrap});
+
+function config(ws,ySplit=3){
+ws.views=[{showGridLines:true,showRowColHeaders:true,state:'frozen',ySplit}];
+ws.pageSetup={
+paperSize:9,
+orientation:'landscape',
+fitToPage:true,
+fitToWidth:1,
+fitToHeight:0,
+margins:{left:0.25,right:0.25,top:0.35,bottom:0.35,header:0.2,footer:0.2}
+};
+}
+
+function titulo(ws,text,lastCol){
+ws.mergeCells(1,1,1,lastCol);
+const c=ws.getCell(1,1);
+c.value=text;
+c.fill=fill('FF1A3A5C');
+c.font=font(true,'FFFFFFFF',15);
+c.alignment=align('center',true);
+c.border=border;
+ws.getRow(1).height=30;
+}
+
+function cabecalho(row){
+row.eachCell(cell=>{
+cell.fill=fill('FF1565C0');
+cell.font=font(true,'FFFFFFFF',10);
+cell.alignment=align('center',true);
+cell.border=border;
+});
+}
+
+function corpo(row){
+row.eachCell((cell,col)=>{
+cell.border=border;
+cell.alignment=align(col<=3?'center':'right',true);
+cell.fill=fill(row.number%2===0?'FFF8FAFC':'FFFFFFFF');
+if(typeof cell.value==='number'&&col>=4)cell.numFmt=moneyFmt;
+if(col===12&&typeof cell.value==='number'){
+cell.font=font(true,cell.value>=0?'FF2E7D32':'FFC62828',10);
+cell.fill=fill(cell.value>=0?'FFE8F5E9':'FFFFEBEE');
+}
+});
+}
+
+const ativos=ST.caixas.filter(cx=>cx.dados);
+
+let total={
+deb:0,cred:0,pix:0,pixm:0,ajuste:0,din:0,apur:0,fil:0,dif:0,tag:0,devtag:0,resgate:0
+};
+
+const ws=wb.addWorksheet('Fechamento');
+config(ws,3);
+
+ws.columns=[
+{header:'Caixa',width:12},
+{header:'Operador',width:26},
+{header:'Tipo',width:18},
+{header:'Débito',width:15},
+{header:'Crédito',width:15},
+{header:'PIX',width:15},
+{header:'PIX Manual',width:15},
+{header:'Ajuste',width:15},
+{header:'Dinheiro Líquido',width:18},
+{header:'Total Apurado',width:18},
+{header:'Total Filipeta',width:18},
+{header:'Diferença Geral',width:18},
+{header:'TAGs Lib.',width:14},
+{header:'TAG Devolvida',width:16},
+{header:'Resgate Saldo',width:16}
+];
+
+titulo(ws,`FECHAMENTO DE CAIXA — ${ev} — ${dt}`,15);
+ws.addRow([]);
+ws.addRow(ws.columns.map(c=>c.header));
+cabecalho(ws.getRow(3));
+
+ativos.forEach(cx=>{
+const d=cx.dados;
+const t=calcTot(cx);
+const row=ws.addRow([
+cx.tipo==='V'?`CV ${cx.num}`:`CX ${cx.num}`,
+cx.nome||'',
+cx.tipo==='V'?'Volante':cx.tipo==='D'?'Dinheiro + Cartão':'Cartão',
+d.deb||0,
+d.cred||0,
+d.pix||0,
+d.pixManual||0,
+d.ajuste||0,
+cx.tipo==='D'?t.dinLiquido:0,
+t.totalComprovado,
+d.totalFilipeta||0,
+t.difGeral,
+d.tagsLib||0,
+d.devtag||0,
+d.devsaldo||0
+]);
+corpo(row);
+
+total.deb+=d.deb||0;
+total.cred+=d.cred||0;
+total.pix+=d.pix||0;
+total.pixm+=d.pixManual||0;
+total.ajuste+=d.ajuste||0;
+total.din+=cx.tipo==='D'?t.dinLiquido:0;
+total.apur+=t.totalComprovado;
+total.fil+=d.totalFilipeta||0;
+total.dif+=t.difGeral;
+total.tag+=d.tagsLib||0;
+total.devtag+=d.devtag||0;
+total.resgate+=d.devsaldo||0;
+});
+
+ws.addRow([]);
+const totalRow=ws.addRow([
+'TOTAL','','',
+total.deb,total.cred,total.pix,total.pixm,total.ajuste,total.din,total.apur,total.fil,total.dif,total.tag,total.devtag,total.resgate
+]);
+totalRow.eachCell((cell,col)=>{
+cell.fill=fill('FFE3F2FD');
+cell.font=font(true,col===12?(total.dif>=0?'FF2E7D32':'FFC62828'):'FF1A3A5C',11);
+cell.alignment=align(col<=3?'center':'right',true);
+cell.border=border;
+if(typeof cell.value==='number'&&col>=4)cell.numFmt=moneyFmt;
+});
+
+const dash=wb.addWorksheet('Dashboard');
+config(dash,13);
+[4,20,22,18,18,18,18].forEach((w,i)=>dash.getColumn(i+1).width=w);
+titulo(dash,`DASHBOARD — ${ev} — ${dt}`,7);
+
+const cards=[
+['Total Apurado',total.apur,'FFE8F5E9','FF2E7D32'],
+['Total Filipeta',total.fil,'FFE3F2FD','FF1565C0'],
+['Diferença Geral',total.dif,total.dif>=0?'FFE8F5E9':'FFFFEBEE',total.dif>=0?'FF2E7D32':'FFC62828'],
+['Débito',total.deb,'FFE3F2FD','FF1565C0'],
+['Crédito',total.cred,'FFE3F2FD','FF1565C0'],
+['PIX Total',total.pix+total.pixm,'FFE0F2F1','FF00796B'],
+['Dinheiro Líquido',total.din,'FFE8F5E9','FF2E7D32'],
+['TAGs Liberadas',total.tag,'FFFFFDE7','FFF9A825'],
+['Devoluções',total.devtag+total.resgate,'FFFFEBEE','FFC62828']
+];
+
+let cr=3;
+cards.forEach((it,i)=>{
+const col=2+(i%3)*2;
+if(i>0&&i%3===0)cr+=3;
+dash.mergeCells(cr,col,cr,col+1);
+dash.getCell(cr,col).value=it[0];
+dash.getCell(cr,col).fill=fill('FF1A3A5C');
+dash.getCell(cr,col).font=font(true,'FFFFFFFF',9);
+dash.getCell(cr,col).alignment=align('center',true);
+dash.getCell(cr,col).border=border;
+
+dash.mergeCells(cr+1,col,cr+1,col+1);
+dash.getCell(cr+1,col).value=it[1];
+dash.getCell(cr+1,col).fill=fill(it[2]);
+dash.getCell(cr+1,col).font=font(true,it[3],14);
+dash.getCell(cr+1,col).alignment=align('center',true);
+dash.getCell(cr+1,col).border=border;
+dash.getCell(cr+1,col).numFmt=i===7?'0':'R$ #,##0.00;[Red]-R$ #,##0.00';
+});
+
+const start=13;
+['Caixa','Operador','Total Apurado','Total Filipeta','Diferença Geral','TAGs Lib.'].forEach((h,i)=>{
+const c=dash.getCell(start,i+2);
+c.value=h;
+c.fill=fill('FF1565C0');
+c.font=font(true,'FFFFFFFF',10);
+c.alignment=align('center',true);
+c.border=border;
+});
+
+let rd=start+1;
+ativos.forEach(cx=>{
+const d=cx.dados;
+const t=calcTot(cx);
+[
+cx.tipo==='V'?`CV ${cx.num}`:`CX ${cx.num}`,
+cx.nome||'',
+t.totalComprovado,
+d.totalFilipeta||0,
+t.difGeral,
+d.tagsLib||0
+].forEach((v,i)=>{
+const c=dash.getCell(rd,i+2);
+c.value=v;
+c.border=border;
+c.alignment=align(i<2?'center':'right',true);
+c.fill=fill(rd%2===0?'FFF8FAFC':'FFFFFFFF');
+if(i>=2&&i<=4)c.numFmt=moneyFmt;
+if(i===4){
+c.font=font(true,v>=0?'FF2E7D32':'FFC62828',10);
+c.fill=fill(v>=0?'FFE8F5E9':'FFFFEBEE');
+}
+});
+rd++;
+});
+
+const din=wb.addWorksheet('Detalhamento Dinheiro');
+config(din,3);
+[10,24,16,14,12,12,12,12,12,12,12,12,18,16,18,18].forEach((w,i)=>din.getColumn(i+1).width=w);
+titulo(din,`DETALHAMENTO DINHEIRO — ${ev} — ${dt}`,16);
+din.addRow([]);
+din.addRow(['CX','Operador','Din. Sistema','Troco','S1','S2','S3','S4','S5','R1','R2','R3','Din. Esperado','Físico','Din. Líquido','Dif. Dinheiro']);
+cabecalho(din.getRow(3));
+
+ST.caixas.filter(cx=>cx.tipo==='D'&&cx.dados).forEach(cx=>{
+const d=cx.dados,t=calcTot(cx);
+const sang=(d.s1||0)+(d.s2||0)+(d.s3||0)+(d.s4||0)+(d.s5||0);
+const repos=(d.r1||0)+(d.r2||0)+(d.r3||0);
+const esp=(d.din||0)-(d.trocoInicial||0)+sang-repos;
+
+const row=din.addRow([
+`CX ${cx.num}`,cx.nome||'',d.din||0,d.trocoInicial||0,
+d.s1||0,d.s2||0,d.s3||0,d.s4||0,d.s5||0,
+d.r1||0,d.r2||0,d.r3||0,
+esp,d.fisico||0,t.dinLiquido,t.difDin
+]);
+
+row.eachCell((cell,col)=>{
+cell.border=border;
+cell.alignment=align(col<=2?'center':'right',true);
+cell.fill=fill(row.number%2===0?'FFF8FAFC':'FFFFFFFF');
+if(typeof cell.value==='number'&&col>=3)cell.numFmt=moneyFmt;
+if(col===16&&typeof cell.value==='number'){
+cell.font=font(true,cell.value>=0?'FF2E7D32':'FFC62828',10);
+cell.fill=fill(cell.value>=0?'FFE8F5E9':'FFFFEBEE');
+}
+});
+});
+
+const buf=await wb.xlsx.writeBuffer();
+const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');
+a.href=url;
+a.download=`Fechamento_${ev}_${dt}.xlsx`.replace(/\s+/g,'_');
+a.click();
+URL.revokeObjectURL(url);
+}
+
+function bulkTipo(tipo){
+ST.caixas.slice(0,VOLANTE_START).forEach(cx=>cx.tipo=tipo);
+renderCfg();
+salvarLocal();
+}
+
 const TROCO_CX=[0,7,8,9,10,11,12,19,20];
-function bulkTroco(){const v=parseFloat(document.getElementById('inp-bulk-troco').value)||0;TROCO_CX.forEach(i=>{ST.caixas[i].troco=v;});renderCfg();}
-function novoEvento(){if(!confirm('Apagar todos os dados?'))return;ST.caixas.forEach(cx=>{cx.dados=null;});atv=null;document.getElementById('inp-data').value='';document.getElementById('inp-evento').value='';document.getElementById('form-cx').innerHTML=`<p style="font-size:13px;color:#888;text-align:center;padding:20px 0;">Selecione um caixa acima</p>`;document.getElementById('barra').classList.remove('show');try{localStorage.removeItem(LS_KEY);}catch(e){}renderGrade();renderCfg();aba('config');}
+
+function bulkTroco(){
+const v=parseFloat(document.getElementById('inp-bulk-troco').value)||0;
+TROCO_CX.forEach(i=>ST.caixas[i].troco=v);
+renderCfg();
+salvarLocal();
+}
+
+function novoEvento(){
+if(!confirm('Apagar todos os dados?'))return;
+ST.caixas.forEach(cx=>cx.dados=null);
+atv=null;
+document.getElementById('inp-data').value='';
+document.getElementById('inp-evento').value='';
+localStorage.removeItem(LS_KEY);
+renderCfg();
+renderGrade();
+aba('config');
+}
+
 restaurarLocal();
 renderCfg();
+renderGrade();
 document.getElementById('inp-data').addEventListener('change',salvarLocal);
 document.getElementById('inp-evento').addEventListener('change',salvarLocal);
 </script>
