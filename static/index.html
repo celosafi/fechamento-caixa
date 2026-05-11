@@ -201,10 +201,11 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
 .report-actions{display:flex;justify-content:space-between;align-items:center;margin:8px 0;}
 .report-actions .ttl{font-size:13px;font-weight:900;color:#431010;}
 .tbl th{background:#8B1515!important;color:#fff!important;border-bottom:2px solid #d9a328!important;text-align:right;}
-.tbl th:first-child,.tbl td:first-child{text-align:left;}
-.tbl td:nth-child(6),.tbl th:nth-child(6){background:#eaf7ef!important;font-weight:800;}
-.tbl td:nth-child(8),.tbl th:nth-child(8){background:#fdecec!important;color:#b71c1c!important;font-weight:800;}
-.tbl td:nth-child(9),.tbl th:nth-child(9){background:#fff8dc!important;color:#7a4a00!important;font-weight:800;}
+.tbl th:first-child,.tbl td:first-child,.tbl th:nth-child(2),.tbl td:nth-child(2){text-align:left;}
+.tbl td:nth-child(7){background:#eaf7ef!important;font-weight:800;}
+.tbl td:nth-child(9){background:#fdecec!important;color:#b71c1c!important;font-weight:800;}
+.tbl td:nth-child(10){background:#fff8dc!important;color:#7a4a00!important;font-weight:800;}
+.tbl th{background:#8B1515!important;color:#fff!important;}
 @media print{
   @page{size:A4 landscape;margin:7mm 6mm;}
   html,body{background:#fff!important;font-size:10px!important;}
@@ -402,9 +403,9 @@ function renderCons(){
   const group=(cls,title,g)=>`<div class="group-box ${cls}"><div class="gt">${title}</div><div class="gm"><span>Apurado<b>${fmt(g.apur)}</b></span></div></div>`;
   const resumo=`<div class="report-wrap"><div class="report-head"><div class="report-brand"><img src="${LOGO_OFICIAL_DIVINO}" alt="Festa do Divino 2026"><div><div class="report-title">Festa do Divino 2026</div><div class="report-sub">PROGRAMAÇÃO OFICIAL • 14 A 24 DE MAIO</div><div class="report-city">MOGI DAS CRUZES - SP</div></div></div><div class="report-datebox"><div class="label">DATA DO RELATÓRIO</div><div class="date">${dt}</div><div class="gen">Gerado em: ${gerado}</div></div></div><div class="kpi-grid">${kpi('main','💰','Total Apurado',fmt(tcomp))}${kpi(tdifGeral>=0?'ok':'bad','⚖️','Diferença Geral',fmt(tdifGeral))}${kpi('bad','↩️','Total Devoluções',fmt(tdevol))}${kpi('tag','🏷️','TAGs Liberadas',fmtInt(tlib)+' un')}${kpi('ok','💵','Dinheiro Apurado',fmt(tdinLiq))}${kpi('',`<img src="${PIX_ICON_OFICIAL}" class="pix-ico" alt="PIX">`,'Total PIX',fmt(tp+tpm))}${kpi('','💳','Total Débito',fmt(td))}${kpi('','💳','Total Crédito',fmt(tc))}</div><div class="group-strip">${group('g1','🟡 CX 1–24',grupos.g1)}${group('g2','🟠 CX 25–40',grupos.g2)}${group('g3','🟣 Volantes 41–58',grupos.g3)}</div></div>`;
   document.getElementById('cards').innerHTML=resumo;
-  const rows=ST.caixas.map(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const isV=cx.tipo==='V',isLar=cat==='laranja';const lib=d?(d.tagsLib||0):0;const cdGeral=!d?'':t.difGeral>=0?'dok':'derr';const rowBg=isV?'background:#faf5ff;':isLar?'background:#fff8f0;':'';const cxTag=isLar?'<span class="tag-lar">L</span>':'';const cxLbl=isV?'CV':'CX';return`<tr style="${rowBg}"><td><b>${cxLbl} ${cx.num}</b>${cxTag}${cx.nome?'<br><span style="font-size:10px;color:#888;">'+cx.nome+'</span>':''}</td><td class="n">${d?fmt(d.deb||0):'—'}</td><td class="n">${d?fmt(d.cred||0):'—'}</td><td class="n">${d?fmt((d.pix||0)+(d.pixManual||0)):'—'}</td><td class="n">${cx.tipo==='D'&&d?fmt(t.dinLiquido):'—'}</td><td class="n">${d?fmt(t.totalComprovado):'—'}</td><td class="n ${cdGeral}">${d?fmt(t.difGeral):'—'}</td><td class="n">${d&&((d.devtag||0)+(d.devsaldo||0))>0?fmt((d.devtag||0)+(d.devsaldo||0)):'—'}</td><td class="n">${d?lib+' un':'—'}</td></tr>`;}).join('');
-  const totalRow=`<tfoot><tr><td>Total</td><td class="n">${fmt(td)}</td><td class="n">${fmt(tc)}</td><td class="n">${fmt(tp+tpm)}</td><td class="n">${fmt(tdinLiq)}</td><td class="n">${fmt(tcomp)}</td><td class="n ${tdifGeral>=0?'dok':'derr'}">${fmt(tdifGeral)}</td><td class="n">${fmt(tdevol)}</td><td class="n">${tlib} un</td></tr></tfoot>`;
-  document.getElementById('tbl').innerHTML=`<thead><tr><th>Caixa</th><th class="n">Débito</th><th class="n">Crédito</th><th class="n"><img src="${PIX_ICON_OFICIAL}" class="pix-ico" alt="PIX"> PIX</th><th class="n">Din.Líq</th><th class="n">Apurado</th><th class="n">Dif.Geral</th><th class="n">Devol.</th><th class="n">TAGs lib.</th></tr></thead><tbody>${rows}</tbody>${totalRow}`;
+  const rows=ST.caixas.map(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const isV=cx.tipo==='V',isLar=cat==='laranja';const lib=d?(d.tagsLib||0):0;const cdGeral=!d?'':t.difGeral>=0?'dok':'derr';const rowBg=isV?'background:#faf5ff;':isLar?'background:#fff8f0;':'';const cxTag=isLar?'<span class="tag-lar">L</span>':'';const cxLbl=isV?'CV':'CX';return`<tr style="${rowBg}"><td><b>${cxLbl} ${cx.num}</b>${cxTag}</td><td>${cx.nome||'—'}</td><td class="n">${d?fmt(d.deb||0):'—'}</td><td class="n">${d?fmt(d.cred||0):'—'}</td><td class="n">${d?fmt((d.pix||0)+(d.pixManual||0)):'—'}</td><td class="n">${cx.tipo==='D'&&d?fmt(t.dinLiquido):'—'}</td><td class="n">${d?fmt(t.totalComprovado):'—'}</td><td class="n ${cdGeral}">${d?fmt(t.difGeral):'—'}</td><td class="n">${d&&((d.devtag||0)+(d.devsaldo||0))>0?fmt((d.devtag||0)+(d.devsaldo||0)):'—'}</td><td class="n">${d?lib+' un':'—'}</td></tr>`;}).join('');
+  const totalRow=`<tfoot><tr><td colspan="2">Total</td><td class="n">${fmt(td)}</td><td class="n">${fmt(tc)}</td><td class="n">${fmt(tp+tpm)}</td><td class="n">${fmt(tdinLiq)}</td><td class="n">${fmt(tcomp)}</td><td class="n ${tdifGeral>=0?'dok':'derr'}">${fmt(tdifGeral)}</td><td class="n">${fmt(tdevol)}</td><td class="n">${tlib} un</td></tr></tfoot>`;
+  document.getElementById('tbl').innerHTML=`<thead><tr><th>Caixa</th><th>Nome</th><th class="n">Débito</th><th class="n">Crédito</th><th class="n"><img src="${PIX_ICON_OFICIAL}" class="pix-ico" alt="PIX"> PIX</th><th class="n">Din.Líq</th><th class="n">Apurado</th><th class="n">Dif.Geral</th><th class="n">Devol.</th><th class="n">TAGs lib.</th></tr></thead><tbody>${rows}</tbody>${totalRow}`;
   const p=document.querySelector('#pnl-consolidado > div[style*="justify-content"]');
   if(p){p.className='report-actions';p.querySelector('span').className='ttl';p.querySelector('span').textContent='Por caixa';}
 }
@@ -429,15 +430,15 @@ async function expXLSX(){
   active.forEach(cx=>{const d=cx.dados,t=calcTot(cx);totDeb+=(d.deb||0);totCred+=(d.cred||0);totPix+=(d.pix||0)+(d.pixManual||0);totDin+=t.dinLiquido;totApur+=t.totalComprovado;totFil+=(d.totalFilipeta||0);totDif+=t.difGeral;totTagLib+=(d.tagsLib||0);totTagDev+=(d.devtag||0);totResgate+=(d.devsaldo||0);if(cx.num<=24)tcompNorm+=t.totalComprovado;else if(cx.num<=40)tcompLar+=t.totalComprovado;else tcompVol+=t.totalComprovado;});
   const totCartoes=totDeb+totCred+totPix,totDevol=totTagDev+totResgate;
   const nOk=active.filter(cx=>calcTot(cx).difGeral===0).length,nPos=active.filter(cx=>calcTot(cx).difGeral>0).length,nNeg=active.filter(cx=>calcTot(cx).difGeral<0).length;
-  const ws1=wb.addWorksheet('Dashboard',{properties:{tabColor:{argb:P.navy}}});
+  const ws1=wb.addWorksheet('Dashboard',{properties:{tabColor:{argb:'FF8B1515'}}});
   ws1.views=[{showGridLines:false}];
   [1,6,18,13,13,14,14,1].forEach((w,i)=>ws1.getColumn(i+1).width=w);
-  ws1.getRow(1).height=6;for(let c=2;c<=7;c++)ws1.getCell(1,c).fill=F(P.navy);
+  ws1.getRow(1).height=6;for(let c=2;c<=7;c++)ws1.getCell(1,c).fill=F('FF8B1515');
   ws1.getRow(2).height=28;ws1.mergeCells(2,2,2,7);
-  setCell(ws1,2,2,`⚡  FECHAMENTO DE CAIXA  —  ${ev}  —  ${dt}`,{fill:F(P.navy),font:ft(true,P.white,13),align:al('center')});
+  setCell(ws1,2,2,`FECHAMENTO DE CAIXA  —  ${ev}  —  ${dt}`,{fill:F('FF8B1515'),font:ft(true,P.white,13),align:al('center')});
   ws1.getRow(3).height=14;ws1.mergeCells(3,2,3,7);
-  setCell(ws1,3,2,`${active.length} caixas lançados  |  Sistema automático de fechamento`,{fill:F('FF1E4B7A'),font:ft(false,'FF90CAF9',9,true),align:al('center')});
-  ws1.getRow(4).height=5;for(let c=2;c<=7;c++)ws1.getCell(4,c).fill=F(P.navy);
+  setCell(ws1,3,2,`${active.length} caixas lançados  |  Festa do Divino 2026`,{fill:F('FFD9A328'),font:ft(true,'FF4A0B0B',9),align:al('center')});
+  ws1.getRow(4).height=5;for(let c=2;c<=7;c++)ws1.getCell(4,c).fill=F('FFD9A328');
   function kpi(row,col,label,val,hdrBg,valBg,valFc,icon){ws1.getRow(row).height=13;ws1.getRow(row+1).height=28;ws1.mergeCells(row,col,row,col+1);setCell(ws1,row,col,`${icon} ${label}`,{fill:F(hdrBg),font:ft(true,'FFBBDEFB',8),align:al('center')});ws1.mergeCells(row+1,col,row+1,col+1);setCell(ws1,row+1,col,val,{fill:F(valBg),font:ft(true,valFc,15),align:al('center')});const s={style:'thin',color:{argb:'FFCCCCCC'}};ws1.getCell(row+1,col).border={bottom:s,left:s,right:s};}
   function divider(row){ws1.getRow(row).height=4;ws1.mergeCells(row,2,row,7);ws1.getCell(row,2).fill=F(P.gray3);}
   kpi(5,2,'TOTAL APURADO',brl(totApur),P.green,'FFE8F5E9',P.green,'💰');
@@ -462,7 +463,7 @@ async function expXLSX(){
   setCell(ws1,16,2,`STATUS:   ✅ Zerados: ${nOk}   |   📈 Sobra: ${nPos}   |   📉 Falta: ${nNeg}   |   🏷️ TAGs lib.: ${Math.round(totTagLib)} un   |   TAG dev.: ${brl(totTagDev)}`,{fill:F('FF1E4B7A'),font:ft(true,P.white,9),align:al('center')});
   ws1.getRow(17).height=4;ws1.mergeCells(17,2,17,7);ws1.getCell(17,2).fill=F(P.gray3);
   ws1.getRow(18).height=18;ws1.mergeCells(18,2,18,7);
-  setCell(ws1,18,2,'RESULTADO POR CAIXA',{fill:F(P.blue),font:ft(true,P.white,10),align:al('center')});
+  setCell(ws1,18,2,'RESULTADO POR CAIXA',{fill:F('FF8B1515'),font:ft(true,P.white,10),align:al('center')});
   ws1.getRow(19).height=20;
   [['CX','2A4A6A'],['OPERADOR','2A4A6A'],['DEB+CRED+PIX','2A5298'],['DINHEIRO','2E7030'],['TOTAL APURADO','1565C0'],['DIF. GERAL','2A4A6A']].forEach(([h,bg],i)=>{setCell(ws1,19,i+2,h,{fill:F('FF'+bg),font:ft(true,P.white,9),align:al('center'),border:bdThin()});});
   let dr=20;
@@ -485,18 +486,40 @@ async function expXLSX(){
   ws1.getRow(dr).height=22;ws1.mergeCells(dr,2,dr,3);
   setCell(ws1,dr,2,'▶  TOTAL GERAL',{fill:F(P.navyBg),font:ft(true,P.navy,10),align:al('center'),border:bdMed()});
   [[4,brl(totCartoes),'FFE3F2FD',P.blue],[5,brl(totDin),'FFE8F5E9',P.green],[6,brl(totApur),'FFE3F2FD',P.blue],[7,brl(totDif),totDif>=0?'FFE8F5E9':'FFFFEBEE',totDif>=0?P.green:P.red]].forEach(([c,v,bg,fc])=>{setCell(ws1,dr,c,v,{fill:F(bg),font:ft(true,fc,10),align:al('right'),border:bdMed()});});
-  ws1.getRow(dr+1).height=5;ws1.mergeCells(dr+1,2,dr+1,7);ws1.getCell(dr+1,2).fill=F(P.navy);
-  const ws2=wb.addWorksheet('Fechamento',{properties:{tabColor:{argb:P.blue}}});
+  ws1.getRow(dr+1).height=5;ws1.mergeCells(dr+1,2,dr+1,7);ws1.getCell(dr+1,2).fill=F('FF8B1515');
+  const ws2=wb.addWorksheet('Fechamento',{properties:{tabColor:{argb:'FF8B1515'}}});
   ws2.views=[{showGridLines:false}];
-  const cw2=[5,18,13,13,13,10,14,14,14,12,10,12,14];
+  const cw2=[8,20,13,13,13,10,14,14,14,12,10,12,14];
   cw2.forEach((w,i)=>ws2.getColumn(i+1).width=w);const nc2=cw2.length;
-  ws2.getRow(1).height=6;ws2.getRow(2).height=30;ws2.getRow(3).height=6;
-  for(let c=1;c<=nc2;c++){ws2.getCell(1,c).fill=F(P.navy);ws2.getCell(3,c).fill=F(P.navy);}
-  ws2.mergeCells(2,1,2,nc2);
-  setCell(ws2,2,1,`FECHAMENTO DE CAIXA  —  ${ev}  —  ${dt}`,{fill:F(P.navy),font:ft(true,P.white,13),align:al('center')});
-  ws2.getRow(4).height=32;
-  ['CX','OPERADOR','DÉBITO','CRÉDITO','PIX','AJUSTE','DIN. LÍQUIDO','TOTAL\nAPURADO','TOTAL\nFILIPETA','DIF.\nGERAL','TAG\nLIB(un)','TAG DEV\n(R$)','RESGATE\nSALDO'].forEach((h,i)=>{setCell(ws2,4,i+1,h,{fill:F('FF2A4A6A'),font:ft(true,P.white,10),align:al('center',null,true),border:bdThin()});});
-  let dr2=5;
+  // Barra superior e resumo no mesmo padrão visual da impressão
+  ws2.getRow(1).height=7;for(let c=1;c<=nc2;c++)ws2.getCell(1,c).fill=F('FF8B1515');
+  ws2.getRow(2).height=30;ws2.mergeCells(2,1,2,8);ws2.mergeCells(2,9,2,nc2);
+  setCell(ws2,2,1,'Festa do Divino 2026  •  PROGRAMAÇÃO OFICIAL 14 A 24 DE MAIO',{fill:F('FF8B1515'),font:ft(true,P.white,14),align:al('left')});
+  setCell(ws2,2,9,`DATA DO RELATÓRIO: ${dt}`,{fill:F('FF8B1515'),font:ft(true,'FFFFE082',12),align:al('center')});
+  ws2.getRow(3).height=5;for(let c=1;c<=nc2;c++)ws2.getCell(3,c).fill=F('FFD9A328');
+  function kpi2(row,c1,c2,label,val,bg,fc){ws2.mergeCells(row,c1,row,c2);const cell=setCell(ws2,row,c1,`${label}
+${val}`,{fill:F(bg),font:ft(true,fc,10),align:al('center',null,true),border:bdThin()});cell.alignment={horizontal:'center',vertical:'middle',wrapText:true};}
+  ws2.getRow(4).height=34;ws2.getRow(5).height=34;
+  kpi2(4,1,3,'TOTAL APURADO',brl(totApur),'FF8B1515',P.white);
+  kpi2(4,4,6,'DIFERENÇA GERAL',brl(totDif),totDif>=0?'FFE8F5E9':'FFFFEBEE',totDif>=0?P.green:P.red);
+  kpi2(4,7,9,'TOTAL DEVOLUÇÕES',brl(totDevol),'FFFFEBEE',P.red);
+  kpi2(4,10,13,'TAGs LIBERADAS',brlUn(totTagLib),'FFFFFDE7',P.amber);
+  kpi2(5,1,3,'DINHEIRO APURADO',brl(totDin),'FFE8F5E9',P.green);
+  kpi2(5,4,6,'TOTAL PIX',brl(totPix),P.tealBg,P.teal);
+  kpi2(5,7,9,'TOTAL DÉBITO',brl(totDeb),'FFE3F2FD',P.blue);
+  kpi2(5,10,13,'TOTAL CRÉDITO',brl(totCred),'FFE3F2FD',P.blue);
+  try{const pixImgId2=wb.addImage({base64:PIX_ICON_OFICIAL,extension:'png'});ws2.addImage(pixImgId2,{tl:{col:3.45,row:4.15},ext:{width:20,height:20}});}catch(e){}
+  ws2.getRow(6).height=4;for(let c=1;c<=nc2;c++)ws2.getCell(6,c).fill=F('FFF5E6D4');
+  ws2.getRow(7).height=26;
+  ws2.mergeCells(7,1,7,4);setCell(ws2,7,1,'🟡 CX 1–24: '+brl(tcompNorm),{fill:F('FFFFFDE7'),font:ft(true,P.amYellow,11),align:al('center'),border:bdThin()});
+  ws2.mergeCells(7,5,7,8);setCell(ws2,7,5,'🟠 CX 25–40: '+brl(tcompLar),{fill:F(P.orangeBg),font:ft(true,P.orangeDark,11),align:al('center'),border:bdThin()});
+  ws2.mergeCells(7,9,7,13);setCell(ws2,7,9,'🟣 VOLANTES 41–58: '+brl(tcompVol),{fill:F(P.lilasBg),font:ft(true,P.lilas,11),align:al('center'),border:bdThin()});
+  ws2.getRow(8).height=6;for(let c=1;c<=nc2;c++)ws2.getCell(8,c).fill=F('FFD9A328');
+  ws2.getRow(9).height=22;ws2.mergeCells(9,1,9,nc2);
+  setCell(ws2,9,1,'DETALHAMENTO POR CAIXA',{fill:F('FF8B1515'),font:ft(true,P.white,12),align:al('center')});
+  ws2.getRow(10).height=32;
+  ['CAIXA','NOME','DÉBITO','CRÉDITO','PIX','AJUSTE','DIN. LÍQUIDO','TOTAL\nAPURADO','TOTAL\nFILIPETA','DIF.\nGERAL','TAG\nLIB(un)','TAG DEV\n(R$)','RESGATE\nSALDO'].forEach((h,i)=>{setCell(ws2,10,i+1,h,{fill:F('FF8B1515'),font:ft(true,P.white,10),align:al('center',null,true),border:bdThin()});});
+  let dr2=11;
   active.forEach(cx=>{
     const d=cx.dados,t=calcTot(cx),nome=cx.nome||'—',dif=t.difGeral;
     const tagDevRS=(d.devtag||0),resgate=d.devsaldo||0,tagLibV=d.tagsLib||0;
@@ -523,7 +546,7 @@ async function expXLSX(){
   const t2bg=[null,null,'FFE3F2FD','FFE3F2FD',P.tealBg,'FFF8FAFC','FFE8F5E9','FFE3F2FD','FFF8FAFC',totDif>=0?'FFE8F5E9':'FFFFEBEE','FFFFFDE7','FFFFEBEE','FFFFEBEE'];
   const t2fc=[null,null,P.blue,P.blue,P.teal,P.text2,P.green,P.blue,P.text,totDif>=0?P.green:P.red,P.amber,P.red,P.red];
   for(let i=2;i<nc2;i++){setCell(ws2,dr2,i+1,t2[i],{fill:F(t2bg[i]||P.navyBg),font:ft(true,t2fc[i]||P.navy,11),align:al('right'),border:bdMed()});}
-  ws2.views=[{state:'frozen',ySplit:4,showGridLines:false}];
+  ws2.views=[{state:'frozen',ySplit:10,showGridLines:false}];
   const ws3=wb.addWorksheet('Detalhamento Dinheiro',{properties:{tabColor:{argb:'FF2E7D32'}}});
   ws3.views=[{showGridLines:false}];
   [5,18,13,10,10,10,10,10,10,10,10,10,14,12,13,13].forEach((w,i)=>ws3.getColumn(i+1).width=w);
