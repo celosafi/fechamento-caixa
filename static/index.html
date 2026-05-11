@@ -8,23 +8,23 @@
 <title>Fechamento de Caixa</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 <style>
-:root{--cf:#1a3a5c;}
+:root{--cf:#8B1515;--bg:#fdf5e6;--card:#ffffff;--card2:#fff8f0;--border:#e8d5c0;--text:#2a0808;--muted:#8a6050;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;min-height:100vh;font-size:16px;}
-.topo{background:var(--cf);color:#fff;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fdf5e6;min-height:100vh;font-size:16px;}
+.topo{background:linear-gradient(135deg,#5a0808,var(--cf));color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .topo h1{font-size:19px;font-weight:600;}
 .topo-meta{display:flex;gap:8px;}
 .topo input{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:8px 11px;color:#fff;font-size:14px;}
 .topo input::placeholder{color:rgba(255,255,255,.6);}
-.nav{display:flex;background:#fff;border-bottom:1px solid #e0e0e0;position:sticky;top:57px;z-index:99;}
-.nav button{flex:1;padding:15px 6px;font-size:15px;border:none;background:none;color:#666;border-bottom:3px solid transparent;cursor:pointer;font-weight:500;}
-.nav button.on{color:var(--cf);border-bottom-color:var(--cf);}
+.nav{display:flex;background:#fff;border-bottom:2px solid #e8d5c0;position:sticky;top:57px;z-index:99;}
+.nav button{flex:1;padding:15px 6px;font-size:15px;border:none;background:none;color:#8a6050;border-bottom:3px solid transparent;cursor:pointer;font-weight:500;}
+.nav button.on{color:#f0c040;border-bottom-color:#c9962a;}
 .pnl{display:none;padding:16px;max-width:600px;margin:0 auto;}
 .pnl.on{display:block;}
-.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.card{background:#ffffff;border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(139,20,20,.07);border:1px solid #eeddd0;}
 .grade{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:16px;}
-.bcx{padding:12px 2px;border:1px solid #ddd;border-radius:8px;font-size:13px;cursor:pointer;background:#fff;text-align:center;line-height:1.5;}
-.bcx.ok{background:#e8f5e9;border-color:#4caf50;color:#2e7d32;}
+.bcx{padding:12px 2px;border:1px solid #ddc8b8;border-radius:8px;font-size:13px;cursor:pointer;background:#fff;text-align:center;line-height:1.5;}
+.bcx.ok{background:#e8f5e9;border-color:#4caf50;color:#1b5e20;}
 .bcx.on{border:2px solid var(--cf);font-weight:700;}
 .bcx.amarelo{background:#fffde7;border-color:#f59e0b;}
 .bcx.amarelo.ok{background:#fff3cd;border-color:#f59e0b;color:#92400e;}
@@ -41,25 +41,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .bcx .sub{font-size:11px;color:#999;}
 .bcx.ok .sub{color:#4caf50;}
 .bcx.volante .sub{color:#7c3aed;}
-.ftit{font-size:17px;font-weight:600;color:#1a1a1a;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;}
+.ftit{font-size:17px;font-weight:600;color:#2a0808;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #eeddd0;display:flex;justify-content:space-between;align-items:center;}
 .badge{font-size:12px;padding:4px 12px;border-radius:20px;font-weight:500;}
 .bd{background:#e3f2fd;color:#1565c0;}.bc{background:#f3e5f5;color:#6a1b9a;}.bv{background:#f3e8ff;color:#6d28d9;}.blar{background:#fff3e0;color:#e65100;}
 .tag-lar{display:inline-block;background:#ef6c00;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:3px;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 .slbl{font-size:12px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.6px;margin:14px 0 9px;}
-.slbl.azul{color:#1565c0;}.slbl.verde{color:#2e7d32;}.slbl.vermelho{color:#c62828;}.slbl.laranja{color:#e65100;}
+.slbl.azul{color:#1a5c9c;}.slbl.verde{color:#2e7d32;}.slbl.vermelho{color:#b71c1c;}.slbl.laranja{color:#bf4000;}
 .lf{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.lf label{font-size:16px;color:#555;flex:1;}
-.lf input{width:140px;padding:13px 12px;border:1px solid #ddd;border-radius:8px;font-size:20px;text-align:right;background:#fff;font-weight:600;}
+.lf label{font-size:16px;color:#5a3030;flex:1;}
+.lf input{width:140px;padding:13px 12px;border:1px solid #ddc8b8;border-radius:8px;font-size:20px;text-align:right;background:#fff;font-weight:600;color:#2a0808;}
 .lf input.vrd{border-color:#4caf50;background:#f9fff9;}
-.lf input:focus{outline:none;border-color:var(--cf);}
-.lf input.fisico-inp{background:#fffde7;border-color:#f59e0b;}
-hr{border:none;border-top:1px solid #f0f0f0;margin:14px 0;}
+.lf input:focus{outline:none;border-color:#8B1515;box-shadow:0 0 0 2px rgba(139,20,20,.1);}
+.lf input.fisico-inp{background:#fffde7;border-color:#d4a820;}
+hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
 .lt{display:flex;justify-content:space-between;align-items:center;padding:9px 0;}
-.lt .lb{font-size:16px;color:#666;}.lt .vl{font-size:24px;font-weight:700;color:#1a1a1a;}
+.lt .lb{font-size:16px;color:#5a3030;}.lt .vl{font-size:24px;font-weight:700;color:#2a0808;}
 .ok-c{color:#2e7d32!important;}.err-c{color:#c62828!important;}.warn-c{color:#e65100!important;}
-.btn-p{width:100%;padding:17px;background:var(--cf);color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;margin-top:14px;}
+.btn-p{width:100%;padding:17px;background:linear-gradient(135deg,#6a1010,#8B1515);color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;margin-top:14px;}
 .btn-p:active{opacity:.85;}
-.zona{border:2px dashed #ccc;border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;margin-bottom:14px;background:#fafafa;}
+.zona{border:2px dashed #ddc8b8;border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;margin-bottom:14px;background:#fff8f4;}
 .zona.proc{border-color:#1976d2;background:#f0f7ff;}
 .zona.suc{border-color:#4caf50;background:#f0fff4;}
 .zona.err{border-color:#e53935;background:#fff5f5;}
@@ -70,14 +70,14 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:14px 0;}
 @keyframes sp{to{transform:rotate(360deg);}}
 .stbox{font-size:14px;padding:12px 15px;border-radius:8px;margin-bottom:12px;display:none;line-height:1.6;}
 .stbox.l{background:#e3f2fd;color:#1565c0;}.stbox.s{background:#e8f5e9;color:#2e7d32;}.stbox.e{background:#ffebee;color:#c62828;}
-.bloco{background:#f8f9fa;border-radius:12px;padding:14px;margin-top:10px;}
-.bloco .titulo{font-size:12px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;}
+.bloco{background:#fff8f4;border:1px solid #eeddd0;border-radius:12px;padding:14px;margin-top:10px;}
+.bloco .titulo{font-size:12px;font-weight:700;color:#8B1515;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;}
 .destaque{border-radius:10px;padding:12px 14px;margin-top:8px;}
-.destaque.azul{background:#e3f2fd;}.destaque.verde{background:#e8f5e9;}.destaque.vermelho{background:#ffebee;}.destaque.laranja{background:#fff3e0;}
+.destaque.azul{background:#e3f2fd;border:1px solid #bbdefb;}.destaque.verde{background:#e8f5e9;border:1px solid #c8e6c9;}.destaque.vermelho{background:#ffebee;border:1px solid #ffcdd2;}.destaque.laranja{background:#fff3e0;border:1px solid #ffe0b2;}
 .destaque .dl{font-size:14px;color:#555;}.destaque .dv{font-size:26px;font-weight:800;}
-.mcard{background:#f8f9fa;border-radius:10px;padding:12px;}
-.mcard .lb{font-size:13px;color:#888;margin-bottom:4px;}
-.mcard .vl{font-size:20px;font-weight:700;color:#1a1a1a;}
+.mcard{background:#fff8f4;border-radius:10px;padding:12px;border:1px solid #eeddd0;}
+.mcard .lb{font-size:13px;color:#7a5040;margin-bottom:4px;}
+.mcard .vl{font-size:20px;font-weight:700;color:#2a0808;}
 .mcard.verde-card{background:#e8f5e9;border:2px solid #4caf50;}
 .mcard.verde-card .lb{color:#2e7d32;}.mcard.verde-card .vl{color:#2e7d32;}
 .mcard.azul-card{background:#e3f2fd;border:2px solid #1565c0;}
@@ -92,23 +92,23 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:14px 0;}
 .mcard.lilas-card .lb{color:#6d28d9;}.mcard.lilas-card .vl{color:#4c1d95;}
 .mcard.tag-s{background:#fff8e1;border:2px solid #f59e0b;}
 .mcard.tag-s .lb{color:#b45309;}.mcard.tag-s .vl{color:#92400e;}
-.tag-sc{background:#fff8e1;color:#92400e;font-weight:700;}
+.tag-sc{background:#fff8e1;color:#7a3a00;font-weight:700;border:1px solid #ffe082;}
 .tbl{width:100%;border-collapse:collapse;font-size:13px;}
-.tbl th{text-align:left;font-weight:600;font-size:11px;color:#888;padding:8px;border-bottom:1px solid #eee;white-space:nowrap;}
-.tbl td{padding:9px 8px;border-bottom:1px solid #f5f5f5;color:#1a1a1a;}
+.tbl th{text-align:left;font-weight:700;font-size:11px;color:#8B1515;padding:8px;border-bottom:2px solid #e8d5c0;white-space:nowrap;background:#fff8f0;}
+.tbl td{padding:9px 8px;border-bottom:1px solid #f0e8e0;color:#2a0808;}
 .tbl .n{text-align:right;}
-.tbl tfoot td{font-weight:700;border-top:2px solid #eee;padding-top:10px;}
-.dok{color:#2e7d32;font-weight:700;}.derr{color:#c62828;font-weight:700;}
-.cfg-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #f5f5f5;flex-wrap:wrap;}
+.tbl tfoot td{font-weight:700;border-top:2px solid #ddc8b8;padding-top:10px;background:#fff8f0;}
+.dok{color:#1b5e20;font-weight:700;}.derr{color:#b71c1c;font-weight:700;}
+.cfg-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #f0e8e0;flex-wrap:wrap;}
 .cfg-row .cn{font-size:15px;font-weight:700;min-width:56px;color:#1a1a1a;}
-.cfg-row select,.cfg-row input{padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;background:#fff;}
-.info{background:#f0f4ff;border-radius:10px;padding:13px 16px;font-size:14px;color:#1565c0;line-height:1.7;margin-bottom:14px;}
-.btn-sec{padding:13px 20px;border:1px solid #ddd;border-radius:10px;font-size:15px;cursor:pointer;background:#fff;color:#333;font-weight:500;}
-.btn-xlsx{padding:13px 20px;border:none;border-radius:10px;font-size:15px;cursor:pointer;background:#1a5c2e;color:#fff;font-weight:600;}
+.cfg-row select,.cfg-row input{padding:10px 12px;border:1px solid #ddc8b8;border-radius:8px;font-size:15px;background:#fff;color:#2a0808;}
+.info{background:#fff8f0;border:1px solid #e0c8b8;border-radius:10px;padding:13px 16px;font-size:14px;color:#7a3010;line-height:1.7;margin-bottom:14px;}
+.btn-sec{padding:13px 20px;border:1px solid #ddc8b8;border-radius:10px;font-size:15px;cursor:pointer;background:#fff;color:#5a3030;font-weight:500;}
+.btn-xlsx{padding:13px 20px;border:none;border-radius:10px;font-size:15px;cursor:pointer;background:linear-gradient(135deg,#1a5c2e,#2e7d32);color:#fff;font-weight:600;}
 #ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:999;align-items:center;justify-content:center;padding:20px;}
 #ov.show{display:flex;}
 .ov-box{background:#fff;border-radius:20px;width:100%;max-width:480px;padding:28px 24px;text-align:center;max-height:90vh;overflow-y:auto;}
-.ov-tit{font-size:22px;font-weight:700;color:var(--cf);margin-bottom:6px;}
+.ov-tit{font-size:22px;font-weight:700;color:#8B1515;margin-bottom:6px;}
 .ov-sub{font-size:15px;color:#888;margin-bottom:22px;}
 .ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
 .ov-item{background:#f4f6fa;border-radius:14px;padding:14px 10px;}
@@ -139,12 +139,12 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:14px 0;}
 .bar-prog-fill{height:100%;background:#ffe082;border-radius:2px;transition:width .4s ease;}
 #pnl-lancamento{padding-bottom:90px;}
 .grade-sep{grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:6px 2px 2px;margin-top:4px;}
-.grade-sep.sep-laranja{color:#e65100;border-top:2px dashed #ffcc80;}
+.grade-sep.sep-laranja{color:#c45000;border-top:2px dashed #ffcc80;}
 .grade-sep.sep-volante{color:#7c3aed;border-top:2px dashed #d8b4fe;}
 .sec-hdr{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:6px 0 3px;margin-bottom:4px;}
-.sec-hdr.amarelo{color:#b45309;border-bottom:1px solid #fff3cd;}
-.sec-hdr.laranja{color:#e65100;border-bottom:1px solid #ffe0b2;margin-top:12px;}
-.sec-hdr.volante{color:#7c3aed;border-bottom:1px solid #d8b4fe;margin-top:12px;}
+.sec-hdr.amarelo{color:#7a4000;border-bottom:1px solid #ffe0b2;background:#fffde7;padding:5px 6px;border-radius:4px;}
+.sec-hdr.laranja{color:#c45000;border-bottom:1px solid #ffcc80;margin-top:12px;background:#fff3e0;padding:5px 6px;border-radius:4px;}
+.sec-hdr.volante{color:#5b21b6;border-bottom:1px solid #c4b5fd;margin-top:12px;background:#f3e8ff;padding:5px 6px;border-radius:4px;}
 @media print{
   @page{size:A4 landscape;margin:12mm 10mm;}
   body{background:#fff!important;}
@@ -159,15 +159,69 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:14px 0;}
   .tag-lar{background:#ef6c00!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 }
 #print-hdr{display:none;margin-bottom:14px;}
-#print-hdr h2{font-size:18px;font-weight:700;color:#1a3a5c;margin-bottom:10px;}
+#print-hdr h2{font-size:18px;font-weight:700;color:#8B1515;margin-bottom:10px;}
 </style>
 </head>
 <body>
 <div class="topo">
-  <h1>📋 Fechamento de Caixa</h1>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" width="44" height="44" style="display:block;flex-shrink:0;">
+  <defs>
+    <radialGradient id="globe" cx="45%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#2a6abf"/>
+      <stop offset="100%" stop-color="#0d2a60"/>
+    </radialGradient>
+    <path id="top-arc" d="M 24 110 A 86 86 0 0 0 196 110"/>
+    <path id="bot-arc" d="M 196 115 A 86 86 0 0 0 24 115"/>
+  </defs>
+  <circle cx="110" cy="110" r="108" fill="#8B6800"/>
+  <circle cx="110" cy="110" r="106" fill="#D4A820"/>
+  <circle cx="110" cy="110" r="102" fill="#8B6800"/>
+  <circle cx="110" cy="110" r="100" fill="#D4A820"/>
+  <circle cx="110" cy="110" r="96" fill="url(#globe)"/>
+  <ellipse cx="110" cy="110" rx="96" ry="38" fill="none" stroke="rgba(100,160,255,0.15)" stroke-width="0.8"/>
+  <ellipse cx="110" cy="110" rx="96" ry="70" fill="none" stroke="rgba(100,160,255,0.15)" stroke-width="0.8"/>
+  <line x1="110" y1="14" x2="110" y2="206" stroke="rgba(100,160,255,0.12)" stroke-width="0.8"/>
+  <line x1="14" y1="110" x2="206" y2="110" stroke="rgba(100,160,255,0.12)" stroke-width="0.8"/>
+  <path d="M 75 55 Q 65 68 62 85 Q 60 102 65 118 Q 70 130 76 125 Q 84 118 82 100 Q 86 82 80 68 Q 78 58 75 55 Z" fill="#4a8035" opacity="0.9"/>
+  <path d="M 73 125 Q 68 138 72 152 Q 78 162 84 155 Q 90 145 86 132 Q 82 122 73 125 Z" fill="#4a8035" opacity="0.9"/>
+  <path d="M 118 48 Q 130 55 134 72 Q 136 90 128 100 Q 120 108 114 98 Q 108 85 112 68 Q 114 55 118 48 Z" fill="#5a7a30" opacity="0.9"/>
+  <path d="M 116 105 Q 128 112 132 130 Q 134 150 126 162 Q 118 168 112 158 Q 106 145 108 128 Q 110 112 116 105 Z" fill="#5a7a30" opacity="0.9"/>
+  <circle cx="110" cy="110" r="96" fill="none" stroke="#D4A820" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <ellipse cx="105" cy="112" rx="24" ry="12" fill="white" transform="rotate(-18,105,112)"/>
+  <ellipse cx="122" cy="93" rx="9" ry="11" fill="white" transform="rotate(15,122,93)"/>
+  <circle cx="128" cy="86" r="7.5" fill="white"/>
+  <circle cx="131" cy="84" r="2" fill="#2a1a00"/>
+  <circle cx="132" cy="83.5" r="0.7" fill="white"/>
+  <path d="M 134 86 L 142 83 L 134 90 Z" fill="#D4A820"/>
+  <path d="M 88 108 Q 62 88 40 95 Q 50 90 65 100 Q 72 104 80 108 Z" fill="white"/>
+  <path d="M 88 112 Q 58 96 36 108 Q 50 100 68 110 Q 76 113 84 114 Z" fill="#e8e8e8"/>
+  <path d="M 88 116 Q 56 108 38 122 Q 54 112 72 118 Q 80 119 86 118 Z" fill="#d8d8d8"/>
+  <path d="M 106 100 Q 140 75 162 82 Q 148 80 132 95 Q 124 100 114 104 Z" fill="white"/>
+  <path d="M 108 105 Q 142 82 165 95 Q 150 88 134 102 Q 126 106 116 108 Z" fill="#e8e8e8"/>
+  <path d="M 80 118 Q 65 128 68 140 Q 74 132 82 122 Z" fill="white"/>
+  <path d="M 76 120 Q 58 130 62 144 Q 70 134 78 124 Z" fill="#e0e0e0"/>
+  <path d="M 68 132 Q 90 148 112 148 Q 130 148 145 138" fill="#C9962A" stroke="#8B6800" stroke-width="0.5"/>
+  <text x="90" y="147" font-size="9.5" fill="#3a1a00" font-weight="bold" font-family="serif" letter-spacing="2">PAZ</text>
+  <text x="38" y="92" font-size="11" fill="#D4A820" text-anchor="middle">✦</text>
+  <text x="182" y="92" font-size="11" fill="#D4A820" text-anchor="middle">✦</text>
+  <text x="100" y="48" font-size="9" fill="#D4A820" text-anchor="middle">✦</text>
+  <text x="128" y="175" font-size="9" fill="#D4A820" text-anchor="middle">✦</text>
+  <text font-size="8.5" fill="#D4A820" font-family="serif" font-weight="bold" letter-spacing="2.5">
+    <textPath href="#top-arc" startOffset="8%">DIVINO ESPÍRITO SANTO</textPath>
+  </text>
+  <text font-size="6.5" fill="#D4A820" font-family="serif" font-weight="bold" letter-spacing="1.2">
+    <textPath href="#bot-arc" startOffset="3%">FAZEI DE NÓS MENSAGEIROS DA VOSSA PAZ</textPath>
+  </text>
+</svg>
+    <div>
+      <div style="font-size:13px;font-weight:800;color:#f0c040;line-height:1.1;">FESTA DO DIVINO</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.7);font-weight:500;">Fechamento de Caixa 2026</div>
+    </div>
+  </div>
   <div class="topo-meta">
-    <input type="text" id="inp-data" placeholder="Data" style="width:80px;">
-    <input type="text" id="inp-evento" placeholder="Evento" style="width:130px;">
+    <input type="text" id="inp-data" placeholder="Data" style="width:70px;">
+    <input type="text" id="inp-evento" placeholder="Evento" style="width:110px;">
   </div>
 </div>
 <div class="nav">
