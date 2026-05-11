@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -145,6 +146,77 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
 .sec-hdr.amarelo{color:#7a4000;border-bottom:1px solid #ffe0b2;background:#fffde7;padding:5px 6px;border-radius:4px;}
 .sec-hdr.laranja{color:#c45000;border-bottom:1px solid #ffcc80;margin-top:12px;background:#fff3e0;padding:5px 6px;border-radius:4px;}
 .sec-hdr.volante{color:#5b21b6;border-bottom:1px solid #c4b5fd;margin-top:12px;background:#f3e8ff;padding:5px 6px;border-radius:4px;}
+
+/* ===== RELATÓRIO PREMIUM - FESTA DO DIVINO 2026 ===== */
+.report-wrap{background:#fff;border:1px solid #ead7bf;border-radius:16px;overflow:hidden;margin-bottom:14px;box-shadow:0 4px 18px rgba(139,21,21,.10);}
+.report-topbar{background:linear-gradient(135deg,#7a0f0f 0%,#9f1717 58%,#6a0b0b 100%);color:#fff;padding:16px 22px 22px;position:relative;display:flex;align-items:center;justify-content:space-between;gap:18px;border-bottom:5px solid #d4a820;}
+.report-topbar:after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:2px;background:#fff2b8;}
+.report-brand{display:flex;align-items:center;gap:16px;min-width:0;}
+.report-logo{width:82px;height:82px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.report-brand h2{font-size:30px;line-height:1.05;margin:0;font-weight:900;letter-spacing:-.5px;}
+.report-brand .sub{display:inline-block;background:#ffd66b;color:#741010;font-weight:900;padding:4px 12px;border-radius:6px;margin-top:7px;font-size:13px;letter-spacing:.2px;}
+.report-brand .city{font-size:12px;margin-top:6px;font-weight:800;letter-spacing:1.5px;color:#fff4c9;}
+.report-date{text-align:right;font-weight:800;font-size:13px;text-transform:uppercase;color:#fff;}
+.report-date strong{display:block;font-size:20px;color:#ffd66b;margin-top:4px;}
+.report-body{padding:16px 18px 18px;background:linear-gradient(180deg,#fff 0%,#fffaf2 100%);}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px;}
+.kpi-card{border-radius:12px;border:1.5px solid #e5cdb3;background:#fff;padding:13px 12px;text-align:center;min-height:94px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.kpi-card .ico{font-size:24px;line-height:1;margin-bottom:7px;}
+.kpi-card .lb{font-size:12px;font-weight:900;text-transform:uppercase;color:#431111;margin-bottom:6px;}
+.kpi-card .vl{font-size:20px;font-weight:900;color:#240808;line-height:1.1;}
+.kpi-card.primary{background:linear-gradient(135deg,#7a0f0f,#a11919);border-color:#7a0f0f;color:#fff;}
+.kpi-card.primary .lb,.kpi-card.primary .vl{color:#fff;}
+.kpi-card.good{background:#eefaf0;border-color:#25a244;}
+.kpi-card.good .vl{color:#087a2b;}
+.kpi-card.bad{background:#fff0f0;border-color:#e53935;}
+.kpi-card.bad .vl{color:#c21818;}
+.kpi-card.warn{background:#fff9e8;border-color:#d4a820;}
+.kpi-card.warn .vl{color:#7a4300;}
+.kpi-card.cash{background:#effaf2;border-color:#2e7d32;}
+.kpi-card.cash .vl{color:#126c2d;}
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid #b8c9e8;border-radius:10px;overflow:hidden;background:#f8fbff;margin-bottom:12px;}
+.kpi-strip .mini{padding:12px 10px;border-right:1px solid #cbd8ee;text-align:center;}
+.kpi-strip .mini:last-child{border-right:none;}
+.kpi-strip .mini .lb{font-size:11px;font-weight:900;color:#143769;text-transform:uppercase;}
+.kpi-strip .mini .vl{font-size:17px;font-weight:900;color:#113f8a;margin-top:5px;}
+.devol-strip{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid #ef9a9a;border-radius:10px;overflow:hidden;background:#fff3f3;margin-bottom:12px;}
+.devol-strip .mini{padding:12px 10px;text-align:center;border-right:1px solid #efb6b6;}
+.devol-strip .mini:last-child{border-right:none;}
+.devol-strip .mini .lb{font-size:11px;font-weight:900;color:#8b1515;text-transform:uppercase;}
+.devol-strip .mini .vl{font-size:17px;font-weight:900;color:#c21818;margin-top:5px;}
+.group-summary{border:1px solid #d4a820;border-radius:12px;overflow:hidden;background:#fff;margin-bottom:14px;}
+.group-title{background:linear-gradient(135deg,#7a0f0f,#9f1717);color:#fff;font-size:14px;font-weight:900;text-transform:uppercase;padding:10px 14px;}
+.group-grid{display:grid;grid-template-columns:repeat(3,1fr);}
+.group-box{padding:13px 14px;text-align:center;border-right:1px solid #edd7b6;}
+.group-box:last-child{border-right:none;}
+.group-box.am{background:#fffbe6;}
+.group-box.lar{background:#fff3e5;}
+.group-box.lil{background:#fbf6ff;}
+.group-box h3{font-size:18px;margin:0 0 10px;font-weight:900;}
+.group-box.am h3{color:#a66c00}.group-box.lar h3{color:#d94f00}.group-box.lil h3{color:#5b21b6}
+.group-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid rgba(0,0,0,.12);padding-top:9px;}
+.group-metrics div{border-right:1px solid rgba(0,0,0,.13);padding:0 6px;}
+.group-metrics div:last-child{border-right:none;}
+.group-metrics span{display:block;font-size:9px;font-weight:900;text-transform:uppercase;color:#2a0808;margin-bottom:4px;}
+.group-metrics b{font-size:13px;font-weight:900;color:#111;}
+.report-footer{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid #d9dee8;border-radius:12px;overflow:hidden;background:#fff;margin-top:12px;}
+.report-footer div{padding:10px 8px;text-align:center;border-right:1px solid #e1e5ee;font-size:11px;color:#1a2440;}
+.report-footer div:last-child{border-right:none;}
+.report-footer b{display:block;text-transform:uppercase;font-size:10px;color:#25304a;margin-bottom:3px;}
+.tbl th{background:#8B1515!important;color:#fff!important;border-bottom:2px solid #d4a820!important;}
+.tbl td.apurado-col{background:#eefaf0!important;font-weight:700;}
+.tbl td.devol-col{background:#fff0f0!important;color:#c62828!important;font-weight:700;}
+.tbl tfoot td{background:#8B1515!important;color:#fff!important;border-top:3px solid #d4a820!important;}
+.tbl tfoot td.apurado-col{background:#dff4e2!important;color:#103d1f!important;}
+.tbl tfoot td.devol-col{background:#a11919!important;color:#fff!important;}
+@media(max-width:760px){
+  .report-topbar{align-items:flex-start;flex-direction:column;}
+  .report-date{text-align:left;}
+  .report-brand h2{font-size:23px;}
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .kpi-strip,.group-grid,.report-footer{grid-template-columns:1fr;}
+}
+
 @media print{
   @page{size:A4 landscape;margin:12mm 10mm;}
   body{background:#fff!important;}
@@ -349,38 +421,86 @@ let _proxIdx=null;
 function salvar(i){const cx=ST.caixas[i],is=cx.tipo==='D';cx.dados={deb:nv('f-deb'),cred:nv('f-cred'),pix:nv('f-pix'),pixManual:nv('f-pix-manual'),ajuste:nv('f-ajuste'),tag:nv('f-tag'),devtag:nv('f-devtag'),devsaldo:nv('f-devsaldo'),tagsLib:nv('f-tags-lib'),totalFilipeta:nv('f-total-filipeta'),...(is?{din:nv('f-din'),trocoInicial:nv('f-troco'),s1:nv('f-s1'),s2:nv('f-s2'),s3:nv('f-s3'),s4:nv('f-s4'),s5:nv('f-s5'),r1:nv('f-r1'),r2:nv('f-r2'),r3:nv('f-r3'),fisico:nv('f-fisico')}:{})};renderGrade();_proxIdx=ST.caixas.findIndex((c,j)=>j>i&&!c.dados);mostrarOv(cx);}
 function mostrarOv(cx){const t=calcTot(cx),is=cx.tipo==='D',d=cx.dados||{};const totalDevol=(d.devtag||0)+(d.devsaldo||0);const label=cx.tipo==='V'?`Caixa Volante ${cx.num}`:`Caixa ${cx.num}`;document.getElementById('ov-tit').textContent=`${label}${cx.nome?' — '+cx.nome:''} ✓`;document.getElementById('ov-sub').textContent='Confira os valores antes de continuar';const itens=[];if(is)itens.push({l:'Dinheiro Líquido',v:fmt(t.dinLiquido),cls:'ov-verde'});itens.push({l:'Cartões + PIX',v:fmt(t.cartoes),cls:'ov-azul'});itens.push({l:'Total Apurado',v:fmt(t.totalComprovado),cls:'ov-laranja full'});itens.push({l:'Total Filipeta',v:fmt(d.totalFilipeta||0),cls:'ov-verde2 full'});if(totalDevol>0)itens.push({l:'↩️ Devoluções (info)',v:fmt(totalDevol),cls:'ov-vermelho full'});if(is)itens.push({l:'🏷️ TAGs lib.',v:d.tagsLib>0?`${d.tagsLib} un`:'—',cls:'ov-amarelo'});itens.push({l:'Dif. Geral',v:fmt(t.difGeral),cls:`${t.difGeral>=0?'ov-verde2':'ov-vermelho'} full`});document.getElementById('ov-grid').innerHTML=itens.map(it=>`<div class="ov-item ${it.cls}"><div class="ov-lbl">${it.l}</div><div class="ov-val">${it.v}</div></div>`).join('');document.getElementById('ov').classList.add('show');}
 function fecharOv(){document.getElementById('ov').classList.remove('show');salvarLocal();atualizarBarra();if(_proxIdx!==-1&&_proxIdx!==null)abrirCx(_proxIdx);else document.getElementById('form-cx').innerHTML=`<div style="text-align:center;padding:30px;"><div style="font-size:40px;">🎉</div><p style="font-size:16px;color:#555;margin-top:10px;">Todos os caixas lançados!<br>Acesse <strong>Consolidado</strong>.</p></div>`;_proxIdx=null;}
+
+function logoDivinoHTML(){return "<svg viewBox=\"0 0 220 220\" xmlns=\"http://www.w3.org/2000/svg\" width=\"92\" height=\"92\" style=\"display:block;flex-shrink:0;\">\n  <defs>\n    <radialGradient id=\"globe\" cx=\"45%\" cy=\"40%\" r=\"60%\">\n      <stop offset=\"0%\" stop-color=\"#2a6abf\"/>\n      <stop offset=\"100%\" stop-color=\"#0d2a60\"/>\n    </radialGradient>\n    <path id=\"top-arc\" d=\"M 24 110 A 86 86 0 0 0 196 110\"/>\n    <path id=\"bot-arc\" d=\"M 196 115 A 86 86 0 0 0 24 115\"/>\n  </defs>\n  <circle cx=\"110\" cy=\"110\" r=\"108\" fill=\"#8B6800\"/>\n  <circle cx=\"110\" cy=\"110\" r=\"106\" fill=\"#D4A820\"/>\n  <circle cx=\"110\" cy=\"110\" r=\"102\" fill=\"#8B6800\"/>\n  <circle cx=\"110\" cy=\"110\" r=\"100\" fill=\"#D4A820\"/>\n  <circle cx=\"110\" cy=\"110\" r=\"96\" fill=\"url(#globe)\"/>\n  <ellipse cx=\"110\" cy=\"110\" rx=\"96\" ry=\"38\" fill=\"none\" stroke=\"rgba(100,160,255,0.15)\" stroke-width=\"0.8\"/>\n  <ellipse cx=\"110\" cy=\"110\" rx=\"96\" ry=\"70\" fill=\"none\" stroke=\"rgba(100,160,255,0.15)\" stroke-width=\"0.8\"/>\n  <line x1=\"110\" y1=\"14\" x2=\"110\" y2=\"206\" stroke=\"rgba(100,160,255,0.12)\" stroke-width=\"0.8\"/>\n  <line x1=\"14\" y1=\"110\" x2=\"206\" y2=\"110\" stroke=\"rgba(100,160,255,0.12)\" stroke-width=\"0.8\"/>\n  <path d=\"M 75 55 Q 65 68 62 85 Q 60 102 65 118 Q 70 130 76 125 Q 84 118 82 100 Q 86 82 80 68 Q 78 58 75 55 Z\" fill=\"#4a8035\" opacity=\"0.9\"/>\n  <path d=\"M 73 125 Q 68 138 72 152 Q 78 162 84 155 Q 90 145 86 132 Q 82 122 73 125 Z\" fill=\"#4a8035\" opacity=\"0.9\"/>\n  <path d=\"M 118 48 Q 130 55 134 72 Q 136 90 128 100 Q 120 108 114 98 Q 108 85 112 68 Q 114 55 118 48 Z\" fill=\"#5a7a30\" opacity=\"0.9\"/>\n  <path d=\"M 116 105 Q 128 112 132 130 Q 134 150 126 162 Q 118 168 112 158 Q 106 145 108 128 Q 110 112 116 105 Z\" fill=\"#5a7a30\" opacity=\"0.9\"/>\n  <circle cx=\"110\" cy=\"110\" r=\"96\" fill=\"none\" stroke=\"#D4A820\" stroke-width=\"1.5\" stroke-dasharray=\"3,2\"/>\n  <ellipse cx=\"105\" cy=\"112\" rx=\"24\" ry=\"12\" fill=\"white\" transform=\"rotate(-18,105,112)\"/>\n  <ellipse cx=\"122\" cy=\"93\" rx=\"9\" ry=\"11\" fill=\"white\" transform=\"rotate(15,122,93)\"/>\n  <circle cx=\"128\" cy=\"86\" r=\"7.5\" fill=\"white\"/>\n  <circle cx=\"131\" cy=\"84\" r=\"2\" fill=\"#2a1a00\"/>\n  <circle cx=\"132\" cy=\"83.5\" r=\"0.7\" fill=\"white\"/>\n  <path d=\"M 134 86 L 142 83 L 134 90 Z\" fill=\"#D4A820\"/>\n  <path d=\"M 88 108 Q 62 88 40 95 Q 50 90 65 100 Q 72 104 80 108 Z\" fill=\"white\"/>\n  <path d=\"M 88 112 Q 58 96 36 108 Q 50 100 68 110 Q 76 113 84 114 Z\" fill=\"#e8e8e8\"/>\n  <path d=\"M 88 116 Q 56 108 38 122 Q 54 112 72 118 Q 80 119 86 118 Z\" fill=\"#d8d8d8\"/>\n  <path d=\"M 106 100 Q 140 75 162 82 Q 148 80 132 95 Q 124 100 114 104 Z\" fill=\"white\"/>\n  <path d=\"M 108 105 Q 142 82 165 95 Q 150 88 134 102 Q 126 106 116 108 Z\" fill=\"#e8e8e8\"/>\n  <path d=\"M 80 118 Q 65 128 68 140 Q 74 132 82 122 Z\" fill=\"white\"/>\n  <path d=\"M 76 120 Q 58 130 62 144 Q 70 134 78 124 Z\" fill=\"#e0e0e0\"/>\n  <path d=\"M 68 132 Q 90 148 112 148 Q 130 148 145 138\" fill=\"#C9962A\" stroke=\"#8B6800\" stroke-width=\"0.5\"/>\n  <text x=\"90\" y=\"147\" font-size=\"9.5\" fill=\"#3a1a00\" font-weight=\"bold\" font-family=\"serif\" letter-spacing=\"2\">PAZ</text>\n  <text x=\"38\" y=\"92\" font-size=\"11\" fill=\"#D4A820\" text-anchor=\"middle\">\u2726</text>\n  <text x=\"182\" y=\"92\" font-size=\"11\" fill=\"#D4A820\" text-anchor=\"middle\">\u2726</text>\n  <text x=\"100\" y=\"48\" font-size=\"9\" fill=\"#D4A820\" text-anchor=\"middle\">\u2726</text>\n  <text x=\"128\" y=\"175\" font-size=\"9\" fill=\"#D4A820\" text-anchor=\"middle\">\u2726</text>\n  <text font-size=\"8.5\" fill=\"#D4A820\" font-family=\"serif\" font-weight=\"bold\" letter-spacing=\"2.5\">\n    <textPath href=\"#top-arc\" startOffset=\"8%\">DIVINO ESP\u00cdRITO SANTO</textPath>\n  </text>\n  <text font-size=\"6.5\" fill=\"#D4A820\" font-family=\"serif\" font-weight=\"bold\" letter-spacing=\"1.2\">\n    <textPath href=\"#bot-arc\" startOffset=\"3%\">FAZEI DE N\u00d3S MENSAGEIROS DA VOSSA PAZ</textPath>\n  </text>\n</svg>";}
 function renderCons(){
   const lc=ST.caixas.filter(c=>c.dados);
-  let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0,ttag=0,tdevtag=0,tlib=0,tdevol=0,tdevsaldo=0,tcompNorm=0,tcompLar=0,tcompVol=0;
-  lc.forEach(cx=>{const d=cx.dados,t=calcTot(cx);td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;ttag+=(d.tag||0);tdevtag+=(d.devtag||0);tlib+=(d.tagsLib||0);tdevol+=(d.devtag||0)+(d.devsaldo||0);tdevsaldo+=(d.devsaldo||0);if(cx.num<=24)tcompNorm+=t.totalComprovado;else if(cx.num<=40)tcompLar+=t.totalComprovado;else tcompVol+=t.totalComprovado;});
+  let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0,ttag=0,tdevtag=0,tlib=0,tdevol=0,tdevsaldo=0,tcompNorm=0,tcompLar=0,tcompVol=0,difNorm=0,difLar=0,difVol=0,tagNorm=0,tagLar=0,tagVol=0;
+  lc.forEach(cx=>{const d=cx.dados,t=calcTot(cx);td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;ttag+=(d.tag||0);tdevtag+=(d.devtag||0);tlib+=(d.tagsLib||0);tdevol+=(d.devtag||0)+(d.devsaldo||0);tdevsaldo+=(d.devsaldo||0);
+    if(cx.num<=24){tcompNorm+=t.totalComprovado;difNorm+=t.difGeral;tagNorm+=(d.tagsLib||0);}
+    else if(cx.num<=40){tcompLar+=t.totalComprovado;difLar+=t.difGeral;tagLar+=(d.tagsLib||0);}
+    else {tcompVol+=t.totalComprovado;difVol+=t.difGeral;tagVol+=(d.tagsLib||0);}
+  });
   const tFilipeta=lc.reduce((s,cx)=>s+(cx.dados.totalFilipeta||0),0);
-  const difCor=tdifGeral>=0?'#2e7d32':'#c62828',difBg=tdifGeral>=0?'#e8f5e9':'#ffebee',difBd=tdifGeral>=0?'#4caf50':'#c62828';
-  let ch='';
-  ch+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;"><div class="mcard verde-card"><div class="lb">Total Apurado</div><div class="vl">${fmt(tcomp)}</div></div><div class="mcard amarelo-card"><div class="lb">Total Filipeta</div><div class="vl">${fmt(tFilipeta)}</div></div></div>`;
-  ch+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:9px;"><div class="mcard azul-card"><div class="lb">Total PIX</div><div class="vl">${fmt(tp+tpm)}</div></div><div class="mcard azul-card"><div class="lb">Total Débito</div><div class="vl">${fmt(td)}</div></div><div class="mcard azul-card"><div class="lb">Total Crédito</div><div class="vl">${fmt(tc)}</div></div></div>`;
-  ch+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:9px;"><div class="mcard verde-card"><div class="lb">Total Dinheiro Apurado</div><div class="vl">${fmt(tdinLiq)}</div></div><div class="mcard amarelo-card"><div class="lb">TAGs Liberadas</div><div class="vl">${Math.round(ttag/5)} un</div></div><div class="mcard" style="background:${difBg};border:2px solid ${difBd};border-radius:10px;padding:12px;"><div class="lb" style="font-size:13px;color:${difCor};margin-bottom:4px;">Dif. Geral</div><div class="vl" style="font-size:20px;font-weight:700;color:${difCor};">${fmt(tdifGeral)}</div></div></div>`;
-  ch+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:9px;"><div class="mcard verm-card"><div class="lb">TAGs Devolvidas</div><div class="vl">${fmt(tdevtag)}</div></div><div class="mcard verm-card"><div class="lb">Saldo Resgatado</div><div class="vl">${fmt(tdevsaldo)}</div></div><div class="mcard verm-card"><div class="lb">Total Devoluções</div><div class="vl">${fmt(tdevol)}</div></div></div>`;
-  ch+=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:9px;"><div class="mcard amarelo-card"><div class="lb">🟡 CX 1–24 Apurado</div><div class="vl">${fmt(tcompNorm)}</div></div><div class="mcard laranja-card"><div class="lb">🟠 CX 25–40 Apurado</div><div class="vl">${fmt(tcompLar)}</div></div><div class="mcard lilas-card"><div class="lb">🟣 Volantes 41–58</div><div class="vl">${fmt(tcompVol)}</div></div></div>`;
+  const ev=document.getElementById('inp-evento').value||'Festa do Divino 2026';
+  const dt=document.getElementById('inp-data').value||'';
+  const dataTopo=dt||'Informe a data no campo Data';
+  const dataGeracao=new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const difStatus=tdifGeral>=0?'POSITIVA':'NEGATIVA';
+  const difClass=tdifGeral>=0?'good':'bad';
+  let ch=`<div class="report-wrap">
+    <div class="report-topbar">
+      <div class="report-brand">
+        <div class="report-logo">${logoDivinoHTML()}</div>
+        <div>
+          <h2>Festa do Divino 2026</h2>
+          <div class="sub">PROGRAMAÇÃO OFICIAL • 14 A 24 DE MAIO</div>
+          <div class="city">MOGI DAS CRUZES - SP</div>
+        </div>
+      </div>
+      <div class="report-date">📅 Data do relatório:<strong>${dataTopo}</strong><div style="font-size:12px;color:#fff4c9;margin-top:4px;">Gerado em: ${dataGeracao}</div></div>
+    </div>
+    <div class="report-body">
+      <div class="kpi-grid">
+        <div class="kpi-card primary"><div class="ico">🪙</div><div class="lb">Total Apurado</div><div class="vl">${fmt(tcomp)}</div></div>
+        <div class="kpi-card ${difClass}"><div class="ico">⚖️</div><div class="lb">Diferença Geral</div><div class="vl">${fmt(tdifGeral)}</div><div style="font-size:10px;font-weight:900;margin-top:3px;">${difStatus}</div></div>
+        <div class="kpi-card bad"><div class="ico">↩️</div><div class="lb">Total Devoluções</div><div class="vl">${fmt(tdevol)}</div><div style="font-size:10px;font-weight:900;margin-top:3px;">DEVOL. + SALDO</div></div>
+        <div class="kpi-card warn"><div class="ico">🏷️</div><div class="lb">TAGs Liberadas</div><div class="vl">${tlib.toLocaleString('pt-BR')} un</div></div>
+        <div class="kpi-card cash"><div class="ico">💵</div><div class="lb">Dinheiro Apurado</div><div class="vl">${fmt(tdinLiq)}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1.05fr;gap:12px;margin-bottom:12px;">
+        <div class="kpi-strip">
+          <div class="mini"><div class="lb">📄 Total Filipeta</div><div class="vl">${fmt(tFilipeta)}</div></div>
+          <div class="mini"><div class="lb">🔷 Total PIX</div><div class="vl">${fmt(tp+tpm)}</div></div>
+          <div class="mini"><div class="lb">💳 Total Débito</div><div class="vl">${fmt(td)}</div></div>
+          <div class="mini"><div class="lb">💳 Total Crédito</div><div class="vl">${fmt(tc)}</div></div>
+        </div>
+        <div class="devol-strip">
+          <div class="mini"><div class="lb">↩️ TAGs Devolvidas</div><div class="vl">${fmt(tdevtag)}</div></div>
+          <div class="mini"><div class="lb">💸 Saldo Resgatado</div><div class="vl">${fmt(tdevsaldo)}</div></div>
+        </div>
+      </div>
+      <div class="group-summary">
+        <div class="group-title">Resumo por grupos de caixas</div>
+        <div class="group-grid">
+          <div class="group-box am"><h3>🟡 CX 1–24</h3><div class="group-metrics"><div><span>Apurado</span><b>${fmt(tcompNorm)}</b></div><div><span>Tags</span><b>${tagNorm} un</b></div><div><span>Diferença</span><b>${fmt(difNorm)}</b></div></div></div>
+          <div class="group-box lar"><h3>🟠 CX 25–40</h3><div class="group-metrics"><div><span>Apurado</span><b>${fmt(tcompLar)}</b></div><div><span>Tags</span><b>${tagLar} un</b></div><div><span>Diferença</span><b>${fmt(difLar)}</b></div></div></div>
+          <div class="group-box lil"><h3>🟣 Volantes 41–58</h3><div class="group-metrics"><div><span>Apurado</span><b>${fmt(tcompVol)}</b></div><div><span>Tags</span><b>${tagVol} un</b></div><div><span>Diferença</span><b>${fmt(difVol)}</b></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
   document.getElementById('cards').innerHTML=ch;
-  const rows=ST.caixas.map(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const isV=cx.tipo==='V',isLar=cat==='laranja';const lib=d?(d.tagsLib||0):0;const cdGeral=!d?'':t.difGeral>=0?'dok':'derr';const rowBg=isV?'background:#faf5ff;':isLar?'background:#fff8f0;':'';const cxTag=isLar?'<span class="tag-lar">L</span>':'';const cxLbl=isV?'CV':'CX';return`<tr style="${rowBg}"><td><b>${cxLbl} ${cx.num}</b>${cxTag}${cx.nome?'<br><span style="font-size:10px;color:#888;">'+cx.nome+'</span>':''}</td><td>${isV?'🟣':isLar?'🟠':cx.tipo==='D'?'💵':'💳'}</td><td class="n">${d?fmt(d.deb||0):'—'}</td><td class="n">${d?fmt(d.cred||0):'—'}</td><td class="n">${d?fmt((d.pix||0)+(d.pixManual||0)):'—'}</td><td class="n">${cx.tipo==='D'&&d?fmt(t.dinLiquido):'—'}</td><td class="n">${d?fmt(t.totalComprovado):'—'}</td><td class="n ${cdGeral}">${d?fmt(t.difGeral):'—'}</td><td class="n" style="color:#c62828;font-weight:700;">${d&&((d.devtag||0)+(d.devsaldo||0))>0?fmt((d.devtag||0)+(d.devsaldo||0)):'—'}</td><td class="n tag-sc">${d?lib+' un':'—'}</td></tr>`;}).join('');
-  document.getElementById('tbl').innerHTML=`<thead><tr><th>Caixa</th><th></th><th class="n">Déb</th><th class="n">Cred</th><th class="n">PIX</th><th class="n">Din.Líq</th><th class="n">Apurado</th><th class="n">Dif.Geral</th><th class="n" style="color:#c62828;">Devol.</th><th class="n tag-sc">TAGs lib.</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="2">Total</td><td class="n">${fmt(td)}</td><td class="n">${fmt(tc)}</td><td class="n">${fmt(tp+tpm)}</td><td class="n">${fmt(tdinLiq)}</td><td class="n">${fmt(tcomp)}</td><td class="n ${tdifGeral>=0?'dok':'derr'}">${fmt(tdifGeral)}</td><td class="n" style="color:#c62828;font-weight:700;">${fmt(tdevol)}</td><td class="n tag-sc">${tlib} un</td></tr></tfoot>`;
+  const rows=ST.caixas.map(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const isV=cx.tipo==='V',isLar=cat==='laranja';const lib=d?(d.tagsLib||0):0;const cdGeral=!d?'':t.difGeral>=0?'dok':'derr';const rowBg=isV?'background:#faf5ff;':isLar?'background:#fff8f0;':'';const cxTag=isLar?'<span class="tag-lar">L</span>':'';const cxLbl=isV?'CV':'CX';return`<tr style="${rowBg}"><td><b>${cxLbl} ${cx.num}</b>${cxTag}${cx.nome?'<br><span style="font-size:10px;color:#888;">'+cx.nome+'</span>':''}</td><td>${isV?'🟣':isLar?'🟠':cx.tipo==='D'?'💵':'💳'}</td><td class="n">${d?fmt(d.deb||0):'—'}</td><td class="n">${d?fmt(d.cred||0):'—'}</td><td class="n">${d?fmt((d.pix||0)+(d.pixManual||0)):'—'}</td><td class="n">${cx.tipo==='D'&&d?fmt(t.dinLiquido):'—'}</td><td class="n apurado-col">${d?fmt(t.totalComprovado):'—'}</td><td class="n ${cdGeral}">${d?fmt(t.difGeral):'—'}</td><td class="n devol-col">${d&&((d.devtag||0)+(d.devsaldo||0))>0?fmt((d.devtag||0)+(d.devsaldo||0)):'—'}</td><td class="n tag-sc">${d?lib+' un':'—'}</td></tr>`;}).join('');
+  document.getElementById('tbl').innerHTML=`<thead><tr><th>Caixa</th><th></th><th class="n">Déb</th><th class="n">Cred</th><th class="n">PIX</th><th class="n">Din.Líq</th><th class="n">Apurado</th><th class="n">Dif.Geral</th><th class="n">Devol.</th><th class="n">TAGs lib.</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="2">TOTAL GERAL</td><td class="n">${fmt(td)}</td><td class="n">${fmt(tc)}</td><td class="n">${fmt(tp+tpm)}</td><td class="n">${fmt(tdinLiq)}</td><td class="n apurado-col">${fmt(tcomp)}</td><td class="n ${tdifGeral>=0?'dok':'derr'}">${fmt(tdifGeral)}</td><td class="n devol-col">${fmt(tdevol)}</td><td class="n tag-sc">${tlib} un</td></tr></tfoot>`;
 }
+
 function foto(idx){const fi=document.getElementById('fi');fi.onchange=e=>{const f=e.target.files[0];if(!f)return;fi.value='';procFoto(f,idx);};fi.click();}
 async function procFoto(file,idx){const zona=document.getElementById('zona'),st=document.getElementById('stocr');zona.className='zona proc';zona.innerHTML=`<div class="zona-ic"><span class="spin"></span></div><div class="zona-lb" style="color:#1565c0;">Lendo filipeta...</div>`;st.style.display='block';st.className='stbox l';st.innerHTML=`<span class="spin"></span> Analisando imagem...`;const r=new FileReader();r.onload=async ev=>{let b64,mt='image/jpeg';try{const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=ev.target.result;});const MAX=1200,cvs=document.createElement('canvas');const scale=Math.min(1,MAX/Math.max(img.width,img.height));cvs.width=Math.round(img.width*scale);cvs.height=Math.round(img.height*scale);cvs.getContext('2d').drawImage(img,0,0,cvs.width,cvs.height);let q=0.85,dataUrl;do{dataUrl=cvs.toDataURL('image/jpeg',q);q-=0.1;}while(dataUrl.length*0.75>4*1024*1024&&q>0.3);b64=dataUrl.split(',')[1];}catch{b64=ev.target.result.split(',')[1];mt=file.type||'image/jpeg';}try{const res=await fetch('/api/ocr',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:b64,media_type:mt})});const p=await res.json();if(p.error)throw new Error(p.error);preencherCampos(p,idx);zona.className='zona suc';zona.innerHTML=`<div class="zona-ic">✅</div><div class="zona-lb" style="color:#2e7d32;">Filipeta lida!</div><div class="zona-sub" style="cursor:pointer;" onclick="foto(${idx})">Ler outra</div>`;st.className='stbox s';st.innerHTML=`✅ Dados preenchidos. Confira antes de salvar.`;}catch(e){zona.className='zona err';zona.innerHTML=`<div class="zona-ic">❌</div><div class="zona-lb" style="color:#c62828;">Erro na leitura</div><div class="zona-sub" style="cursor:pointer;" onclick="foto(${idx})">Tentar novamente</div>`;st.className='stbox e';st.innerHTML=`❌ ${e.message||'Tente com foto mais nítida.'}`;}};r.readAsDataURL(file);}
 function preencherCampos(p,idx){const cx=ST.caixas[idx];const s=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null&&v!==undefined&&v!==0){el.value=v;el.classList.add('vrd');}};if(cx.tipo==='D')s('f-din',p.dinheiro);s('f-deb',p.debito);s('f-cred',p.credito);s('f-pix',p.pix);if(cx.tipo!=='V')s('f-tag',p.liberacao_tag);s('f-devtag',p.tag_devolvida);s('f-devsaldo',p.resgate_saldo);s('f-total-filipeta',p.total);if(p.liberacao_tag!=null&&p.liberacao_tag>0)s('f-tags-lib',Math.round(p.liberacao_tag/5));calc();}
-function expCSV(){const ev=document.getElementById('inp-evento').value||'Evento',dt=document.getElementById('inp-data').value||'';let c=`FECHAMENTO — ${ev} — ${dt}\n`;c+='Caixa,Grupo,Tipo,Nome,Débito,Crédito,PIX,PIX Manual,Ajuste,Din.Líquido,Total Apurado,Total Filipeta,Dif.Geral,TAG lib(un),TAG dev(un),Resgate Saldo\n';let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0;ST.caixas.forEach(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const grupo=cat==='volante'?'Volante 41-58':cat==='laranja'?'CX 25-40':'CX 1-24';const tipoLabel=cx.tipo==='V'?'Somente Eletrônico':cx.tipo==='D'?'Din+Cartão':'Somente Cartão';if(d){td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;}const devtagUn=d?Math.round((d.devtag||0)/5):0;c+=`${cx.num},${grupo},${tipoLabel},${cx.nome||''},${d?d.deb||0:''},${d?d.cred||0:''},${d?d.pix||0:''},${d?d.pixManual||0:''},${d?d.ajuste||0:''},${cx.tipo==='D'&&d?t.dinLiquido:''},${d?t.totalComprovado:''},${d?d.totalFilipeta||0:''},${d?t.difGeral:''},${d?d.tagsLib||0:''},${d?devtagUn:''},${d?d.devsaldo||0:''}\n`;});c+=`TOTAL,,,,${td.toFixed(2)},${tc.toFixed(2)},${tp.toFixed(2)},${tpm.toFixed(2)},,${tdinLiq.toFixed(2)},${tcomp.toFixed(2)},,${tdifGeral.toFixed(2)}\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download=`Fechamento_${ev}_${dt}.csv`.replace(/\s+/g,'_');a.click();}
+function expCSV(){const ev=document.getElementById('inp-evento').value||'Evento',dt=document.getElementById('inp-data').value||'';let c=`FECHAMENTO — ${ev} — DATA DO RELATÓRIO: ${dt||'NÃO INFORMADA'}\n`;c+='Caixa,Grupo,Tipo,Nome,Débito,Crédito,PIX,PIX Manual,Ajuste,Din.Líquido,Total Apurado,Total Filipeta,Dif.Geral,TAG lib(un),TAG dev(un),Resgate Saldo\n';let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0;ST.caixas.forEach(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const grupo=cat==='volante'?'Volante 41-58':cat==='laranja'?'CX 25-40':'CX 1-24';const tipoLabel=cx.tipo==='V'?'Somente Eletrônico':cx.tipo==='D'?'Din+Cartão':'Somente Cartão';if(d){td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;}const devtagUn=d?Math.round((d.devtag||0)/5):0;c+=`${cx.num},${grupo},${tipoLabel},${cx.nome||''},${d?d.deb||0:''},${d?d.cred||0:''},${d?d.pix||0:''},${d?d.pixManual||0:''},${d?d.ajuste||0:''},${cx.tipo==='D'&&d?t.dinLiquido:''},${d?t.totalComprovado:''},${d?d.totalFilipeta||0:''},${d?t.difGeral:''},${d?d.tagsLib||0:''},${d?devtagUn:''},${d?d.devsaldo||0:''}\n`;});c+=`TOTAL,,,,${td.toFixed(2)},${tc.toFixed(2)},${tp.toFixed(2)},${tpm.toFixed(2)},,${tdinLiq.toFixed(2)},${tcomp.toFixed(2)},,${tdifGeral.toFixed(2)}\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download=`Fechamento_${ev}_${dt}.csv`.replace(/\s+/g,'_');a.click();}
 async function expXLSX(){
   if(typeof ExcelJS==='undefined'){alert('Aguarde a biblioteca carregar.');return;}
   const ev=document.getElementById('inp-evento').value||'Evento';
   const dt=document.getElementById('inp-data').value||'';
   const wb=new ExcelJS.Workbook();wb.creator='Fechamento de Caixa';wb.created=new Date();
-  const P={navy:'FF1A3A5C',navyBg:'FFD6E4F0',blue:'FF1976D2',blueBg:'FFE3F2FD',green:'FF388E3C',greenBg:'FFE8F5E9',red:'FFE53935',redBg:'FFFFEBEE',amber:'FFF9A825',amberBg:'FFFFFDE7',teal:'FF00796B',tealBg:'FFE0F2F1',white:'FFFFFFFF',gray1:'FFF8FAFC',gray3:'FFDEE5EE',text:'FF1A2332',text2:'FF607080',lilas:'FF7C3AED',lilasBg:'FFF3E8FF',orangeDark:'FFE65100',orangeBg:'FFFFF3E0',amYellow:'FFB45309',amYellowBg:'FFFFFDE7'};
+  const P={navy:'FF8B1515',navyBg:'FFFFF1E0',blue:'FF1976D2',blueBg:'FFE3F2FD',green:'FF388E3C',greenBg:'FFE8F5E9',red:'FFE53935',redBg:'FFFFEBEE',amber:'FFF9A825',amberBg:'FFFFFDE7',teal:'FF00796B',tealBg:'FFE0F2F1',white:'FFFFFFFF',gray1:'FFF8FAFC',gray3:'FFDEE5EE',text:'FF1A2332',text2:'FF607080',lilas:'FF7C3AED',lilasBg:'FFF3E8FF',orangeDark:'FFE65100',orangeBg:'FFFFF3E0',amYellow:'FFB45309',amYellowBg:'FFFFFDE7'};
   const F=h=>({type:'pattern',pattern:'solid',fgColor:{argb:h}});
   const ft=(bold,color,size,italic)=>({name:'Calibri',bold:!!bold,color:{argb:color||P.text},size:size||10,italic:!!italic});
   const al=(h,v,wrap)=>({horizontal:h||'center',vertical:v||'middle',wrapText:!!wrap});
   const bdThin=()=>{const s={style:'thin',color:{argb:'FFCCCCCC'}};return{top:s,bottom:s,left:s,right:s};};
   const bdMed=()=>{const s={style:'medium',color:{argb:'FF888888'}};return{top:s,bottom:s,left:s,right:s};};
-  function brl(v){if(v===null||v===undefined||v==='')return '';const neg=v<0,n=Math.abs(Math.round(v));const s=n.toLocaleString('pt-BR');return neg?`R$ -${s}`:`R$ ${s}`;}
+  function brl(v){if(v===null||v===undefined||v==='')return '';return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2});}
   function brlUn(v){return Math.round(v).toLocaleString('pt-BR')+' un';}
   function setCell(ws,row,col,val,opts={}){const cell=ws.getCell(row,col);cell.value=val;if(opts.fill)cell.fill=opts.fill;if(opts.font)cell.font=opts.font;if(opts.align)cell.alignment=opts.align;if(opts.border)cell.border=opts.border;return cell;}
   const active=ST.caixas.filter(cx=>cx.dados&&calcTot(cx).totalComprovado!==0);
@@ -393,9 +513,9 @@ async function expXLSX(){
   [1,6,18,13,13,14,14,1].forEach((w,i)=>ws1.getColumn(i+1).width=w);
   ws1.getRow(1).height=6;for(let c=2;c<=7;c++)ws1.getCell(1,c).fill=F(P.navy);
   ws1.getRow(2).height=28;ws1.mergeCells(2,2,2,7);
-  setCell(ws1,2,2,`⚡  FECHAMENTO DE CAIXA  —  ${ev}  —  ${dt}`,{fill:F(P.navy),font:ft(true,P.white,13),align:al('center')});
+  setCell(ws1,2,2,`🕊️  FESTA DO DIVINO 2026  —  FECHAMENTO DE CAIXA  —  ${ev}  —  DATA DO RELATÓRIO: ${dt||'NÃO INFORMADA'}`,{fill:F(P.navy),font:ft(true,P.white,13),align:al('center')});
   ws1.getRow(3).height=14;ws1.mergeCells(3,2,3,7);
-  setCell(ws1,3,2,`${active.length} caixas lançados  |  Sistema automático de fechamento`,{fill:F('FF1E4B7A'),font:ft(false,'FF90CAF9',9,true),align:al('center')});
+  setCell(ws1,3,2,`${active.length} caixas lançados  |  Programação oficial • 14 a 24 de maio • Mogi das Cruzes - SP`,{fill:F('FFA11919'),font:ft(false,'FFFFE6A3',9,true),align:al('center')});
   ws1.getRow(4).height=5;for(let c=2;c<=7;c++)ws1.getCell(4,c).fill=F(P.navy);
   function kpi(row,col,label,val,hdrBg,valBg,valFc,icon){ws1.getRow(row).height=13;ws1.getRow(row+1).height=28;ws1.mergeCells(row,col,row,col+1);setCell(ws1,row,col,`${icon} ${label}`,{fill:F(hdrBg),font:ft(true,'FFBBDEFB',8),align:al('center')});ws1.mergeCells(row+1,col,row+1,col+1);setCell(ws1,row+1,col,val,{fill:F(valBg),font:ft(true,valFc,15),align:al('center')});const s={style:'thin',color:{argb:'FFCCCCCC'}};ws1.getCell(row+1,col).border={bottom:s,left:s,right:s};}
   function divider(row){ws1.getRow(row).height=4;ws1.mergeCells(row,2,row,7);ws1.getCell(row,2).fill=F(P.gray3);}
