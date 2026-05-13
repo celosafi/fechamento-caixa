@@ -10,65 +10,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fechamento Caixa">
 <title>Fechamento de Caixa</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js">
-
-/* ===== LIMPEZA VISUAL SOMENTE NA IMPRESSÃO =====
-   Não altera a tela normal nem os dados: apenas prepara o DOM para o preview/impressão
-   e restaura tudo ao fechar a impressão. */
-let __printBackupMarcelo = null;
-function prepararRelatorioImpressaoMarcelo(){
-  const tbl = document.getElementById('tbl');
-  const sub = document.querySelector('.report-sub');
-  if(!tbl) return;
-  if(!__printBackupMarcelo){
-    __printBackupMarcelo = {
-      tbl: tbl.innerHTML,
-      sub: sub ? sub.innerHTML : null
-    };
-  }
-
-  // Topo: deixar apenas a data do período.
-  if(sub) sub.textContent = '14 A 24 DE MAIO';
-
-  // Cabeçalho: centralizar por CSS, remover ícone PIX e trocar Devol. por Devolução.
-  const ths = tbl.querySelectorAll('thead th');
-  if(ths[4]) ths[4].textContent = 'PIX';
-  if(ths[8]) ths[8].textContent = 'Devolução';
-
-  // Corpo e total: tirar R$ só na versão de impressão, inclusive na linha Total.
-  tbl.querySelectorAll('tbody tr').forEach(tr=>{
-    const cells = tr.children;
-    for(let i=2;i<=8;i++){
-      if(cells[i]) cells[i].innerHTML = cells[i].innerHTML.replace(/R\$\s*/g,'').trim();
-    }
-  });
-  tbl.querySelectorAll('tfoot tr').forEach(tr=>{
-    const cells = tr.children;
-    for(let i=1;i<cells.length;i++){
-      if(cells[i]) cells[i].innerHTML = cells[i].innerHTML.replace(/R\$\s*/g,'').trim();
-    }
-  });
-
-  // Coluna Caixa: tirar CX/CV e qualquer marca auxiliar, deixando somente o número.
-  tbl.querySelectorAll('tbody tr').forEach(tr=>{
-    const c = tr.children[0];
-    if(!c) return;
-    const m = c.textContent.match(/\d+/);
-    if(m) c.innerHTML = '<b>'+m[0]+'</b>';
-  });
-}
-function restaurarRelatorioImpressaoMarcelo(){
-  if(!__printBackupMarcelo) return;
-  const tbl = document.getElementById('tbl');
-  const sub = document.querySelector('.report-sub');
-  if(tbl) tbl.innerHTML = __printBackupMarcelo.tbl;
-  if(sub && __printBackupMarcelo.sub !== null) sub.innerHTML = __printBackupMarcelo.sub;
-  __printBackupMarcelo = null;
-}
-window.addEventListener('beforeprint', prepararRelatorioImpressaoMarcelo);
-window.addEventListener('afterprint', restaurarRelatorioImpressaoMarcelo);
-
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 <style>
 :root{--cf:#8B1515;--bg:#fdf5e6;--card:#ffffff;--card2:#fff8f0;--border:#e8d5c0;--text:#2a0808;--muted:#8a6050;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -326,8 +268,8 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .report-wrap{
     margin:0 0 3mm 0!important;
     padding:0!important;
-    width:100%!important;
-    max-width:100%!important;
+    width:95%!important;
+    max-width:95%!important;
     border:1px solid #ead8bd!important;
     border-radius:10px!important;
     overflow:hidden!important;
@@ -349,15 +291,15 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .report-datebox .gen{font-size:9px!important;}
 
   .kpi-grid{
-    grid-template-columns:repeat(4,1fr)!important;
-    gap:5px!important;
-    padding:6px 6px 4px!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:4px!important;
+    padding:5px 5px 4px!important;
   }
-  .kpi-card{min-height:52px!important;padding:7px 8px!important;border-radius:8px!important;gap:6px!important;}
-  .kpi-card .ico{font-size:18px!important;width:22px!important;min-width:22px!important;}
-  .pix-ico{width:19px!important;height:19px!important;}
-  .kpi-card .lb{font-size:9px!important;line-height:1.08!important;}
-  .kpi-card .vl{font-size:15px!important;line-height:1.08!important;white-space:nowrap!important;}
+  .kpi-card{min-height:50px!important;padding:6px 6px!important;border-radius:8px!important;gap:5px!important;min-width:0!important;}
+  .kpi-card .ico{font-size:17px!important;width:20px!important;min-width:20px!important;}
+  .pix-ico{width:18px!important;height:18px!important;}
+  .kpi-card .lb{font-size:8.5px!important;line-height:1.05!important;}
+  .kpi-card .vl{font-size:14px!important;line-height:1.05!important;white-space:nowrap!important;}
 
   .group-strip{margin:4px 6px 6px!important;border-radius:8px!important;}
   .group-box{padding:6px 8px!important;}
@@ -365,8 +307,8 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .group-box .gm{font-size:8px!important;}
   .group-box .gm b{font-size:13px!important;margin-top:1px!important;}
 
-  .report-actions{margin:0 0 2mm 0!important;}
-  .report-actions .ttl{font-size:12px!important;font-weight:900!important;}
+  .report-actions{display:none!important;margin:0!important;padding:0!important;}
+  .report-actions .ttl{display:none!important;}
 
   /* Tabela: fonte real 12px, sem zoom visual, com larguras proporcionais e padding mínimo */
   .tbl{
@@ -396,11 +338,12 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
     background:#8B1515!important;
     color:#fff!important;
     border-bottom:2px solid #d9a328!important;
-    text-align:right!important;
+    text-align:center!important;
   }
   .tbl td{text-align:right!important;}
-  .tbl th:first-child,.tbl td:first-child,
-  .tbl th:nth-child(2),.tbl td:nth-child(2){text-align:left!important;}
+  .tbl td:first-child,
+  .tbl td:nth-child(2){text-align:left!important;}
+  .tbl thead .pix-ico{display:none!important;}
   .tbl tfoot td{
     font-size:12px!important;
     font-weight:700!important;
@@ -427,7 +370,7 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
 
   .dok{color:#1b7a2a!important;}
   .derr{color:#b71c1c!important;}
-  .tag-lar{font-size:9px!important;padding:1px 4px!important;}
+  .tag-lar{display:none!important;}
 
   .print-signatures{
     display:grid!important;
@@ -439,85 +382,8 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   }
   .sig-box{text-align:center!important;font-family:Arial,Helvetica,sans-serif!important;font-size:12px!important;color:#111!important;}
   .sig-line{border-top:1px solid #111!important;height:1px!important;margin-bottom:3mm!important;}
-  .sig-label{font-weight:700!important;text-transform:uppercase!important;}
+  .sig-label{font-weight:700!important;text-transform:uppercase!important;white-space:nowrap!important;}
 }
-
-
-/* ===== AJUSTES SOLICITADOS — SOMENTE RELATÓRIO DE IMPRESSÃO ===== */
-@media print{
-  /* Topo: remove a expressão "PROGRAMAÇÃO OFICIAL" apenas na impressão */
-  .report-sub{font-size:0!important;padding:3px 7px!important;}
-  .report-sub::after{content:"14 A 24 DE MAIO";font-size:11px!important;font-weight:900!important;}
-
-  /* Remove a linha "Por caixa" da impressão */
-  .report-actions{display:none!important;}
-
-  /* Cabeçalho da tabela centralizado, sem ícone do PIX */
-  .tbl thead th,
-  .tbl thead th:first-child,
-  .tbl thead th:nth-child(2){text-align:center!important;}
-  .tbl thead .pix-ico{display:none!important;}
-
-  /* Reforço para os campos de assinatura aparecerem no landscape */
-  .print-signatures{
-    display:grid!important;
-    visibility:visible!important;
-    opacity:1!important;
-    grid-template-columns:1fr 1fr!important;
-    gap:36mm!important;
-    margin:8mm 8mm 0 8mm!important;
-    min-height:22mm!important;
-    page-break-inside:avoid!important;
-    break-inside:avoid!important;
-  }
-  .sig-box{display:block!important;text-align:center!important;}
-  .sig-line{display:block!important;border-top:1px solid #111!important;height:1px!important;margin-bottom:3mm!important;}
-}
-
-
-
-/* ===== CORREÇÃO DE CORTE À DIREITA — SOMENTE IMPRESSÃO ===== */
-@media print{
-  /* Deixa uma folga técnica à direita para o Chrome/Edge e drivers de impressora não cortarem o último campo. */
-  #pnl-consolidado,
-  .card,
-  .report-wrap,
-  .tbl{
-    width:98.6%!important;
-    max-width:98.6%!important;
-  }
-
-  /* Evita que o card da direita do topo encoste na borda imprimível. */
-  .report-wrap{
-    margin-right:1.4%!important;
-  }
-
-  /* Garante que a última coluna não fique colada na borda direita. */
-  .tbl th:nth-child(10),
-  .tbl td:nth-child(10){
-    width:6.6%!important;
-    padding-right:4px!important;
-  }
-
-  /* Compensa a pequena folga retirada da direita sem alterar visualmente a tabela. */
-  .tbl th:nth-child(2),.tbl td:nth-child(2){width:8.1%!important;}
-  .tbl th:nth-child(8),.tbl td:nth-child(8){width:9.1%!important;}
-  .tbl th:nth-child(9),.tbl td:nth-child(9){width:9.7%!important;}
-
-  /* Assinaturas: impede o campo da direita de quebrar/cortar. */
-  .print-signatures{
-    width:88%!important;
-    max-width:88%!important;
-    margin:8mm auto 0 auto!important;
-    gap:24mm!important;
-  }
-  .sig-label{
-    white-space:nowrap!important;
-    font-size:11px!important;
-    letter-spacing:-0.2px!important;
-  }
-}
-
 </style>
 </head>
 <body>
@@ -683,11 +549,11 @@ function renderCons(){
   const dt=reportDate(),ev=reportEvento(),gerado=new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
   const kpi=(cls,ico,lb,vl)=>`<div class="kpi-card ${cls||''}"><div class="ico">${ico}</div><div><div class="lb">${lb}</div><div class="vl">${vl}</div></div></div>`;
   const group=(cls,title,g)=>`<div class="group-box ${cls}"><div class="gt">${title}</div><div class="gm"><span>Apurado<b>${fmtNZ(g.apur)}</b></span></div></div>`;
-  const resumo=`<div class="report-wrap"><div class="report-head"><div class="report-brand"><img src="${LOGO_OFICIAL_DIVINO}" alt="Festa do Divino 2026"><div><div class="report-title">Festa do Divino 2026</div><div class="report-sub">PROGRAMAÇÃO OFICIAL • 14 A 24 DE MAIO</div><div class="report-city">MOGI DAS CRUZES - SP</div></div></div><div class="report-datebox"><div class="label">DATA DO RELATÓRIO</div><div class="date">${dt}</div><div class="gen">Gerado em: ${gerado}</div></div></div><div class="kpi-grid">${kpi('main','💰','Total Apurado',fmtNZ(tcomp))}${kpi(tdifGeral>=0?'ok':'bad','⚖️','Diferença Geral',fmtNZ(tdifGeral))}${kpi('bad','↩️','Total Devoluções',fmtNZ(tdevol))}${kpi('tag','🏷️','TAGs Liberadas',fmtUnNZ(tlib))}${kpi('ok','💵','Dinheiro Apurado',fmtNZ(tdinLiq))}${kpi('',`<img src="${PIX_ICON_OFICIAL}" class="pix-ico" alt="PIX">`,'Total PIX',fmtNZ(tp+tpm))}${kpi('','💳','Total Débito',fmtNZ(td))}${kpi('','💳','Total Crédito',fmtNZ(tc))}</div><div class="group-strip">${group('g1','🟡 CX 1–24',grupos.g1)}${group('g2','🟠 CX 25–40',grupos.g2)}${group('g3','🟣 Volantes 41–68',grupos.g3)}</div></div>`;
+  const resumo=`<div class="report-wrap"><div class="report-head"><div class="report-brand"><img src="${LOGO_OFICIAL_DIVINO}" alt="Festa do Divino 2026"><div><div class="report-title">Festa do Divino 2026</div><div class="report-sub">14 A 24 DE MAIO</div><div class="report-city">MOGI DAS CRUZES - SP</div></div></div><div class="report-datebox"><div class="label">DATA DO RELATÓRIO</div><div class="date">${dt}</div><div class="gen">Gerado em: ${gerado}</div></div></div><div class="kpi-grid">${kpi('main','💰','Total Apurado',fmtNZ(tcomp))}${kpi(tdifGeral>=0?'ok':'bad','⚖️','Diferença Geral',fmtNZ(tdifGeral))}${kpi('bad','↩️','Total Devoluções',fmtNZ(tdevol))}${kpi('tag','🏷️','TAGs Liberadas',fmtUnNZ(tlib))}${kpi('ok','💵','Dinheiro Apurado',fmtNZ(tdinLiq))}${kpi('',`<img src="${PIX_ICON_OFICIAL}" class="pix-ico" alt="PIX">`,'Total PIX',fmtNZ(tp+tpm))}${kpi('','💳','Total Débito',fmtNZ(td))}${kpi('','💳','Total Crédito',fmtNZ(tc))}</div><div class="group-strip">${group('g1','🟡 CX 1–24',grupos.g1)}${group('g2','🟠 CX 25–40',grupos.g2)}${group('g3','🟣 Volantes 41–68',grupos.g3)}</div></div>`;
   document.getElementById('cards').innerHTML=resumo;
   const rows=lc.map(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const isV=cx.tipo==='V',isLar=cat==='laranja';const lib=d?(d.tagsLib||0):0;const cdGeral=!d?'':t.difGeral>=0?'dok':'derr';const rowBg=isV?'background:#faf5ff;':isLar?'background:#fff8f0;':'';const cxTag=isLar?'<span class="tag-lar">L</span>':'';const cxLbl=isV?'CV':'CX';return`<tr style="${rowBg}"><td><b>${cxLbl} ${cx.num}</b>${cxTag}</td><td>${cx.nome||'—'}</td><td class="n">${d?fmtNZ(d.deb||0):'—'}</td><td class="n">${d?fmtNZ(d.cred||0):'—'}</td><td class="n">${d?fmtNZ((d.pix||0)+(d.pixManual||0)):'—'}</td><td class="n">${cx.tipo==='D'&&d?fmtNZ(t.dinLiquido):'—'}</td><td class="n">${d?fmtNZ(t.totalComprovado):'—'}</td><td class="n ${cdGeral}">${d?fmtNZ(t.difGeral):'—'}</td><td class="n">${d?fmtNZ((d.devtag||0)+(d.devsaldo||0)):'—'}</td><td class="n">${d?fmtUnNZ(lib):'—'}</td></tr>`;}).join('');
   const totalRow=`<tfoot><tr><td colspan="2">Total</td><td class="n">${fmtNZ(td)}</td><td class="n">${fmtNZ(tc)}</td><td class="n">${fmtNZ(tp+tpm)}</td><td class="n">${fmtNZ(tdinLiq)}</td><td class="n">${fmtNZ(tcomp)}</td><td class="n ${tdifGeral>=0?'dok':'derr'}">${fmtNZ(tdifGeral)}</td><td class="n">${fmtNZ(tdevol)}</td><td class="n">${fmtUnNZ(tlib)}</td></tr></tfoot>`;
-  document.getElementById('tbl').innerHTML=`<thead><tr><th>Caixa</th><th>Nome</th><th class="n">Débito</th><th class="n">Crédito</th><th class="n"><img src="${PIX_ICON_OFICIAL}" class="pix-ico" alt="PIX"> PIX</th><th class="n">Din.Líq</th><th class="n">Apurado</th><th class="n">Dif.Geral</th><th class="n">Devolução</th><th class="n">TAGs lib.</th></tr></thead><tbody>${rows}</tbody>${totalRow}`;
+  document.getElementById('tbl').innerHTML=`<thead><tr><th>Caixa</th><th>Nome</th><th class="n">Débito</th><th class="n">Crédito</th><th class="n">PIX</th><th class="n">Din.Líq</th><th class="n">Apurado</th><th class="n">Dif.Geral</th><th class="n">Devolução</th><th class="n">TAGs lib.</th></tr></thead><tbody>${rows}</tbody>${totalRow}`;
   const p=document.querySelector('#pnl-consolidado > div[style*="justify-content"]');
   if(p){p.className='report-actions';p.querySelector('span').className='ttl';p.querySelector('span').textContent='Por caixa';}
 }
@@ -1034,68 +900,40 @@ function bulkTipoLar(tipo){ST.caixas.slice(LARANJA_START,VOLANTE_START).forEach(
 const TROCO_CX=[0,7,8,9,10,11,12,13,20];
 function bulkTroco(){const v=parseFloat(document.getElementById('inp-bulk-troco').value)||0;TROCO_CX.forEach(i=>{ST.caixas[i].troco=v;});renderCfg();}
 function novoEvento(){if(!confirm('Apagar todos os dados?'))return;ST.caixas.forEach(cx=>{cx.dados=null;});atv=null;document.getElementById('inp-data').value='';document.getElementById('inp-evento').value='';document.getElementById('form-cx').innerHTML=`<p style="font-size:13px;color:#888;text-align:center;padding:20px 0;">Selecione um caixa acima</p>`;document.getElementById('barra').classList.remove('show');try{localStorage.removeItem(LS_KEY);}catch(e){}renderGrade();renderCfg();aba('config');}
+
+// Ajustes exclusivos de impressão: remove R$ e CX/CV da tabela impressa sem alterar a tela
+let __printTblBackup = [];
+function prepararTabelaParaImpressao(){
+  const tbl=document.getElementById('tbl');
+  if(!tbl)return;
+  __printTblBackup=[];
+  tbl.querySelectorAll('td,th').forEach((el,idx)=>{
+    __printTblBackup.push([el, el.innerHTML]);
+    let txt=el.textContent || '';
+    if(el.tagName==='TH'){
+      if(txt.trim()==='Devol.') txt='Devolução';
+      if(txt.includes('PIX')) txt='PIX';
+      el.textContent=txt.trim();
+      return;
+    }
+    txt=txt.replace(/R\$\s*/g,'');
+    if(el.cellIndex===0){
+      txt=txt.replace(/^\s*(CX|CV)\s*/i,'').replace(/\s*L\s*$/,'').trim();
+    }
+    el.textContent=txt;
+  });
+}
+function restaurarTabelaAposImpressao(){
+  __printTblBackup.forEach(([el,html])=>{el.innerHTML=html;});
+  __printTblBackup=[];
+}
+window.addEventListener('beforeprint',prepararTabelaParaImpressao);
+window.addEventListener('afterprint',restaurarTabelaAposImpressao);
+
 restaurarLocal();
 renderCfg();
 document.getElementById('inp-data').addEventListener('change',salvarLocal);
 document.getElementById('inp-evento').addEventListener('change',salvarLocal);
-
-
-/* ===== LIMPEZA VISUAL SOMENTE NA IMPRESSÃO =====
-   Não altera a tela normal nem os dados: apenas prepara o DOM para o preview/impressão
-   e restaura tudo ao fechar a impressão. */
-let __printBackupMarcelo = null;
-function prepararRelatorioImpressaoMarcelo(){
-  const tbl = document.getElementById('tbl');
-  const sub = document.querySelector('.report-sub');
-  if(!tbl) return;
-  if(!__printBackupMarcelo){
-    __printBackupMarcelo = {
-      tbl: tbl.innerHTML,
-      sub: sub ? sub.innerHTML : null
-    };
-  }
-
-  // Topo: deixar apenas a data do período.
-  if(sub) sub.textContent = '14 A 24 DE MAIO';
-
-  // Cabeçalho: centralizar por CSS, remover ícone PIX e trocar Devol. por Devolução.
-  const ths = tbl.querySelectorAll('thead th');
-  if(ths[4]) ths[4].textContent = 'PIX';
-  if(ths[8]) ths[8].textContent = 'Devolução';
-
-  // Corpo e total: tirar R$ só na versão de impressão, inclusive na linha Total.
-  tbl.querySelectorAll('tbody tr').forEach(tr=>{
-    const cells = tr.children;
-    for(let i=2;i<=8;i++){
-      if(cells[i]) cells[i].innerHTML = cells[i].innerHTML.replace(/R\$\s*/g,'').trim();
-    }
-  });
-  tbl.querySelectorAll('tfoot tr').forEach(tr=>{
-    const cells = tr.children;
-    for(let i=1;i<cells.length;i++){
-      if(cells[i]) cells[i].innerHTML = cells[i].innerHTML.replace(/R\$\s*/g,'').trim();
-    }
-  });
-
-  // Coluna Caixa: tirar CX/CV e qualquer marca auxiliar, deixando somente o número.
-  tbl.querySelectorAll('tbody tr').forEach(tr=>{
-    const c = tr.children[0];
-    if(!c) return;
-    const m = c.textContent.match(/\d+/);
-    if(m) c.innerHTML = '<b>'+m[0]+'</b>';
-  });
-}
-function restaurarRelatorioImpressaoMarcelo(){
-  if(!__printBackupMarcelo) return;
-  const tbl = document.getElementById('tbl');
-  const sub = document.querySelector('.report-sub');
-  if(tbl) tbl.innerHTML = __printBackupMarcelo.tbl;
-  if(sub && __printBackupMarcelo.sub !== null) sub.innerHTML = __printBackupMarcelo.sub;
-  __printBackupMarcelo = null;
-}
-window.addEventListener('beforeprint', prepararRelatorioImpressaoMarcelo);
-window.addEventListener('afterprint', restaurarRelatorioImpressaoMarcelo);
-
 </script>
 </body>
 </html>
