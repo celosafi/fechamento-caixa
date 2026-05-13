@@ -270,6 +270,46 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
 }
 
+
+/* ===== CORREÇÃO FINAL TESTADA — impressão: colunas monetárias sem quebra + assinaturas ===== */
+.print-signatures{display:none;}
+@media print{
+  .tbl{table-layout:fixed!important;width:100%!important;}
+  .tbl th,.tbl td{box-sizing:border-box!important;}
+
+  /* Larguras reais fechando 100% para A4 retrato */
+  .tbl th:nth-child(1),.tbl td:nth-child(1){width:7%!important;}
+  .tbl th:nth-child(2),.tbl td:nth-child(2){width:10%!important;}
+  .tbl th:nth-child(3),.tbl td:nth-child(3){width:8%!important;}
+  .tbl th:nth-child(4),.tbl td:nth-child(4){width:8%!important;}
+  .tbl th:nth-child(5),.tbl td:nth-child(5){width:8%!important;}
+  .tbl th:nth-child(6),.tbl td:nth-child(6){width:8%!important;}
+  .tbl th:nth-child(7),.tbl td:nth-child(7){width:15%!important;} /* Apurado */
+  .tbl th:nth-child(8),.tbl td:nth-child(8){width:11%!important;} /* Diferença */
+  .tbl th:nth-child(9),.tbl td:nth-child(9){width:12%!important;} /* Devolução */
+  .tbl th:nth-child(10),.tbl td:nth-child(10){width:5%!important;} /* TAGs lib. */
+
+  /* Impede R$ em uma linha e o número em outra */
+  .tbl th:nth-child(3),.tbl td:nth-child(3),
+  .tbl th:nth-child(4),.tbl td:nth-child(4),
+  .tbl th:nth-child(5),.tbl td:nth-child(5),
+  .tbl th:nth-child(6),.tbl td:nth-child(6),
+  .tbl th:nth-child(7),.tbl td:nth-child(7),
+  .tbl th:nth-child(8),.tbl td:nth-child(8),
+  .tbl th:nth-child(9),.tbl td:nth-child(9),
+  .tbl th:nth-child(10),.tbl td:nth-child(10){white-space:nowrap!important;word-break:keep-all!important;overflow:visible!important;text-overflow:clip!important;}
+
+  /* Colunas críticas recebem leitura um pouco mais folgada */
+  .tbl td:nth-child(7),.tbl td:nth-child(9){font-size:8.4px!important;letter-spacing:-.15px!important;}
+  .tbl th:nth-child(7),.tbl th:nth-child(9){font-size:8px!important;letter-spacing:-.2px!important;}
+  .tbl th:nth-child(10),.tbl td:nth-child(10){font-size:7.5px!important;text-align:center!important;}
+
+  .print-signatures{display:grid!important;grid-template-columns:1fr 1fr;gap:22mm;margin-top:10mm;padding:0 8mm;page-break-inside:avoid!important;}
+  .sig-box{text-align:center;font-size:9.5px;color:#111;}
+  .sig-line{border-top:1px solid #111;height:1px;margin-bottom:3mm;}
+  .sig-label{font-weight:800;text-transform:uppercase;letter-spacing:.25px;}
+}
+
 </style>
 </head>
 <body>
@@ -327,6 +367,10 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   </div>
   <div class="card" style="overflow-x:auto;padding:0;">
     <table class="tbl" id="tbl"></table>
+  </div>
+  <div class="print-signatures">
+    <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Coordenador de Caixa</div></div>
+    <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Responsável pelo Fechamento</div></div>
   </div>
 </div>
 <input type="file" id="fi" accept="image/*" capture="environment" style="display:none;">
