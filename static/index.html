@@ -35,10 +35,16 @@ function prepararRelatorioImpressaoMarcelo(){
   if(ths[4]) ths[4].textContent = 'PIX';
   if(ths[8]) ths[8].textContent = 'Devolução';
 
-  // Corpo e total: tirar R$ só das colunas monetárias.
-  tbl.querySelectorAll('tbody tr, tfoot tr').forEach(tr=>{
+  // Corpo e total: tirar R$ só na versão de impressão, inclusive na linha Total.
+  tbl.querySelectorAll('tbody tr').forEach(tr=>{
     const cells = tr.children;
     for(let i=2;i<=8;i++){
+      if(cells[i]) cells[i].innerHTML = cells[i].innerHTML.replace(/R\$\s*/g,'').trim();
+    }
+  });
+  tbl.querySelectorAll('tfoot tr').forEach(tr=>{
+    const cells = tr.children;
+    for(let i=1;i<cells.length;i++){
       if(cells[i]) cells[i].innerHTML = cells[i].innerHTML.replace(/R\$\s*/g,'').trim();
     }
   });
@@ -466,6 +472,50 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   }
   .sig-box{display:block!important;text-align:center!important;}
   .sig-line{display:block!important;border-top:1px solid #111!important;height:1px!important;margin-bottom:3mm!important;}
+}
+
+
+
+/* ===== CORREÇÃO DE CORTE À DIREITA — SOMENTE IMPRESSÃO ===== */
+@media print{
+  /* Deixa uma folga técnica à direita para o Chrome/Edge e drivers de impressora não cortarem o último campo. */
+  #pnl-consolidado,
+  .card,
+  .report-wrap,
+  .tbl{
+    width:98.6%!important;
+    max-width:98.6%!important;
+  }
+
+  /* Evita que o card da direita do topo encoste na borda imprimível. */
+  .report-wrap{
+    margin-right:1.4%!important;
+  }
+
+  /* Garante que a última coluna não fique colada na borda direita. */
+  .tbl th:nth-child(10),
+  .tbl td:nth-child(10){
+    width:6.6%!important;
+    padding-right:4px!important;
+  }
+
+  /* Compensa a pequena folga retirada da direita sem alterar visualmente a tabela. */
+  .tbl th:nth-child(2),.tbl td:nth-child(2){width:8.1%!important;}
+  .tbl th:nth-child(8),.tbl td:nth-child(8){width:9.1%!important;}
+  .tbl th:nth-child(9),.tbl td:nth-child(9){width:9.7%!important;}
+
+  /* Assinaturas: impede o campo da direita de quebrar/cortar. */
+  .print-signatures{
+    width:88%!important;
+    max-width:88%!important;
+    margin:8mm auto 0 auto!important;
+    gap:24mm!important;
+  }
+  .sig-label{
+    white-space:nowrap!important;
+    font-size:11px!important;
+    letter-spacing:-0.2px!important;
+  }
 }
 
 </style>
@@ -1013,10 +1063,16 @@ function prepararRelatorioImpressaoMarcelo(){
   if(ths[4]) ths[4].textContent = 'PIX';
   if(ths[8]) ths[8].textContent = 'Devolução';
 
-  // Corpo e total: tirar R$ só das colunas monetárias.
-  tbl.querySelectorAll('tbody tr, tfoot tr').forEach(tr=>{
+  // Corpo e total: tirar R$ só na versão de impressão, inclusive na linha Total.
+  tbl.querySelectorAll('tbody tr').forEach(tr=>{
     const cells = tr.children;
     for(let i=2;i<=8;i++){
+      if(cells[i]) cells[i].innerHTML = cells[i].innerHTML.replace(/R\$\s*/g,'').trim();
+    }
+  });
+  tbl.querySelectorAll('tfoot tr').forEach(tr=>{
+    const cells = tr.children;
+    for(let i=1;i<cells.length;i++){
       if(cells[i]) cells[i].innerHTML = cells[i].innerHTML.replace(/R\$\s*/g,'').trim();
     }
   });
