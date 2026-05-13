@@ -359,6 +359,100 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .print-signatures{margin-top:8mm!important;padding:0 10mm!important;gap:24mm!important;}
 }
 
+
+/* ===== AJUSTE FINAL — IMPRESSÃO A4 PAISAGEM COM COLUNAS DINÂMICAS ===== */
+@media print{
+  @page{size:A4 landscape;margin:3mm 2mm!important;}
+  html,body{margin:0!important;padding:0!important;background:#fff!important;font-family:Arial,Helvetica,sans-serif!important;font-size:12px!important;}
+  #pnl-consolidado{display:block!important;width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;}
+  .card[style*="overflow-x"]{overflow:visible!important;width:100%!important;max-width:100%!important;}
+  .report-wrap{margin:0 0 5px 0!important;width:100%!important;max-width:100%!important;}
+
+  /* Cabeçalho um pouco mais compacto para sobrar área para tabela */
+  .report-head{padding:5px 8px!important;gap:8px!important;border-bottom:2px solid #d9a328!important;}
+  .report-brand img{width:36px!important;height:36px!important;}
+  .report-title{font-size:15px!important;line-height:1.05!important;}
+  .report-sub{font-size:7.5px!important;padding:1px 5px!important;margin-top:1px!important;}
+  .report-city{font-size:7px!important;margin-top:1px!important;letter-spacing:1px!important;}
+  .report-datebox{min-width:120px!important;}
+  .report-datebox .label{font-size:7.5px!important;}
+  .report-datebox .date{font-size:14px!important;line-height:1.05!important;}
+  .report-datebox .gen{font-size:7px!important;margin-top:1px!important;}
+
+  .kpi-grid{grid-template-columns:repeat(8,1fr)!important;gap:3px!important;padding:4px!important;}
+  .kpi-card{min-height:34px!important;padding:4px 5px!important;border-radius:5px!important;gap:4px!important;}
+  .kpi-card .ico{font-size:13px!important;width:15px!important;min-width:15px!important;}
+  .pix-ico{width:13px!important;height:13px!important;}
+  .kpi-card .lb{font-size:7px!important;line-height:1.05!important;letter-spacing:0!important;}
+  .kpi-card .vl{font-size:10.5px!important;line-height:1.05!important;margin-top:1px!important;white-space:nowrap!important;}
+  .group-strip{margin:3px 4px 4px!important;border-radius:5px!important;}
+  .group-box{padding:4px 5px!important;}
+  .group-box .gt{font-size:10.5px!important;margin-bottom:1px!important;line-height:1.05!important;}
+  .group-box .gm{font-size:6.5px!important;line-height:1!important;}
+  .group-box .gm b{font-size:10.5px!important;margin-top:1px!important;line-height:1.05!important;}
+
+  /* TABELA: largura dinâmica, sem percentuais fixos */
+  .tbl{
+    width:100%!important;
+    max-width:100%!important;
+    table-layout:auto!important;
+    border-collapse:collapse!important;
+    font-family:Arial,Helvetica,sans-serif!important;
+    font-size:12px!important;
+  }
+  .tbl th,.tbl td{
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+    padding:3px 4px!important;
+    line-height:1.12!important;
+    font-family:Arial,Helvetica,sans-serif!important;
+    font-size:12px!important;
+    white-space:nowrap!important;
+    word-break:keep-all!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  .tbl th{
+    font-size:12px!important;
+    font-weight:700!important;
+    letter-spacing:-.15px!important;
+    background:#8B1515!important;
+    color:#fff!important;
+    border-bottom:1.5px solid #d9a328!important;
+  }
+  .tbl td{font-size:12px!important;letter-spacing:-.25px!important;}
+  .tbl td span{font-size:10px!important;line-height:1!important;}
+
+  /* Só as colunas de texto podem encolher por conteúdo; valores ficam protegidos */
+  .tbl th:nth-child(1),.tbl td:nth-child(1){text-align:left!important;padding-left:3px!important;padding-right:3px!important;}
+  .tbl th:nth-child(2),.tbl td:nth-child(2){text-align:left!important;padding-left:3px!important;padding-right:5px!important;}
+  .tbl th:nth-child(n+3),.tbl td:nth-child(n+3){text-align:right!important;}
+  .tbl th:nth-child(10),.tbl td:nth-child(10){text-align:center!important;padding-left:3px!important;padding-right:3px!important;}
+
+  /* Linha total maior, sem embolar e sem quebrar */
+  .tbl tfoot td{
+    width:auto!important;
+    font-family:Arial,Helvetica,sans-serif!important;
+    font-size:12px!important;
+    font-weight:700!important;
+    letter-spacing:-.3px!important;
+    padding:4px 4px!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  .tbl tfoot td:first-child{text-align:left!important;letter-spacing:0!important;}
+
+  .print-signatures{display:grid!important;grid-template-columns:1fr 1fr;gap:28mm;margin-top:9mm;padding:0 16mm;page-break-inside:avoid!important;}
+  .sig-box{text-align:center;font-family:Arial,Helvetica,sans-serif!important;font-size:11px!important;color:#111;}
+  .sig-line{border-top:1px solid #111;height:1px;margin-bottom:3mm;}
+  .sig-label{font-weight:700;text-transform:uppercase;letter-spacing:.25px;}
+}
+
 </style>
 </head>
 <body>
