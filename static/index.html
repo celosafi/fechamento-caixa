@@ -310,6 +310,55 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .sig-label{font-weight:800;text-transform:uppercase;letter-spacing:.25px;}
 }
 
+
+/* ===== AJUSTE RECALCULADO — impressão A4 retrato sem embolar total ===== */
+@media print{
+  @page{size:A4 portrait;margin:2mm 2mm!important;}
+  #pnl-consolidado{padding:0!important;margin:0!important;width:100%!important;max-width:100%!important;}
+  .card[style*="overflow-x"]{overflow:visible!important;width:100%!important;}
+  .report-wrap{margin-left:0!important;margin-right:0!important;}
+
+  .tbl{width:100%!important;max-width:100%!important;table-layout:fixed!important;border-collapse:collapse!important;}
+  .tbl th,.tbl td{
+    box-sizing:border-box!important;
+    padding:1.8px 1.2px!important;
+    line-height:1.04!important;
+    font-size:8.1px!important;
+    letter-spacing:-.20px!important;
+    white-space:nowrap!important;
+    word-break:keep-all!important;
+    overflow:hidden!important;
+    text-overflow:clip!important;
+  }
+  .tbl th{font-size:7.4px!important;letter-spacing:-.25px!important;}
+  .tbl td span{font-size:6.4px!important;}
+
+  /* Larguras recalculadas com base no PDF enviado: fecha 100% */
+  .tbl th:nth-child(1),.tbl td:nth-child(1){width:6.2%!important;}   /* Caixa */
+  .tbl th:nth-child(2),.tbl td:nth-child(2){width:10.0%!important;}  /* Nome */
+  .tbl th:nth-child(3),.tbl td:nth-child(3){width:11.4%!important;}  /* Débito */
+  .tbl th:nth-child(4),.tbl td:nth-child(4){width:11.0%!important;}  /* Crédito */
+  .tbl th:nth-child(5),.tbl td:nth-child(5){width:10.2%!important;}  /* PIX */
+  .tbl th:nth-child(6),.tbl td:nth-child(6){width:9.8%!important;}   /* Din.Líq */
+  .tbl th:nth-child(7),.tbl td:nth-child(7){width:12.7%!important;}  /* Apurado */
+  .tbl th:nth-child(8),.tbl td:nth-child(8){width:9.2%!important;}   /* Dif.Geral */
+  .tbl th:nth-child(9),.tbl td:nth-child(9){width:11.0%!important;}  /* Devol. */
+  .tbl th:nth-child(10),.tbl td:nth-child(10){width:8.5%!important;text-align:center!important;} /* TAGs */
+
+  /* Total: fonte menor para não misturar colunas */
+  .tbl tfoot td{
+    font-size:7.1px!important;
+    letter-spacing:-.38px!important;
+    padding:2px 1px!important;
+    font-weight:900!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+  }
+  .tbl tfoot td:first-child{text-align:left!important;font-size:7.8px!important;letter-spacing:0!important;}
+
+  .print-signatures{margin-top:8mm!important;padding:0 10mm!important;gap:24mm!important;}
+}
+
 </style>
 </head>
 <body>
