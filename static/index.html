@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -9,7 +10,59 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fechamento Caixa">
 <title>Fechamento de Caixa</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js">
+
+/* ===== LIMPEZA VISUAL SOMENTE NA IMPRESSÃO =====
+   Não altera a tela normal nem os dados: apenas prepara o DOM para o preview/impressão
+   e restaura tudo ao fechar a impressão. */
+let __printBackupMarcelo = null;
+function prepararRelatorioImpressaoMarcelo(){
+  const tbl = document.getElementById('tbl');
+  const sub = document.querySelector('.report-sub');
+  if(!tbl) return;
+  if(!__printBackupMarcelo){
+    __printBackupMarcelo = {
+      tbl: tbl.innerHTML,
+      sub: sub ? sub.innerHTML : null
+    };
+  }
+
+  // Topo: deixar apenas a data do período.
+  if(sub) sub.textContent = '14 A 24 DE MAIO';
+
+  // Cabeçalho: centralizar por CSS, remover ícone PIX e trocar Devol. por Devolução.
+  const ths = tbl.querySelectorAll('thead th');
+  if(ths[4]) ths[4].textContent = 'PIX';
+  if(ths[8]) ths[8].textContent = 'Devolução';
+
+  // Corpo e total: tirar R$ só das colunas monetárias.
+  tbl.querySelectorAll('tbody tr, tfoot tr').forEach(tr=>{
+    const cells = tr.children;
+    for(let i=2;i<=8;i++){
+      if(cells[i]) cells[i].innerHTML = cells[i].innerHTML.replace(/R\$\s*/g,'').trim();
+    }
+  });
+
+  // Coluna Caixa: tirar CX/CV e qualquer marca auxiliar, deixando somente o número.
+  tbl.querySelectorAll('tbody tr').forEach(tr=>{
+    const c = tr.children[0];
+    if(!c) return;
+    const m = c.textContent.match(/\d+/);
+    if(m) c.innerHTML = '<b>'+m[0]+'</b>';
+  });
+}
+function restaurarRelatorioImpressaoMarcelo(){
+  if(!__printBackupMarcelo) return;
+  const tbl = document.getElementById('tbl');
+  const sub = document.querySelector('.report-sub');
+  if(tbl) tbl.innerHTML = __printBackupMarcelo.tbl;
+  if(sub && __printBackupMarcelo.sub !== null) sub.innerHTML = __printBackupMarcelo.sub;
+  __printBackupMarcelo = null;
+}
+window.addEventListener('beforeprint', prepararRelatorioImpressaoMarcelo);
+window.addEventListener('afterprint', restaurarRelatorioImpressaoMarcelo);
+
+</script>
 <style>
 :root{--cf:#8B1515;--bg:#fdf5e6;--card:#ffffff;--card2:#fff8f0;--border:#e8d5c0;--text:#2a0808;--muted:#8a6050;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -382,6 +435,39 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .sig-line{border-top:1px solid #111!important;height:1px!important;margin-bottom:3mm!important;}
   .sig-label{font-weight:700!important;text-transform:uppercase!important;}
 }
+
+
+/* ===== AJUSTES SOLICITADOS — SOMENTE RELATÓRIO DE IMPRESSÃO ===== */
+@media print{
+  /* Topo: remove a expressão "PROGRAMAÇÃO OFICIAL" apenas na impressão */
+  .report-sub{font-size:0!important;padding:3px 7px!important;}
+  .report-sub::after{content:"14 A 24 DE MAIO";font-size:11px!important;font-weight:900!important;}
+
+  /* Remove a linha "Por caixa" da impressão */
+  .report-actions{display:none!important;}
+
+  /* Cabeçalho da tabela centralizado, sem ícone do PIX */
+  .tbl thead th,
+  .tbl thead th:first-child,
+  .tbl thead th:nth-child(2){text-align:center!important;}
+  .tbl thead .pix-ico{display:none!important;}
+
+  /* Reforço para os campos de assinatura aparecerem no landscape */
+  .print-signatures{
+    display:grid!important;
+    visibility:visible!important;
+    opacity:1!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:36mm!important;
+    margin:8mm 8mm 0 8mm!important;
+    min-height:22mm!important;
+    page-break-inside:avoid!important;
+    break-inside:avoid!important;
+  }
+  .sig-box{display:block!important;text-align:center!important;}
+  .sig-line{display:block!important;border-top:1px solid #111!important;height:1px!important;margin-bottom:3mm!important;}
+}
+
 </style>
 </head>
 <body>
@@ -551,7 +637,7 @@ function renderCons(){
   document.getElementById('cards').innerHTML=resumo;
   const rows=lc.map(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const isV=cx.tipo==='V',isLar=cat==='laranja';const lib=d?(d.tagsLib||0):0;const cdGeral=!d?'':t.difGeral>=0?'dok':'derr';const rowBg=isV?'background:#faf5ff;':isLar?'background:#fff8f0;':'';const cxTag=isLar?'<span class="tag-lar">L</span>':'';const cxLbl=isV?'CV':'CX';return`<tr style="${rowBg}"><td><b>${cxLbl} ${cx.num}</b>${cxTag}</td><td>${cx.nome||'—'}</td><td class="n">${d?fmtNZ(d.deb||0):'—'}</td><td class="n">${d?fmtNZ(d.cred||0):'—'}</td><td class="n">${d?fmtNZ((d.pix||0)+(d.pixManual||0)):'—'}</td><td class="n">${cx.tipo==='D'&&d?fmtNZ(t.dinLiquido):'—'}</td><td class="n">${d?fmtNZ(t.totalComprovado):'—'}</td><td class="n ${cdGeral}">${d?fmtNZ(t.difGeral):'—'}</td><td class="n">${d?fmtNZ((d.devtag||0)+(d.devsaldo||0)):'—'}</td><td class="n">${d?fmtUnNZ(lib):'—'}</td></tr>`;}).join('');
   const totalRow=`<tfoot><tr><td colspan="2">Total</td><td class="n">${fmtNZ(td)}</td><td class="n">${fmtNZ(tc)}</td><td class="n">${fmtNZ(tp+tpm)}</td><td class="n">${fmtNZ(tdinLiq)}</td><td class="n">${fmtNZ(tcomp)}</td><td class="n ${tdifGeral>=0?'dok':'derr'}">${fmtNZ(tdifGeral)}</td><td class="n">${fmtNZ(tdevol)}</td><td class="n">${fmtUnNZ(tlib)}</td></tr></tfoot>`;
-  document.getElementById('tbl').innerHTML=`<thead><tr><th>Caixa</th><th>Nome</th><th class="n">Débito</th><th class="n">Crédito</th><th class="n"><img src="${PIX_ICON_OFICIAL}" class="pix-ico" alt="PIX"> PIX</th><th class="n">Din.Líq</th><th class="n">Apurado</th><th class="n">Dif.Geral</th><th class="n">Devol.</th><th class="n">TAGs lib.</th></tr></thead><tbody>${rows}</tbody>${totalRow}`;
+  document.getElementById('tbl').innerHTML=`<thead><tr><th>Caixa</th><th>Nome</th><th class="n">Débito</th><th class="n">Crédito</th><th class="n"><img src="${PIX_ICON_OFICIAL}" class="pix-ico" alt="PIX"> PIX</th><th class="n">Din.Líq</th><th class="n">Apurado</th><th class="n">Dif.Geral</th><th class="n">Devolução</th><th class="n">TAGs lib.</th></tr></thead><tbody>${rows}</tbody>${totalRow}`;
   const p=document.querySelector('#pnl-consolidado > div[style*="justify-content"]');
   if(p){p.className='report-actions';p.querySelector('span').className='ttl';p.querySelector('span').textContent='Por caixa';}
 }
@@ -902,6 +988,58 @@ restaurarLocal();
 renderCfg();
 document.getElementById('inp-data').addEventListener('change',salvarLocal);
 document.getElementById('inp-evento').addEventListener('change',salvarLocal);
+
+
+/* ===== LIMPEZA VISUAL SOMENTE NA IMPRESSÃO =====
+   Não altera a tela normal nem os dados: apenas prepara o DOM para o preview/impressão
+   e restaura tudo ao fechar a impressão. */
+let __printBackupMarcelo = null;
+function prepararRelatorioImpressaoMarcelo(){
+  const tbl = document.getElementById('tbl');
+  const sub = document.querySelector('.report-sub');
+  if(!tbl) return;
+  if(!__printBackupMarcelo){
+    __printBackupMarcelo = {
+      tbl: tbl.innerHTML,
+      sub: sub ? sub.innerHTML : null
+    };
+  }
+
+  // Topo: deixar apenas a data do período.
+  if(sub) sub.textContent = '14 A 24 DE MAIO';
+
+  // Cabeçalho: centralizar por CSS, remover ícone PIX e trocar Devol. por Devolução.
+  const ths = tbl.querySelectorAll('thead th');
+  if(ths[4]) ths[4].textContent = 'PIX';
+  if(ths[8]) ths[8].textContent = 'Devolução';
+
+  // Corpo e total: tirar R$ só das colunas monetárias.
+  tbl.querySelectorAll('tbody tr, tfoot tr').forEach(tr=>{
+    const cells = tr.children;
+    for(let i=2;i<=8;i++){
+      if(cells[i]) cells[i].innerHTML = cells[i].innerHTML.replace(/R\$\s*/g,'').trim();
+    }
+  });
+
+  // Coluna Caixa: tirar CX/CV e qualquer marca auxiliar, deixando somente o número.
+  tbl.querySelectorAll('tbody tr').forEach(tr=>{
+    const c = tr.children[0];
+    if(!c) return;
+    const m = c.textContent.match(/\d+/);
+    if(m) c.innerHTML = '<b>'+m[0]+'</b>';
+  });
+}
+function restaurarRelatorioImpressaoMarcelo(){
+  if(!__printBackupMarcelo) return;
+  const tbl = document.getElementById('tbl');
+  const sub = document.querySelector('.report-sub');
+  if(tbl) tbl.innerHTML = __printBackupMarcelo.tbl;
+  if(sub && __printBackupMarcelo.sub !== null) sub.innerHTML = __printBackupMarcelo.sub;
+  __printBackupMarcelo = null;
+}
+window.addEventListener('beforeprint', prepararRelatorioImpressaoMarcelo);
+window.addEventListener('afterprint', restaurarRelatorioImpressaoMarcelo);
+
 </script>
 </body>
 </html>
