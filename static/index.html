@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -221,7 +222,7 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
 
 
 
-/* ===== BLOCO ÚNICO FINAL DE IMPRESSÃO — A4 PAISAGEM 5mm ===== */
+/* ===== BLOCO ÚNICO FINAL DE IMPRESSÃO — A4 PAISAGEM 5mm / TABELA 12px REAL ===== */
 .print-signatures{display:none;}
 @media print{
   @page{size:A4 landscape;margin:5mm;}
@@ -240,16 +241,8 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .topo,.nav,#pnl-config,#pnl-lancamento,#barra,#ov,.btn-sec,.btn-xlsx,.btn-print,#fi,.report-actions button{
     display:none!important;
   }
-
-  /* Esconde avisos flutuantes/temporários que estavam entrando na impressão */
   body > div[style*="position:fixed"],
   body > div[style*="position: fixed"]{display:none!important;}
-
-  /* Segurança contra corte lateral: nunca força largura física maior que a área imprimível */
-  .report-wrap,.card,#pnl-consolidado,.tbl{
-    min-width:0!important;
-    max-width:100%!important;
-  }
 
   #pnl-consolidado{
     display:block!important;
@@ -259,7 +252,6 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
     width:100%!important;
     overflow:visible!important;
   }
-
   #print-hdr{display:none!important;}
   .card{
     margin:0!important;
@@ -271,12 +263,12 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
     max-width:none!important;
   }
 
-  /* Topo visual antigo, sem fonte Arial forçada */
+  /* Topo mantido no visual antigo, apenas compactado para liberar espaço à tabela */
   .report-wrap{
-    margin:0 0 4mm 0!important;
+    margin:0 0 3mm 0!important;
     padding:0!important;
     width:100%!important;
-    max-width:none!important;
+    max-width:100%!important;
     border:1px solid #ead8bd!important;
     border-radius:10px!important;
     overflow:hidden!important;
@@ -317,20 +309,21 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .report-actions{margin:0 0 2mm 0!important;}
   .report-actions .ttl{font-size:12px!important;font-weight:900!important;}
 
-  /* Tabela: landscape com colunas dinâmicas e sem conflitos antigos */
+  /* Tabela: fonte real 12px, sem zoom visual, com larguras proporcionais e padding mínimo */
   .tbl{
     width:100%!important;
     max-width:100%!important;
     border-collapse:collapse!important;
-    table-layout:auto!important;
+    table-layout:fixed!important;
     font-family:Arial,Helvetica,sans-serif!important;
     font-size:12px!important;
+    letter-spacing:-0.25px!important;
   }
   .tbl th,.tbl td,.tbl tfoot td{
     font-family:Arial,Helvetica,sans-serif!important;
     font-size:12px!important;
-    line-height:1.12!important;
-    padding:3px 4px!important;
+    line-height:1.08!important;
+    padding:2px 2px!important;
     vertical-align:middle!important;
     white-space:nowrap!important;
     word-break:normal!important;
@@ -350,23 +343,24 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .tbl th:first-child,.tbl td:first-child,
   .tbl th:nth-child(2),.tbl td:nth-child(2){text-align:left!important;}
   .tbl tfoot td{
+    font-size:12px!important;
     font-weight:700!important;
     background:#fff8f0!important;
     border-top:2px solid #ddc8b8!important;
   }
   .tbl tfoot td:first-child{text-align:left!important;}
 
-  /* Prioridades dinâmicas: só limites mínimos/máximos, sem largura fixa rígida */
-  .tbl th:nth-child(1),.tbl td:nth-child(1){min-width:42px!important;max-width:54px!important;}
-  .tbl th:nth-child(2),.tbl td:nth-child(2){min-width:72px!important;max-width:118px!important;}
-  .tbl th:nth-child(3),.tbl td:nth-child(3),
-  .tbl th:nth-child(4),.tbl td:nth-child(4),
-  .tbl th:nth-child(5),.tbl td:nth-child(5),
-  .tbl th:nth-child(6),.tbl td:nth-child(6){min-width:82px!important;}
-  .tbl th:nth-child(7),.tbl td:nth-child(7){min-width:96px!important;}
-  .tbl th:nth-child(8),.tbl td:nth-child(8){min-width:78px!important;}
-  .tbl th:nth-child(9),.tbl td:nth-child(9){min-width:82px!important;}
-  .tbl th:nth-child(10),.tbl td:nth-child(10){min-width:58px!important;text-align:center!important;}
+  /* Distribuição calculada para A4 landscape com 10 colunas e Arial 12px */
+  .tbl th:nth-child(1),.tbl td:nth-child(1){width:4.5%!important;}
+  .tbl th:nth-child(2),.tbl td:nth-child(2){width:8.5%!important;overflow:hidden!important;text-overflow:clip!important;}
+  .tbl th:nth-child(3),.tbl td:nth-child(3){width:10.4%!important;}
+  .tbl th:nth-child(4),.tbl td:nth-child(4){width:10.4%!important;}
+  .tbl th:nth-child(5),.tbl td:nth-child(5){width:9.4%!important;}
+  .tbl th:nth-child(6),.tbl td:nth-child(6){width:9.4%!important;}
+  .tbl th:nth-child(7),.tbl td:nth-child(7){width:12%!important;}
+  .tbl th:nth-child(8),.tbl td:nth-child(8){width:9.5%!important;}
+  .tbl th:nth-child(9),.tbl td:nth-child(9){width:10%!important;}
+  .tbl th:nth-child(10),.tbl td:nth-child(10){width:6%!important;text-align:center!important;}
 
   .tbl td:nth-child(7){background:#eaf7ef!important;font-weight:800!important;}
   .tbl td:nth-child(9){background:#fdecec!important;color:#b71c1c!important;font-weight:800!important;}
