@@ -453,6 +453,59 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .sig-label{font-weight:700;text-transform:uppercase;letter-spacing:.25px;}
 }
 
+
+/* ===== AJUSTE FINAL MARCELO — topo antigo + tabela landscape legível ===== */
+@media print{
+  /* Mantém o topo/resumos com a fonte visual antiga do sistema, sem forçar Arial no cabeçalho */
+  .report-wrap,
+  .report-wrap *:not(.tbl):not(.tbl *){
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;
+  }
+
+  /* A tabela fica em Arial 12px, inclusive colunas que estavam herdando regra antiga menor */
+  .tbl,
+  .tbl thead th,
+  .tbl tbody td,
+  .tbl tbody td:nth-child(7),
+  .tbl tbody td:nth-child(9),
+  .tbl tfoot td,
+  .tbl tfoot td:nth-child(7),
+  .tbl tfoot td:nth-child(8),
+  .tbl tfoot td:nth-child(9){
+    font-family:Arial,Helvetica,sans-serif!important;
+    font-size:12px!important;
+    line-height:1.12!important;
+    white-space:nowrap!important;
+    word-break:keep-all!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+
+  .tbl thead th,
+  .tbl tfoot td,
+  .tbl tfoot td:nth-child(7),
+  .tbl tfoot td:nth-child(8),
+  .tbl tfoot td:nth-child(9){
+    font-weight:700!important;
+  }
+
+  /* Corrige especificamente Apurado, Dif.Geral e Devol. no corpo e no Total */
+  .tbl tbody td:nth-child(7),
+  .tbl tbody td:nth-child(8),
+  .tbl tbody td:nth-child(9),
+  .tbl tfoot td:nth-child(7),
+  .tbl tfoot td:nth-child(8),
+  .tbl tfoot td:nth-child(9){
+    font-size:12px!important;
+    letter-spacing:-.15px!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+  }
+
+  /* Mantém o comportamento dinâmico das colunas em landscape */
+  .tbl{table-layout:auto!important;width:100%!important;max-width:100%!important;}
+  .tbl th,.tbl td{width:auto!important;max-width:none!important;}
+}
+
 </style>
 </head>
 <body>
