@@ -3,6 +3,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -238,6 +239,66 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
 
 
 
+
+
+
+/* ===== PADRONIZAÇÃO VISUAL DO DASHBOARD WEB COM O RELATÓRIO ===== */
+@media screen{
+  #pnl-consolidado{
+    max-width:1180px!important;
+    padding:18px!important;
+  }
+  #pnl-consolidado #cards{
+    margin-bottom:14px!important;
+  }
+  #pnl-consolidado .report-wrap{
+    border-radius:16px!important;
+    overflow:hidden!important;
+    box-shadow:0 6px 18px rgba(139,21,21,.10)!important;
+  }
+  #pnl-consolidado .kpi-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:10px!important;
+    padding:12px!important;
+  }
+  #pnl-consolidado .kpi-card{
+    min-height:76px!important;
+    padding:12px!important;
+  }
+  #pnl-consolidado .kpi-card .vl{
+    font-size:19px!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+  }
+  #pnl-consolidado .group-strip{
+    display:grid!important;
+    grid-template-columns:repeat(2,1fr)!important;
+    gap:0!important;
+    margin:8px 12px 12px!important;
+  }
+  #pnl-consolidado .group-box.g1{background:#fff8dc!important;color:#7a4a00!important;}
+  #pnl-consolidado .group-box.g2{background:#fff3e0!important;color:#bd4b00!important;}
+  #pnl-consolidado .group-box.g3{background:#e3f2fd!important;color:#1565c0!important;}
+  #pnl-consolidado .group-box.g4{background:#f4eaff!important;color:#5b21b6!important;}
+  #pnl-consolidado .card{
+    border-radius:14px!important;
+    border:1px solid #ead8bd!important;
+    box-shadow:0 3px 12px rgba(139,21,21,.08)!important;
+  }
+  #pnl-consolidado .tbl th{
+    background:#8B1515!important;
+    color:#fff!important;
+    border-bottom:2px solid #D9A328!important;
+  }
+  #pnl-consolidado .tbl td:nth-child(7){background:#eaf7ef!important;font-weight:800!important;}
+  #pnl-consolidado .tbl td:nth-child(9){background:#fdecec!important;color:#b71c1c!important;font-weight:800!important;}
+  #pnl-consolidado .tbl td:nth-child(10){background:#fff8dc!important;color:#7a4a00!important;font-weight:800!important;}
+}
+@media screen and (max-width:800px){
+  #pnl-consolidado{padding:12px!important;}
+  #pnl-consolidado .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  #pnl-consolidado .group-strip{grid-template-columns:1fr!important;}
+}
 
 /* ===== BLOCO ÚNICO FINAL DE IMPRESSÃO — A4 PAISAGEM 5mm / TABELA 12px REAL ===== */
 .print-signatures{display:none;}
@@ -613,6 +674,8 @@ async function expXLSX(){
   const bdMed=()=>{const s={style:'medium',color:{argb:'FF888888'}};return{top:s,bottom:s,left:s,right:s};};
   function brl(v){if(v===null||v===undefined||v===''||Math.abs(Number(v||0))<0.005)return '';const neg=v<0,n=Math.abs(Math.round(v));const s=n.toLocaleString('pt-BR');return neg?`R$ -${s}`:`R$ ${s}`;}
   function brlUn(v){return Number(v||0)===0?'':Math.round(v).toLocaleString('pt-BR')+' un';}
+  function rowBgByCat(cat){return cat==='toten2'?P.lilasBg:cat==='toten1'?P.orangeBg:cat==='tarde'?P.blueBg:P.amYellowBg;}
+  function rowFgByCat(cat){return cat==='toten2'?P.lilas:cat==='toten1'?P.orangeDark:cat==='tarde'?P.blue:P.amYellow;}
   function setCell(ws,row,col,val,opts={}){const cell=ws.getCell(row,col);cell.value=val;if(opts.fill)cell.fill=opts.fill;if(opts.font)cell.font=opts.font;if(opts.align)cell.alignment=opts.align;if(opts.border)cell.border=opts.border;return cell;}
   const active=ST.caixas.filter(cx=>cx.dados&&calcTot(cx).totalComprovado!==0);
   let totDeb=0,totCred=0,totPix=0,totDin=0,totApur=0,totFil=0,totDif=0,totTagLib=0,totTagDev=0,totResgate=0,tcompNorm=0,tcompLar=0,tcompTarde=0,tcompVol=0;
@@ -643,26 +706,27 @@ async function expXLSX(){
   kpi(11,4,'TAGs LIBERADAS',brlUn(totTagLib),P.amber,'FFFFFDE7',P.amber,'🏷️');
   kpi(11,6,'TOTAL DEVOLUÇÕES',brl(totDevol),P.red,'FFFFEBEE',P.red,'↩️');
   divider(13);
-  ws1.getRow(14).height=12;
-  ws1.mergeCells(14,2,14,3);setCell(ws1,14,2,'🟡 CX 1–27: '+brl(tcompNorm),{fill:F('FFFFFDE7'),font:ft(true,P.amYellow,9),align:al('center')});
-  ws1.mergeCells(14,4,14,5);setCell(ws1,14,4,'🟠 Toten 28–37: '+brl(tcompLar),{fill:F(P.orangeBg),font:ft(true,P.orangeDark,9),align:al('center')});
-  ws1.mergeCells(14,6,14,7);setCell(ws1,14,6,'🟣 Volante 59–80: '+brl(tcompVol),{fill:F(P.lilasBg),font:ft(true,P.lilas,9),align:al('center')});
-  divider(15);
-  ws1.getRow(16).height=20;ws1.mergeCells(16,2,16,7);
-  setCell(ws1,16,2,`STATUS:   ✅ Zerados: ${nOk}   |   📈 Sobra: ${nPos}   |   📉 Falta: ${nNeg}   |   🏷️ TAGs lib.: ${Math.round(totTagLib)} un   |   TAG dev.: ${brl(totTagDev)}`,{fill:F('FF1E4B7A'),font:ft(true,P.white,9),align:al('center')});
-  ws1.getRow(17).height=4;ws1.mergeCells(17,2,17,7);ws1.getCell(17,2).fill=F(P.gray3);
-  ws1.getRow(18).height=18;ws1.mergeCells(18,2,18,7);
-  setCell(ws1,18,2,'RESULTADO POR CAIXA',{fill:F('FF8B1515'),font:ft(true,P.white,10),align:al('center')});
-  ws1.getRow(19).height=20;
-  [['CX','2A4A6A'],['OPERADOR','2A4A6A'],['DEB+CRED+PIX','2A5298'],['DINHEIRO','2E7030'],['TOTAL APURADO','1565C0'],['DIF. GERAL','2A4A6A']].forEach(([h,bg],i)=>{setCell(ws1,19,i+2,h,{fill:F('FF'+bg),font:ft(true,P.white,9),align:al('center'),border:bdThin()});});
-  let dr=20;
+  ws1.getRow(14).height=16;ws1.getRow(15).height=16;
+  ws1.mergeCells(14,2,14,4);setCell(ws1,14,2,'🟡 CX 1–27: '+brl(tcompNorm),{fill:F('FFFFFDE7'),font:ft(true,P.amYellow,9),align:al('center')});
+  ws1.mergeCells(14,5,14,7);setCell(ws1,14,5,'🟠 Toten 28–37: '+brl(tcompLar),{fill:F(P.orangeBg),font:ft(true,P.orangeDark,9),align:al('center')});
+  ws1.mergeCells(15,2,15,4);setCell(ws1,15,2,'🔵 Tarde 38–58: '+brl(tcompTarde),{fill:F(P.blueBg),font:ft(true,P.blue,9),align:al('center')});
+  ws1.mergeCells(15,5,15,7);setCell(ws1,15,5,'🟣 Volante 59–80: '+brl(tcompVol),{fill:F(P.lilasBg),font:ft(true,P.lilas,9),align:al('center')});
+  divider(16);
+  ws1.getRow(17).height=20;ws1.mergeCells(17,2,17,7);
+  setCell(ws1,17,2,`STATUS:   ✅ Zerados: ${nOk}   |   📈 Sobra: ${nPos}   |   📉 Falta: ${nNeg}   |   🏷️ TAGs lib.: ${Math.round(totTagLib)} un   |   TAG dev.: ${brl(totTagDev)}`,{fill:F('FF1E4B7A'),font:ft(true,P.white,9),align:al('center')});
+  ws1.getRow(18).height=4;ws1.mergeCells(18,2,18,7);ws1.getCell(18,2).fill=F(P.gray3);
+  ws1.getRow(19).height=18;ws1.mergeCells(19,2,19,7);
+  setCell(ws1,19,2,'RESULTADO POR CAIXA',{fill:F('FF8B1515'),font:ft(true,P.white,10),align:al('center')});
+  ws1.getRow(20).height=20;
+  [['CX','2A4A6A'],['OPERADOR','2A4A6A'],['DEB+CRED+PIX','2A5298'],['DINHEIRO','2E7030'],['TOTAL APURADO','1565C0'],['DIF. GERAL','2A4A6A']].forEach(([h,bg],i)=>{setCell(ws1,20,i+2,h,{fill:F('FF'+bg),font:ft(true,P.white,9),align:al('center'),border:bdThin()});});
+  let dr=21;
   active.forEach(cx=>{
     const d=cx.dados,t=calcTot(cx),nome=cx.nome||'—',dif=t.difGeral;
     const cartoes=(d.deb||0)+(d.cred||0)+(d.pix||0)+(d.pixManual||0);
     const cat=getCat(cx);
-    const baseBg=dr%2===0?P.gray1:P.white,difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
-    const cxNumBg=cat==='toten2'?P.lilasBg:cat==='toten1'?P.orangeBg:cat==='tarde'?P.blueBg:P.amYellowBg;
-    const cxNumFc=cat==='toten2'?P.lilas:cat==='toten1'?P.orangeDark:cat==='tarde'?P.blue:P.amYellow;
+    const baseBg=rowBgByCat(cat),difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
+    const cxNumBg=rowBgByCat(cat);
+    const cxNumFc=rowFgByCat(cat);
     ws1.getRow(dr).height=17;
     setCell(ws1,dr,2,'CX '+cx.num,{fill:F(cxNumBg),font:ft(true,cxNumFc,10),align:al('center'),border:bdThin()});
     setCell(ws1,dr,3,nome,{fill:F(baseBg),font:ft(false,P.text2,10),align:al('center'),border:bdThin()});
@@ -700,9 +764,10 @@ ${val}`,{fill:F(bg),font:ft(true,fc,10),align:al('center',null,true),border:bdTh
   try{const pixImgId2=wb.addImage({base64:PIX_ICON_OFICIAL,extension:'png'});ws2.addImage(pixImgId2,{tl:{col:3.45,row:4.15},ext:{width:20,height:20}});}catch(e){}
   ws2.getRow(6).height=4;for(let c=1;c<=nc2;c++)ws2.getCell(6,c).fill=F('FFF5E6D4');
   ws2.getRow(7).height=26;
-  ws2.mergeCells(7,1,7,4);setCell(ws2,7,1,'🟡 CX 1–27: '+brl(tcompNorm),{fill:F('FFFFFDE7'),font:ft(true,P.amYellow,11),align:al('center'),border:bdThin()});
-  ws2.mergeCells(7,5,7,8);setCell(ws2,7,5,'🟠 Toten 28–37: '+brl(tcompLar),{fill:F(P.orangeBg),font:ft(true,P.orangeDark,11),align:al('center'),border:bdThin()});
-  ws2.mergeCells(7,9,7,13);setCell(ws2,7,9,'🟣 Volante 59–80: '+brl(tcompVol),{fill:F(P.lilasBg),font:ft(true,P.lilas,11),align:al('center'),border:bdThin()});
+  ws2.mergeCells(7,1,7,3);setCell(ws2,7,1,'🟡 CX 1–27: '+brl(tcompNorm),{fill:F('FFFFFDE7'),font:ft(true,P.amYellow,10),align:al('center'),border:bdThin()});
+  ws2.mergeCells(7,4,7,6);setCell(ws2,7,4,'🟠 Toten 28–37: '+brl(tcompLar),{fill:F(P.orangeBg),font:ft(true,P.orangeDark,10),align:al('center'),border:bdThin()});
+  ws2.mergeCells(7,7,7,9);setCell(ws2,7,7,'🔵 Tarde 38–58: '+brl(tcompTarde),{fill:F(P.blueBg),font:ft(true,P.blue,10),align:al('center'),border:bdThin()});
+  ws2.mergeCells(7,10,7,13);setCell(ws2,7,10,'🟣 Volante 59–80: '+brl(tcompVol),{fill:F(P.lilasBg),font:ft(true,P.lilas,10),align:al('center'),border:bdThin()});
   ws2.getRow(8).height=6;for(let c=1;c<=nc2;c++)ws2.getCell(8,c).fill=F('FFD9A328');
   ws2.getRow(9).height=22;ws2.mergeCells(9,1,9,nc2);
   setCell(ws2,9,1,'DETALHAMENTO POR CAIXA',{fill:F('FF8B1515'),font:ft(true,P.white,12),align:al('center')});
@@ -713,9 +778,9 @@ ${val}`,{fill:F(bg),font:ft(true,fc,10),align:al('center',null,true),border:bdTh
     const d=cx.dados,t=calcTot(cx),nome=cx.nome||'—',dif=t.difGeral;
     const tagDevRS=(d.devtag||0),resgate=d.devsaldo||0,tagLibV=d.tagsLib||0;
     const cat=getCat(cx);
-    const baseBg=dr2%2===0?P.gray1:P.white,difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
-    const cxNumBg=cat==='toten2'?P.lilasBg:cat==='toten1'?P.orangeBg:cat==='tarde'?P.blueBg:P.amYellowBg;
-    const cxNumFc=cat==='toten2'?P.lilas:cat==='toten1'?P.orangeDark:cat==='tarde'?P.blue:P.amYellow;
+    const baseBg=rowBgByCat(cat),difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
+    const cxNumBg=rowBgByCat(cat);
+    const cxNumFc=rowFgByCat(cat);
     ws2.getRow(dr2).height=19;
     [['CX '+cx.num,cxNumBg,cxNumFc,true,'center'],
      [nome,baseBg,P.text2,false,'center',true],
@@ -750,9 +815,9 @@ ${val}`,{fill:F(bg),font:ft(true,fc,10),align:al('center',null,true),border:bdTh
     const d=cx.dados,t=calcTot(cx);if(!t.dinLiquido&&!d.din)return;
     const cat=getCat(cx);
     const dif=t.difDin,sang=(d.s1||0)+(d.s2||0)+(d.s3||0)+(d.s4||0)+(d.s5||0),esp=(d.din||0)-(d.trocoInicial||0)+sang;
-    const baseBg=dr3%2===0?P.gray1:P.white,difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
-    const cxNumBg=cat==='laranja'?P.orangeBg:'FFD4EDDA';
-    const cxNumFc=cat==='laranja'?P.orangeDark:'FF1B5E20';
+    const baseBg=rowBgByCat(cat),difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
+    const cxNumBg=rowBgByCat(cat);
+    const cxNumFc=rowFgByCat(cat);
     ws3.getRow(dr3).height=19;
     ['CX '+cx.num,(cx.nome||'—'),(d.din||0),(d.trocoInicial||0),(d.s1||0),(d.s2||0),(d.s3||0),(d.s4||0),(d.s5||0),(d.r1||0),(d.r2||0),(d.r3||0),esp,(d.fisico||0),t.dinLiquido,dif].forEach((v,i)=>{
       let bg=baseBg,fc=P.text,bold=false;
@@ -794,6 +859,8 @@ async function expXLSX(){
   const bdMed=()=>{const s={style:'medium',color:{argb:'FF888888'}};return{top:s,bottom:s,left:s,right:s};};
   function brl(v){if(v===null||v===undefined||v===''||Math.abs(Number(v||0))<0.005)return '';return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2});}
   function brlUn(v){return Number(v||0)===0?'':Math.round(v).toLocaleString('pt-BR')+' un';}
+  function rowBgByCat(cat){return cat==='toten2'?P.lilasBg:cat==='toten1'?P.orangeBg:cat==='tarde'?P.blueBg:P.amYellowBg;}
+  function rowFgByCat(cat){return cat==='toten2'?P.lilas:cat==='toten1'?P.orangeDark:cat==='tarde'?P.blue:P.amYellow;}
   function setCell(ws,row,col,val,opts={}){const cell=ws.getCell(row,col);cell.value=val;if(opts.fill)cell.fill=opts.fill;if(opts.font)cell.font=opts.font;if(opts.align)cell.alignment=opts.align;if(opts.border)cell.border=opts.border;return cell;}
   const active=ST.caixas.filter(cx=>cx.dados&&calcTot(cx).totalComprovado!==0);
   let totDeb=0,totCred=0,totPix=0,totDin=0,totApur=0,totFil=0,totDif=0,totTagLib=0,totTagDev=0,totResgate=0,tcompNorm=0,tcompLar=0,tcompTarde=0,tcompVol=0;
@@ -834,15 +901,15 @@ async function expXLSX(){
   ws1.getRow(18).height=18;ws1.mergeCells(18,2,18,7);
   setCell(ws1,18,2,'RESULTADO POR CAIXA',{fill:F(P.blue),font:ft(true,P.white,10),align:al('center')});
   ws1.getRow(19).height=20;
-  [['CX','2A4A6A'],['OPERADOR','2A4A6A'],['DEB+CRED+PIX','2A5298'],['DINHEIRO','2E7030'],['TOTAL APURADO','1565C0'],['DIF. GERAL','2A4A6A']].forEach(([h,bg],i)=>{setCell(ws1,19,i+2,h,{fill:F('FF'+bg),font:ft(true,P.white,9),align:al('center'),border:bdThin()});});
-  let dr=20;
+  [['CX','2A4A6A'],['OPERADOR','2A4A6A'],['DEB+CRED+PIX','2A5298'],['DINHEIRO','2E7030'],['TOTAL APURADO','1565C0'],['DIF. GERAL','2A4A6A']].forEach(([h,bg],i)=>{setCell(ws1,20,i+2,h,{fill:F('FF'+bg),font:ft(true,P.white,9),align:al('center'),border:bdThin()});});
+  let dr=21;
   active.forEach(cx=>{
     const d=cx.dados,t=calcTot(cx),nome=cx.nome||'—',dif=t.difGeral;
     const cartoes=(d.deb||0)+(d.cred||0)+(d.pix||0)+(d.pixManual||0);
     const cat=getCat(cx);
-    const baseBg=dr%2===0?P.gray1:P.white,difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
-    const cxNumBg=cat==='toten2'?P.lilasBg:cat==='toten1'?P.orangeBg:cat==='tarde'?P.blueBg:P.amYellowBg;
-    const cxNumFc=cat==='toten2'?P.lilas:cat==='toten1'?P.orangeDark:cat==='tarde'?P.blue:P.amYellow;
+    const baseBg=rowBgByCat(cat),difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
+    const cxNumBg=rowBgByCat(cat);
+    const cxNumFc=rowFgByCat(cat);
     ws1.getRow(dr).height=17;
     setCell(ws1,dr,2,'CX '+cx.num,{fill:F(cxNumBg),font:ft(true,cxNumFc,10),align:al('center'),border:bdThin()});
     setCell(ws1,dr,3,nome,{fill:F(baseBg),font:ft(false,P.text2,10),align:al('center'),border:bdThin()});
@@ -871,9 +938,9 @@ async function expXLSX(){
     const d=cx.dados,t=calcTot(cx),nome=cx.nome||'—',dif=t.difGeral;
     const tagDevRS=(d.devtag||0),resgate=d.devsaldo||0,tagLibV=d.tagsLib||0;
     const cat=getCat(cx);
-    const baseBg=dr2%2===0?P.gray1:P.white,difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
-    const cxNumBg=cat==='toten2'?P.lilasBg:cat==='toten1'?P.orangeBg:cat==='tarde'?P.blueBg:P.amYellowBg;
-    const cxNumFc=cat==='toten2'?P.lilas:cat==='toten1'?P.orangeDark:cat==='tarde'?P.blue:P.amYellow;
+    const baseBg=rowBgByCat(cat),difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
+    const cxNumBg=rowBgByCat(cat);
+    const cxNumFc=rowFgByCat(cat);
     ws2.getRow(dr2).height=19;
     [['CX '+cx.num,cxNumBg,cxNumFc,true,'center'],
      [nome,baseBg,P.text2,false,'center',true],
@@ -908,9 +975,9 @@ async function expXLSX(){
     const d=cx.dados,t=calcTot(cx);if(!t.dinLiquido&&!d.din)return;
     const cat=getCat(cx);
     const dif=t.difDin,sang=(d.s1||0)+(d.s2||0)+(d.s3||0)+(d.s4||0)+(d.s5||0),esp=(d.din||0)-(d.trocoInicial||0)+sang;
-    const baseBg=dr3%2===0?P.gray1:P.white,difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
-    const cxNumBg=cat==='laranja'?P.orangeBg:'FFD4EDDA';
-    const cxNumFc=cat==='laranja'?P.orangeDark:'FF1B5E20';
+    const baseBg=rowBgByCat(cat),difBg=dif>=0?'FFE8F5E9':'FFFFEBEE',difFc=dif>=0?P.green:P.red;
+    const cxNumBg=rowBgByCat(cat);
+    const cxNumFc=rowFgByCat(cat);
     ws3.getRow(dr3).height=19;
     ['CX '+cx.num,(cx.nome||'—'),(d.din||0),(d.trocoInicial||0),(d.s1||0),(d.s2||0),(d.s3||0),(d.s4||0),(d.s5||0),(d.r1||0),(d.r2||0),(d.r3||0),esp,(d.fisico||0),t.dinLiquido,dif].forEach((v,i)=>{
       let bg=baseBg,fc=P.text,bold=false;
