@@ -266,13 +266,13 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
 
   /* Topo mantido no visual antigo, apenas compactado para liberar espaço à tabela */
   .report-wrap{
-    margin:0 0 3mm 0!important;
+    margin:0 auto 3mm auto!important;
     padding:0!important;
-    width:100%!important;
-    max-width:100%!important;
+    width:99.2%!important;
+    max-width:99.2%!important;
     border:1px solid #ead8bd!important;
     border-radius:10px!important;
-    overflow:visible!important;
+    overflow:hidden!important;
     box-shadow:none!important;
     page-break-inside:avoid!important;
   }
@@ -292,15 +292,14 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
 
   .kpi-grid{
     grid-template-columns:repeat(4,1fr)!important;
-    gap:5px!important;
-    padding:6px 6px 5px!important;
+    gap:6px!important;
+    padding:7px 7px 5px!important;
   }
-  .kpi-card{min-height:56px!important;padding:7px 5px!important;border-radius:8px!important;gap:4px!important;min-width:0!important;overflow:visible!important;}
-  .kpi-card > div:last-child{min-width:0!important;overflow:visible!important;flex:1 1 auto!important;}
-  .kpi-card .ico{font-size:18px!important;width:20px!important;min-width:20px!important;}
-  .pix-ico{width:17px!important;height:17px!important;}
-  .kpi-card .lb{font-size:9.2px!important;line-height:1.08!important;white-space:nowrap!important;letter-spacing:-0.15px!important;}
-  .kpi-card .vl{font-size:15.4px!important;line-height:1.08!important;white-space:nowrap!important;letter-spacing:-0.45px!important;display:block!important;overflow:visible!important;}
+  .kpi-card{min-height:58px!important;padding:8px 9px!important;border-radius:8px!important;gap:7px!important;}
+  .kpi-card .ico{font-size:20px!important;width:24px!important;min-width:24px!important;}
+  .pix-ico{width:20px!important;height:20px!important;}
+  .kpi-card .lb{font-size:9.6px!important;line-height:1.08!important;}
+  .kpi-card .vl{font-size:16.5px!important;line-height:1.08!important;white-space:nowrap!important;}
 
   .group-strip{margin:5px 7px 6px!important;border-radius:8px!important;}
   .group-box{padding:7px 8px!important;}
@@ -308,13 +307,13 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .group-box .gm{font-size:8.5px!important;}
   .group-box .gm b{font-size:13.8px!important;margin-top:1px!important;}
 
-  .report-actions{display:none!important;margin:0!important;}
+  .report-actions{margin:0 0 2mm 0!important;}
   .report-actions .ttl{font-size:12px!important;font-weight:900!important;}
 
   /* Tabela: fonte real 12px, sem zoom visual, com larguras proporcionais e padding mínimo */
   .tbl{
-    width:98.6%!important;
-    max-width:98.6%!important;
+    width:99.2%!important;
+    max-width:99.2%!important;
     margin-left:auto!important;
     margin-right:auto!important;
     border-collapse:collapse!important;
@@ -377,14 +376,14 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .print-signatures{
     display:grid!important;
     grid-template-columns:1fr 1fr!important;
-    gap:28mm!important;
-    margin:7mm 10mm 0 10mm!important;
+    gap:36mm!important;
+    margin:8mm 6mm 0 6mm!important;
     padding:0!important;
     page-break-inside:avoid!important;
   }
   .sig-box{text-align:center!important;font-family:Arial,Helvetica,sans-serif!important;font-size:12px!important;color:#111!important;}
   .sig-line{border-top:1px solid #111!important;height:1px!important;margin-bottom:3mm!important;}
-  .sig-label{font-weight:700!important;text-transform:uppercase!important;white-space:nowrap!important;}
+  .sig-label{font-weight:700!important;text-transform:uppercase!important;}
 }
 </style>
 </head>
@@ -550,7 +549,7 @@ function renderCons(){
   const tFilipeta=lc.reduce((s,cx)=>s+(cx.dados.totalFilipeta||0),0);
   const dt=reportDate(),ev=reportEvento(),gerado=new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
   const kpi=(cls,ico,lb,vl)=>`<div class="kpi-card ${cls||''}"><div class="ico">${ico}</div><div><div class="lb">${lb}</div><div class="vl">${vl}</div></div></div>`;
-  const group=(cls,title,g)=>`<div class="group-box ${cls}"><div class="gt">${title}</div><div class="gm"><span>Apurado<b>${fmtNZ(g.apur)}</b></span></div></div>`;
+  const group=(cls,title,g)=>`<div class="group-box ${cls}"><div class="gt">${title}</div><div class="gm"><b>${fmtNZ(g.apur)}</b></div></div>`;
   const resumo=`<div class="report-wrap"><div class="report-head"><div class="report-brand"><img src="${LOGO_OFICIAL_DIVINO}" alt="Festa do Divino 2026"><div><div class="report-title">Festa do Divino 2026</div><div class="report-sub">PROGRAMAÇÃO OFICIAL • 14 A 24 DE MAIO</div><div class="report-city">MOGI DAS CRUZES - SP</div></div></div><div class="report-datebox"><div class="label">DATA DO RELATÓRIO</div><div class="date">${dt}</div><div class="gen">Gerado em: ${gerado}</div></div></div><div class="kpi-grid">${kpi('main','💰','Total Apurado',fmtNZ(tcomp))}${kpi(tdifGeral>=0?'ok':'bad','⚖️','Diferença Geral',fmtNZ(tdifGeral))}${kpi('bad','↩️','Total Devoluções',fmtNZ(tdevol))}${kpi('tag','🏷️','TAGs Liberadas',fmtUnNZ(tlib))}${kpi('ok','💵','Dinheiro Apurado',fmtNZ(tdinLiq))}${kpi('',`<img src="${PIX_ICON_OFICIAL}" class="pix-ico" alt="PIX">`,'Total PIX',fmtNZ(tp+tpm))}${kpi('','💳','Total Débito',fmtNZ(td))}${kpi('','💳','Total Crédito',fmtNZ(tc))}</div><div class="group-strip">${group('g1','🟡 CX 1–24',grupos.g1)}${group('g2','🟠 CX 25–40',grupos.g2)}${group('g3','🟣 Volantes 41–68',grupos.g3)}</div></div>`;
   document.getElementById('cards').innerHTML=resumo;
   const rows=lc.map(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const isV=cx.tipo==='V',isLar=cat==='laranja';const lib=d?(d.tagsLib||0):0;const cdGeral=!d?'':t.difGeral>=0?'dok':'derr';const rowBg=isV?'background:#faf5ff;':isLar?'background:#fff8f0;':'';const cxTag=isLar?'<span class="tag-lar">L</span>':'';const cxLbl=isV?'CV':'CX';return`<tr style="${rowBg}"><td><b>${cxLbl} ${cx.num}</b>${cxTag}</td><td>${cx.nome||'—'}</td><td class="n">${d?fmtNZ(d.deb||0):'—'}</td><td class="n">${d?fmtNZ(d.cred||0):'—'}</td><td class="n">${d?fmtNZ((d.pix||0)+(d.pixManual||0)):'—'}</td><td class="n">${cx.tipo==='D'&&d?fmtNZ(t.dinLiquido):'—'}</td><td class="n">${d?fmtNZ(t.totalComprovado):'—'}</td><td class="n ${cdGeral}">${d?fmtNZ(t.difGeral):'—'}</td><td class="n">${d?fmtNZ((d.devtag||0)+(d.devsaldo||0)):'—'}</td><td class="n">${d?fmtUnNZ(lib):'—'}</td></tr>`;}).join('');
@@ -906,43 +905,6 @@ restaurarLocal();
 renderCfg();
 document.getElementById('inp-data').addEventListener('change',salvarLocal);
 document.getElementById('inp-evento').addEventListener('change',salvarLocal);
-
-
-/* ===== AJUSTE PONTUAL DE IMPRESSÃO — sem reestruturar a tabela ===== */
-let __printBackupHTML = null;
-function __limparRelatorioParaImpressao(){
-  const tbl = document.getElementById('tbl');
-  if(!tbl) return;
-  __printBackupHTML = tbl.innerHTML;
-
-  const sub = document.querySelector('.report-sub');
-  if(sub){ sub.dataset.oldPrintText = sub.textContent; sub.textContent = '14 A 24 DE MAIO'; }
-
-  const ths = tbl.querySelectorAll('thead th');
-  const headers = ['Caixa','Nome','Débito','Crédito','PIX','Din.Líq','Apurado','Dif.Geral','Devolução','TAGs lib.'];
-  ths.forEach((th,i)=>{ if(headers[i]){ th.innerHTML = headers[i]; th.style.textAlign = 'center'; }});
-
-  const moneyCols = [3,4,5,6,7,8,9];
-  tbl.querySelectorAll('tbody tr, tfoot tr').forEach(tr=>{
-    const cells = tr.children;
-    if(cells[0]){
-      cells[0].innerHTML = cells[0].textContent.replace(/\b(CX|CV)\s*/gi,'').trim();
-    }
-    moneyCols.forEach(n=>{
-      const td = cells[n-1];
-      if(td){ td.innerHTML = td.textContent.replace(/R\$\s*/g,'').trim(); }
-    });
-  });
-}
-function __restaurarRelatorioDepoisImpressao(){
-  const tbl = document.getElementById('tbl');
-  if(tbl && __printBackupHTML!==null){ tbl.innerHTML = __printBackupHTML; __printBackupHTML = null; }
-  const sub = document.querySelector('.report-sub');
-  if(sub && sub.dataset.oldPrintText){ sub.textContent = sub.dataset.oldPrintText; delete sub.dataset.oldPrintText; }
-}
-window.addEventListener('beforeprint', __limparRelatorioParaImpressao);
-window.addEventListener('afterprint', __restaurarRelatorioDepoisImpressao);
-
 </script>
 </body>
 </html>
