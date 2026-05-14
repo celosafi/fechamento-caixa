@@ -1025,6 +1025,196 @@ function __restaurarRelatorioDepoisImpressao(){
 window.addEventListener('beforeprint', __limparRelatorioParaImpressao);
 window.addEventListener('afterprint', __restaurarRelatorioDepoisImpressao);
 
+
+
+/* ===== CORREÇÃO FINAL — EXPORTAÇÃO EXCEL + LÓGICA DEV. ÁGUA + VISUAL DO RELATÓRIO ===== */
+function __numExcel(v){ return Number(v||0); }
+function __blankZero(v){ return Math.abs(Number(v||0)) < 0.000001 ? null : Number(v||0); }
+function __catExcel(cx){
+  const c = getCat(cx);
+  if(c === 'normal') return {nome:'CX 1–27', fill:'FFFFF8DC', font:'FF7A4A00', tag:'g1'};
+  if(c === 'toten1') return {nome:'Toten 28–37', fill:'FFFFF3E0', font:'FFBD4B00', tag:'g2'};
+  if(c === 'tarde') return {nome:'Tarde 38–58', fill:'FFE3F2FD', font:'FF1565C0', tag:'g3'};
+  return {nome:'Volante 59–80', fill:'FFF4EAFF', font:'FF5B21B6', tag:'g4'};
+}
+function __tipoExcel(cx){ return cx.tipo === 'D' ? 'Dinheiro + eletrônico' : 'Somente eletrônico'; }
+function __moneyFmt(){ return '"R$" #,##0.00;[Red]-"R$" #,##0.00;'; }
+function __intFmt(){ return '#,##0'; }
+function __cellFill(argb){ return {type:'pattern',pattern:'solid',fgColor:{argb}}; }
+function __thinBorder(color='FFE2D3C2'){
+  return {top:{style:'thin',color:{argb:color}},left:{style:'thin',color:{argb:color}},bottom:{style:'thin',color:{argb:color}},right:{style:'thin',color:{argb:color}}};
+}
+function __styleCell(cell,opt={}){
+  if(opt.fill) cell.fill=__cellFill(opt.fill);
+  if(opt.font) cell.font=opt.font;
+  if(opt.alignment) cell.alignment=opt.alignment;
+  if(opt.border) cell.border=opt.border;
+  if(opt.numFmt) cell.numFmt=opt.numFmt;
+}
+function __addKpi(ws,row,col,title,value,fill='FFFFFFFF',fontColor='FF2A0808',numFmt=__moneyFmt()){
+  ws.mergeCells(row,col,row,col+1);
+  const c=ws.getCell(row,col);
+  c.value=title;
+  __styleCell(c,{fill,font:{bold:true,color:{argb:fontColor},size:10},alignment:{horizontal:'center',vertical:'middle'},border:__thinBorder('FFD9A328')});
+  const c2=ws.getCell(row+1,col);
+  ws.mergeCells(row+1,col,row+1,col+1);
+  c2.value=value===null?'—':value;
+  __styleCell(c2,{fill,font:{bold:true,color:{argb:fontColor},size:14},alignment:{horizontal:'center',vertical:'middle'},border:__thinBorder('FFD9A328'),numFmt:typeof value==='number'?numFmt:undefined});
+}
+function __safeDownload(blob, filename){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=filename.replace(/\s+/g,'_');
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1500);
+}
+
+async function expXLSX(){
+  try{
+    syncCamposAbertos();
+    if(typeof ExcelJS==='undefined'){
+      alert('A biblioteca Excel ainda não carregou. Aguarde alguns segundos e tente novamente.');
+      return;
+    }
+    const ev=document.getElementById('inp-evento')?.value||'Evento';
+    const dt=document.getElementById('inp-data')?.value||'';
+    const gerado=new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+    const wb=new ExcelJS.Workbook();
+    wb.creator='Fechamento de Caixa';
+    wb.created=new Date();
+    wb.properties.date1904=false;
+
+    const P={
+      vinho:'FF8B1515', vinhoEscuro:'FF650909', dourado:'FFD9A328', creme:'FFFFF8F0', texto:'FF2A0808',
+      verde:'FFEAF7EF', verdeFonte:'FF10752D', vermelho:'FFFFEBEE', vermelhoFonte:'FFB71C1C',
+      amarelo:'FFFFF8DC', laranja:'FFFFF3E0', azul:'FFE3F2FD', lilas:'FFF4EAFF', branco:'FFFFFFFF', cinza:'FFF4F4F4'
+    };
+    const lc=ST.caixas.filter(c=>c.dados);
+    const totais={deb:0,cred:0,pix:0,pixManual:0,dinLiq:0,apurado:0,filipeta:0,dif:0,tagDev:0,saldo:0,devAgua:0,tagsLib:0};
+    const grupos={g1:{nome:'CX 1–27',apurado:0,fill:P.amarelo,font:'FF7A4A00'},g2:{nome:'Toten 28–37',apurado:0,fill:P.laranja,font:'FFBD4B00'},g3:{nome:'Tarde 38–58',apurado:0,fill:P.azul,font:'FF1565C0'},g4:{nome:'Volante 59–80',apurado:0,fill:P.lilas,font:'FF5B21B6'}};
+    lc.forEach(cx=>{
+      const d=cx.dados||{},t=calcTot(cx),cat=__catExcel(cx);
+      totais.deb+=d.deb||0; totais.cred+=d.cred||0; totais.pix+=d.pix||0; totais.pixManual+=d.pixManual||0;
+      totais.dinLiq+=t.dinLiquido||0; totais.apurado+=t.totalComprovado||0; totais.filipeta+=d.totalFilipeta||0; totais.dif+=t.difGeral||0;
+      totais.tagDev+=d.devtag||0; totais.saldo+=d.devsaldo||0; totais.devAgua+=aguaVal(d); totais.tagsLib+=d.tagsLib||0;
+      grupos[cat.tag].apurado+=t.totalComprovado||0;
+    });
+    const devolFinanceira=totais.tagDev+totais.saldo;
+    const aguaUn=totais.devAgua/5;
+
+    // ABA 1 — DASHBOARD
+    const ws=wb.addWorksheet('Dashboard',{views:[{showGridLines:false}]});
+    ws.columns=[{width:18},{width:18},{width:18},{width:18},{width:18},{width:18},{width:18},{width:18}];
+    ws.mergeCells('A1:H1');
+    __styleCell(ws.getCell('A1'),{fill:P.vinho,font:{bold:true,color:{argb:'FFFFFFFF'},size:22},alignment:{horizontal:'center',vertical:'middle'}});
+    ws.getCell('A1').value='Festa do Divino 2026'; ws.getRow(1).height=32;
+    ws.mergeCells('A2:H2');
+    __styleCell(ws.getCell('A2'),{fill:P.vinho,font:{bold:true,color:{argb:'FFFFE177'},size:12},alignment:{horizontal:'center'}});
+    ws.getCell('A2').value=`14 A 24 DE MAIO   •   Relatório: ${dt||'-'}   •   Gerado em: ${gerado}`;
+    __addKpi(ws,4,1,'TOTAL APURADO',totais.apurado,P.vinho,'FFFFFFFF');
+    __addKpi(ws,4,3,'DIFERENÇA GERAL',totais.dif,totais.dif>=0?P.verde:P.vermelho,totais.dif>=0?P.verdeFonte:P.vermelhoFonte);
+    __addKpi(ws,4,5,'TOTAL DEVOLUÇÕES FINANCEIRAS',devolFinanceira,P.vermelho,P.vermelhoFonte);
+    __addKpi(ws,4,7,'TAGS LIBERADAS',totais.tagsLib,P.amarelo,'FF7A4A00',__intFmt());
+    __addKpi(ws,7,1,'DINHEIRO APURADO',totais.dinLiq,P.verde,P.verdeFonte);
+    __addKpi(ws,7,3,'TOTAL PIX',totais.pix+totais.pixManual,P.branco,P.texto);
+    __addKpi(ws,7,5,'TOTAL DÉBITO',totais.deb,P.branco,P.texto);
+    __addKpi(ws,7,7,'TOTAL CRÉDITO',totais.cred,P.branco,P.texto);
+
+    ws.mergeCells('A10:H10');
+    ws.getCell('A10').value='DEVOLUÇÕES E CONTROLE OPERACIONAL';
+    __styleCell(ws.getCell('A10'),{fill:P.vinho,font:{bold:true,color:{argb:'FFFFFFFF'},size:12},alignment:{horizontal:'center'},border:__thinBorder(P.dourado)});
+    __addKpi(ws,11,1,'TOTAL DE TAG DEVOLVIDA',totais.tagDev,P.vermelho,P.vermelhoFonte);
+    __addKpi(ws,11,3,'RESGATE DE SALDO',totais.saldo,P.vermelho,P.vermelhoFonte);
+    __addKpi(ws,11,5,'DEV. ÁGUA',totais.devAgua,P.vermelho,P.vermelhoFonte);
+    __addKpi(ws,11,7,'ÁGUA UNIDADE',aguaUn,P.vermelho,P.vermelhoFonte,__intFmt());
+    ws.getCell('G12').numFmt=__intFmt();
+
+    ws.mergeCells('A14:H14');
+    ws.getCell('A14').value='RESUMO POR GRUPO';
+    __styleCell(ws.getCell('A14'),{fill:P.vinho,font:{bold:true,color:{argb:'FFFFFFFF'},size:12},alignment:{horizontal:'center'},border:__thinBorder(P.dourado)});
+    const gArr=[grupos.g1,grupos.g2,grupos.g3,grupos.g4];
+    gArr.forEach((g,i)=>{
+      const col=1+i*2;
+      __addKpi(ws,15,col,g.nome,g.apurado,g.fill,g.font);
+    });
+
+    // ABA 2 — POR CAIXA
+    const ws2=wb.addWorksheet('Por Caixa',{views:[{state:'frozen',ySplit:1,showGridLines:false}]});
+    const headers=['Caixa','Grupo','Tipo','Nome','Débito','Crédito','PIX','PIX Manual','Ajuste','Din.Líq','Apurado','Filipeta','Dif.Geral','TAGs Lib.','TAG Devolvida','Resgate Saldo','Dev. Água','Água Un.'];
+    ws2.addRow(headers);
+    ws2.columns=[7,16,20,18,13,13,12,12,12,13,13,13,13,11,14,14,13,11].map(w=>({width:w}));
+    ws2.getRow(1).height=24;
+    ws2.getRow(1).eachCell(c=>__styleCell(c,{fill:P.vinho,font:{bold:true,color:{argb:'FFFFFFFF'},size:11},alignment:{horizontal:'center',vertical:'middle'},border:__thinBorder(P.dourado)}));
+    lc.forEach(cx=>{
+      const d=cx.dados||{},t=calcTot(cx),cat=__catExcel(cx);
+      const row=ws2.addRow([
+        cx.num,cat.nome,__tipoExcel(cx),cx.nome||'',
+        __blankZero(d.deb),__blankZero(d.cred),__blankZero(d.pix),__blankZero(d.pixManual),__blankZero(d.ajuste),
+        cx.tipo==='D'?__blankZero(t.dinLiquido):null,__blankZero(t.totalComprovado),__blankZero(d.totalFilipeta),__blankZero(t.difGeral),
+        __blankZero(d.tagsLib),__blankZero(d.devtag),__blankZero(d.devsaldo),__blankZero(aguaVal(d)),__blankZero(aguaVal(d)/5)
+      ]);
+      row.eachCell((cell,col)=>{
+        const base={fill:cat.fill,font:{color:{argb:P.texto},size:11},alignment:{horizontal:col<=4?'left':'right',vertical:'middle'},border:__thinBorder()};
+        if(col===11) base.fill=P.verde;
+        if(col===13) {base.fill=t.difGeral<0?P.vermelho:P.verde;base.font={bold:true,color:{argb:t.difGeral<0?P.vermelhoFonte:P.verdeFonte},size:11};}
+        if(col>=15&&col<=18) {base.fill=P.vermelho;base.font={bold:true,color:{argb:P.vermelhoFonte},size:11};}
+        if(col===14) {base.fill=P.amarelo;base.font={bold:true,color:{argb:'FF7A4A00'},size:11};}
+        __styleCell(cell,base);
+        if(col>=5 && col<=13 || col>=15 && col<=17) cell.numFmt=__moneyFmt();
+        if(col===14 || col===18) cell.numFmt=__intFmt();
+      });
+    });
+    const totalRow=ws2.addRow(['Total','','','',totais.deb,totais.cred,totais.pix,totais.pixManual,null,totais.dinLiq,totais.apurado,totais.filipeta,totais.dif,totais.tagsLib,totais.tagDev,totais.saldo,totais.devAgua,aguaUn]);
+    totalRow.eachCell((cell,col)=>{
+      __styleCell(cell,{fill:P.creme,font:{bold:true,color:{argb:P.texto},size:11},alignment:{horizontal:col<=4?'left':'right'},border:__thinBorder(P.dourado)});
+      if(col>=5 && col<=13 || col>=15 && col<=17) cell.numFmt=__moneyFmt();
+      if(col===14 || col===18) cell.numFmt=__intFmt();
+    });
+    ws2.autoFilter={from:{row:1,column:1},to:{row:1,column:headers.length}};
+
+    // ABA 3 — RESUMO CONTÁBIL/OPERACIONAL
+    const ws3=wb.addWorksheet('Resumo',{views:[{showGridLines:false}]});
+    ws3.columns=[{width:28},{width:18},{width:28},{width:18}];
+    ws3.mergeCells('A1:D1');
+    ws3.getCell('A1').value='Resumo financeiro e operacional';
+    __styleCell(ws3.getCell('A1'),{fill:P.vinho,font:{bold:true,color:{argb:'FFFFFFFF'},size:16},alignment:{horizontal:'center'}});
+    const resumoRows=[
+      ['Total Apurado',totais.apurado,'Diferença Geral',totais.dif],
+      ['Total Devoluções Financeiras',devolFinanceira,'Total de TAG Devolvida',totais.tagDev],
+      ['Resgate de Saldo',totais.saldo,'Dev. Água (não financeira)',totais.devAgua],
+      ['Água Unidade',aguaUn,'Tags Liberadas',totais.tagsLib],
+      ['Total Débito',totais.deb,'Total Crédito',totais.cred],
+      ['Total PIX',totais.pix+totais.pixManual,'Dinheiro Apurado',totais.dinLiq]
+    ];
+    resumoRows.forEach(r=>ws3.addRow(r));
+    for(let r=2;r<=ws3.rowCount;r++){
+      [1,3].forEach(c=>__styleCell(ws3.getCell(r,c),{fill:P.creme,font:{bold:true,color:{argb:P.texto}},border:__thinBorder(),alignment:{horizontal:'left'}}));
+      [2,4].forEach(c=>{__styleCell(ws3.getCell(r,c),{fill:P.branco,font:{bold:true,color:{argb:P.texto}},border:__thinBorder(),alignment:{horizontal:'right'},numFmt: (r===5 && c===2) || (r===5&&c===4) ? __intFmt() : __moneyFmt()});});
+    }
+    ws3.getCell('B5').numFmt=__intFmt(); ws3.getCell('D5').numFmt=__intFmt();
+    ws3.addRow([]); ws3.addRow(['Grupo','Apurado']);
+    const grHeader=ws3.getRow(ws3.rowCount);
+    grHeader.eachCell(c=>__styleCell(c,{fill:P.vinho,font:{bold:true,color:{argb:'FFFFFFFF'}},border:__thinBorder(P.dourado),alignment:{horizontal:'center'}}));
+    Object.values(grupos).forEach(g=>{
+      const row=ws3.addRow([g.nome,g.apurado]);
+      row.eachCell((cell,col)=>__styleCell(cell,{fill:g.fill,font:{bold:true,color:{argb:g.font}},border:__thinBorder(),alignment:{horizontal:col===1?'left':'right'},numFmt:col===2?__moneyFmt():undefined}));
+    });
+
+    [ws,ws2,ws3].forEach(sheet=>{
+      sheet.pageSetup={paperSize:9,orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,margins:{left:0.25,right:0.25,top:0.35,bottom:0.35,header:0.1,footer:0.1}};
+    });
+
+    const buf=await wb.xlsx.writeBuffer();
+    const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    __safeDownload(blob,`Fechamento_${ev}_${dt}.xlsx`);
+  }catch(err){
+    console.error('Erro ao exportar XLSX:',err);
+    alert('Erro ao gerar Excel: '+(err&&err.message?err.message:err));
+  }
+}
+
 </script>
 </body>
 </html>
