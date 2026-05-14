@@ -1141,7 +1141,7 @@ async function expXLSX(){
     });
 
     // ABA 2 — POR CAIXA
-    const ws2=wb.addWorksheet('Por Caixa',{views:[{state:'frozen',ySplit:1,showGridLines:false}]});
+    const ws2=wb.addWorksheet('Por Caixa',{views:[{state:'frozen',ySplit:1,showGridLines:true}]});
     const headers=['Caixa','Grupo','Tipo','Nome','Débito','Crédito','PIX','PIX Manual','Ajuste','Din.Líq','Apurado','Filipeta','Dif.Geral','TAGs Lib.','TAG Devolvida','Resgate Saldo','Dev. Água','Água Un.'];
     ws2.addRow(headers);
     ws2.columns=[7,16,20,18,13,13,12,12,12,13,13,13,13,11,14,14,13,11].map(w=>({width:w}));
@@ -1155,23 +1155,32 @@ async function expXLSX(){
         cx.tipo==='D'?__blankZero(t.dinLiquido):null,__blankZero(t.totalComprovado),__blankZero(d.totalFilipeta),__blankZero(t.difGeral),
         __blankZero(d.tagsLib),__blankZero(d.devtag),__blankZero(d.devsaldo),__blankZero(aguaVal(d)),__blankZero(aguaVal(d)/5)
       ]);
-      row.eachCell((cell,col)=>{
-        const base={fill:cat.fill,font:{color:{argb:P.texto},size:11},alignment:{horizontal:col<=4?'left':'right',vertical:'middle'},border:__thinBorder()};
+      // Mantém a cor do grupo e a grade em TODAS as células da linha, inclusive células vazias.
+      // Antes o ExcelJS só estilava células com valor, deixando buracos brancos que atrapalhavam a leitura.
+      for(let col=1; col<=headers.length; col++){
+        const cell=row.getCell(col);
+        const base={
+          fill:cat.fill,
+          font:{color:{argb:P.texto},size:11},
+          alignment:{horizontal:col<=4?'left':'right',vertical:'middle'},
+          border:__thinBorder('FFBFBFBF')
+        };
         if(col===11) base.fill=P.verde;
         if(col===13) {base.fill=t.difGeral<0?P.vermelho:P.verde;base.font={bold:true,color:{argb:t.difGeral<0?P.vermelhoFonte:P.verdeFonte},size:11};}
         if(col>=15&&col<=18) {base.fill=P.vermelho;base.font={bold:true,color:{argb:P.vermelhoFonte},size:11};}
         if(col===14) {base.fill=P.amarelo;base.font={bold:true,color:{argb:'FF7A4A00'},size:11};}
         __styleCell(cell,base);
-        if(col>=5 && col<=13 || col>=15 && col<=17) cell.numFmt=__moneyFmt();
+        if((col>=5 && col<=13) || (col>=15 && col<=17)) cell.numFmt=__moneyFmt();
         if(col===14 || col===18) cell.numFmt=__intFmt();
-      });
+      }
     });
     const totalRow=ws2.addRow(['Total','','','',totais.deb,totais.cred,totais.pix,totais.pixManual,null,totais.dinLiq,totais.apurado,totais.filipeta,totais.dif,totais.tagsLib,totais.tagDev,totais.saldo,totais.devAgua,aguaUn]);
-    totalRow.eachCell((cell,col)=>{
+    for(let col=1; col<=headers.length; col++){
+      const cell=totalRow.getCell(col);
       __styleCell(cell,{fill:P.creme,font:{bold:true,color:{argb:P.texto},size:11},alignment:{horizontal:col<=4?'left':'right'},border:__thinBorder(P.dourado)});
-      if(col>=5 && col<=13 || col>=15 && col<=17) cell.numFmt=__moneyFmt();
+      if((col>=5 && col<=13) || (col>=15 && col<=17)) cell.numFmt=__moneyFmt();
       if(col===14 || col===18) cell.numFmt=__intFmt();
-    });
+    }
     ws2.autoFilter={from:{row:1,column:1},to:{row:1,column:headers.length}};
 
     // ABA 3 — RESUMO CONTÁBIL/OPERACIONAL
