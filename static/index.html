@@ -4,6 +4,8 @@
 
 
 
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -815,8 +817,163 @@ ${val}`,{fill:F(bg),font:ft(true,fc,10),align:al('center',null,true),border:bdTh
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');a.href=url;a.download=`Fechamento_${ev}_${dt}.xlsx`.replace(/\s+/g,'_');a.click();URL.revokeObjectURL(url);
 }
-function foto(idx){const fi=document.getElementById('fi');fi.onchange=e=>{const f=e.target.files[0];if(!f)return;fi.value='';procFoto(f,idx);};fi.click();}
-async function procFoto(file,idx){const zona=document.getElementById('zona'),st=document.getElementById('stocr');zona.className='zona proc';zona.innerHTML=`<div class="zona-ic"><span class="spin"></span></div><div class="zona-lb" style="color:#1565c0;">Lendo filipeta...</div>`;st.style.display='block';st.className='stbox l';st.innerHTML=`<span class="spin"></span> Analisando imagem...`;const r=new FileReader();r.onload=async ev=>{let b64,mt='image/jpeg';try{const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=ev.target.result;});const MAX=1200,cvs=document.createElement('canvas');const scale=Math.min(1,MAX/Math.max(img.width,img.height));cvs.width=Math.round(img.width*scale);cvs.height=Math.round(img.height*scale);cvs.getContext('2d').drawImage(img,0,0,cvs.width,cvs.height);let q=0.85,dataUrl;do{dataUrl=cvs.toDataURL('image/jpeg',q);q-=0.1;}while(dataUrl.length*0.75>4*1024*1024&&q>0.3);b64=dataUrl.split(',')[1];}catch{b64=ev.target.result.split(',')[1];mt=file.type||'image/jpeg';}try{const res=await fetch('/api/ocr',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:b64,media_type:mt})});const p=await res.json();if(p.error)throw new Error(p.error);preencherCampos(p,idx);zona.className='zona suc';zona.innerHTML=`<div class="zona-ic">✅</div><div class="zona-lb" style="color:#2e7d32;">Filipeta lida!</div><div class="zona-sub" style="cursor:pointer;" onclick="foto(${idx})">Ler outra</div>`;st.className='stbox s';st.innerHTML=`✅ Dados preenchidos. Confira antes de salvar.`;}catch(e){zona.className='zona err';zona.innerHTML=`<div class="zona-ic">❌</div><div class="zona-lb" style="color:#c62828;">Erro na leitura</div><div class="zona-sub" style="cursor:pointer;" onclick="foto(${idx})">Tentar novamente</div>`;st.className='stbox e';st.innerHTML=`❌ ${e.message||'Tente com foto mais nítida.'}`;}};r.readAsDataURL(file);}
+function foto(idx){
+  const fi=document.getElementById('fi');
+  fi.onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;fi.value='';procFoto(f,idx);};
+  fi.click();
+}
+function __statusOCR(tipo,msg){
+  const st=document.getElementById('stocr');
+  if(!st)return;
+  st.style.display='block';
+  st.className='stbox '+(tipo||'l');
+  st.innerHTML=msg;
+}
+function __setZonaOCR(tipo,html){
+  const zona=document.getElementById('zona');
+  if(!zona)return;
+  zona.className='zona '+(tipo||'proc');
+  zona.innerHTML=html;
+}
+function __temDadosOCR(p){
+  if(!p||typeof p!=='object')return false;
+  return ['dinheiro','debito','credito','pix','liberacao_tag','tag_devolvida','resgate_saldo','dev_agua','agua','devolucao_agua','devagua','total'].some(k=>Number(p[k]||0)!==0);
+}
+async function __fileToDataUrl(file){
+  return await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(file);});
+}
+async function __compactarImagem(dataUrl,max=1600){
+  const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=dataUrl;});
+  const cvs=document.createElement('canvas');
+  const scale=Math.min(1,max/Math.max(img.width,img.height));
+  cvs.width=Math.max(1,Math.round(img.width*scale));
+  cvs.height=Math.max(1,Math.round(img.height*scale));
+  const ctx=cvs.getContext('2d');
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,cvs.width,cvs.height);
+  ctx.drawImage(img,0,0,cvs.width,cvs.height);
+  let q=0.88,out;
+  do{out=cvs.toDataURL('image/jpeg',q);q-=0.08;}while(out.length*0.75>4*1024*1024&&q>0.35);
+  return out;
+}
+async function __tentarOcrServidor(b64,mt){
+  const ctl=new AbortController();
+  const timer=setTimeout(()=>ctl.abort(),12000);
+  try{
+    const res=await fetch('/api/ocr',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:b64,media_type:mt}),signal:ctl.signal});
+    if(!res.ok)throw new Error('Servidor OCR indisponível');
+    const p=await res.json();
+    if(p.error)throw new Error(p.error);
+    if(!__temDadosOCR(p))throw new Error('OCR do servidor não retornou valores');
+    return p;
+  }finally{clearTimeout(timer);}
+}
+function __normalizarTxt(t){
+  return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[|]/g,'I');
+}
+function __valorBR(txt){
+  if(!txt)return null;
+  let s=String(txt).replace(/[Oo]/g,'0');
+  const ms=s.match(/-?\d{1,3}(?:[\.\s]\d{3})*,\d{2}|-?\d+[,\.]\d{2}|-?\d+/g);
+  if(!ms)return null;
+  let raw=ms[ms.length-1].replace(/\s/g,'');
+  if(raw.includes(',')) raw=raw.replace(/\./g,'').replace(',','.');
+  const n=parseFloat(raw);
+  return isNaN(n)?null:n;
+}
+function __extrairValorLinha(linhas,i){
+  let v=__valorBR(linhas[i]);
+  if(v!==null)return v;
+  for(let k=1;k<=2;k++){
+    if(linhas[i+k]){v=__valorBR(linhas[i+k]);if(v!==null)return v;}
+  }
+  return null;
+}
+function __parseFilipetaTexto(texto,cxTipo){
+  const rawLines=String(texto||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const linhas=rawLines.map(__normalizarTxt);
+  const out={};
+  const set=(key,val)=>{if(val!==null&&val!==undefined&&!isNaN(val)&&out[key]==null)out[key]=Math.abs(Number(val));};
+  for(let i=0;i<linhas.length;i++){
+    const l=linhas[i];
+    const v=__extrairValorLinha(linhas,i);
+    if(v===null)continue;
+    if(/DINHEIRO|\bDIN\b/.test(l)&&!/LIQUIDO|LIQ/.test(l)) set('dinheiro',v);
+    else if(/DEBITO|DEB\.?/.test(l)) set('debito',v);
+    else if(/CREDITO|CRED\.?/.test(l)) set('credito',v);
+    else if(/PIX/.test(l)) set('pix',v);
+    else if(/LIBERACAO.*TAG|TAG.*LIBERAD|TAG.*LIB/.test(l)) set('liberacao_tag',v);
+    else if(/TAG.*DEV|DEV.*TAG|DEVOLUCAO.*TAG/.test(l)) set('tag_devolvida',v);
+    else if(/RESGATE|SALDO/.test(l)) set('resgate_saldo',v);
+    else if(/AGUA/.test(l)) set('dev_agua',v);
+    else if(/TOTAL|APURADO|GERAL/.test(l)) set('total',v);
+  }
+  // Fallback por ordem, só quando o OCR leu números mas não identificou rótulos suficientes.
+  const achados=[];
+  rawLines.forEach(line=>{
+    const norm=__normalizarTxt(line);
+    const ms=norm.replace(/[Oo]/g,'0').match(/-?\d{1,3}(?:[\.\s]\d{3})*,\d{2}|-?\d+[,\.]\d{2}/g);
+    if(ms)ms.forEach(m=>{const v=__valorBR(m);if(v!==null)achados.push(v);});
+  });
+  const preenchidos=Object.keys(out).filter(k=>Number(out[k]||0)!==0).length;
+  if(preenchidos<3&&achados.length>=4){
+    const nums=achados.slice(-6);
+    if(cxTipo==='D'){
+      if(out.dinheiro==null)out.dinheiro=nums[0]||0;
+      if(out.debito==null)out.debito=nums[1]||0;
+      if(out.credito==null)out.credito=nums[2]||0;
+      if(out.pix==null)out.pix=nums[3]||0;
+      if(out.total==null)out.total=nums[nums.length-1]||0;
+    }else{
+      if(out.debito==null)out.debito=nums[0]||0;
+      if(out.credito==null)out.credito=nums[1]||0;
+      if(out.pix==null)out.pix=nums[2]||0;
+      if(out.total==null)out.total=nums[nums.length-1]||0;
+    }
+  }
+  return out;
+}
+async function __loadTesseract(){
+  if(window.Tesseract)return window.Tesseract;
+  await new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    s.onload=res;
+    s.onerror=()=>rej(new Error('Não foi possível carregar OCR local. Verifique a internet do aparelho.'));
+    document.head.appendChild(s);
+  });
+  return window.Tesseract;
+}
+async function __ocrLocal(dataUrl,idx){
+  const T=await __loadTesseract();
+  __statusOCR('l','<span class="spin"></span> OCR local ativo. Lendo texto da imagem...');
+  const r=await T.recognize(dataUrl,'por+eng',{logger:m=>{if(m.status){const pct=m.progress?` ${Math.round(m.progress*100)}%`:'';__statusOCR('l',`<span class="spin"></span> ${m.status}${pct}`);}}});
+  const texto=(r&&r.data&&r.data.text)||'';
+  const p=__parseFilipetaTexto(texto,ST.caixas[idx]?.tipo);
+  if(!__temDadosOCR(p))throw new Error('Não consegui identificar os valores na imagem. Tente foto mais nítida, sem reflexo e com a filipeta inteira.');
+  return p;
+}
+async function procFoto(file,idx){
+  __setZonaOCR('proc',`<div class="zona-ic"><span class="spin"></span></div><div class="zona-lb" style="color:#1565c0;">Lendo filipeta...</div>`);
+  __statusOCR('l','<span class="spin"></span> Preparando imagem...');
+  try{
+    const original=await __fileToDataUrl(file);
+    const dataUrl=await __compactarImagem(original,1600);
+    const b64=dataUrl.split(',')[1];
+    let p=null,origem='servidor';
+    try{
+      p=await __tentarOcrServidor(b64,'image/jpeg');
+    }catch(e){
+      origem='local';
+      p=await __ocrLocal(dataUrl,idx);
+    }
+    preencherCampos(p,idx);
+    __setZonaOCR('suc',`<div class="zona-ic">✅</div><div class="zona-lb" style="color:#2e7d32;">Filipeta lida!</div><div class="zona-sub" style="cursor:pointer;" onclick="foto(${idx})">Ler outra</div>`);
+    __statusOCR('s',`✅ Dados preenchidos via OCR ${origem}. Confira antes de salvar.`);
+  }catch(e){
+    __setZonaOCR('err',`<div class="zona-ic">❌</div><div class="zona-lb" style="color:#c62828;">Erro na leitura</div><div class="zona-sub" style="cursor:pointer;" onclick="foto(${idx})">Tentar novamente</div>`);
+    __statusOCR('e',`❌ ${e.message||'Tente com foto mais nítida.'}`);
+  }
+}
 function preencherCampos(p,idx){const cx=ST.caixas[idx];const s=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null&&v!==undefined&&v!==0){el.value=v;el.classList.add('vrd');}};if(cx.tipo==='D')s('f-din',p.dinheiro);s('f-deb',p.debito);s('f-cred',p.credito);s('f-pix',p.pix);if(cx.tipo!=='V')s('f-tag',p.liberacao_tag);s('f-devtag',p.tag_devolvida);s('f-devsaldo',p.resgate_saldo);s('f-devagua',p.dev_agua||p.agua||p.devolucao_agua||p.devagua||p.devolucaoAgua);s('f-total-filipeta',p.total);if(p.liberacao_tag!=null&&p.liberacao_tag>0)s('f-tags-lib',Math.round(p.liberacao_tag/5));calc();}
 function expCSV(){syncCamposAbertos();const ev=document.getElementById('inp-evento').value||'Evento',dt=document.getElementById('inp-data').value||'';let c=`FECHAMENTO — ${ev} — DATA DO RELATÓRIO: ${dt||'NÃO INFORMADA'}\n`;c+='Caixa,Grupo,Tipo,Nome,Débito,Crédito,PIX,PIX Manual,Ajuste,Din.Líquido,Total Apurado,Total Filipeta,Dif.Geral,TAG lib(un),TAG dev(R$),Resgate Saldo,Dev Água,Água un\n';let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0;ST.caixas.forEach(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const grupo=grupoLabel(cx);const tipoLabel=cx.tipo==='V'?'Somente Eletrônico':cx.tipo==='D'?'Din+Cartão':'Somente Cartão';if(d){td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;}const devtagUn=d?Math.round((d.devtag||0)/5):0;c+=`${cx.num},${grupo},${tipoLabel},${cx.nome||''},${d?csvNZ(d.deb||0):''},${d?csvNZ(d.cred||0):''},${d?csvNZ(d.pix||0):''},${d?csvNZ(d.pixManual||0):''},${d?csvNZ(d.ajuste||0):''},${cx.tipo==='D'&&d?csvNZ(t.dinLiquido):''},${d?csvNZ(t.totalComprovado):''},${d?csvNZ(d.totalFilipeta||0):''},${d?csvNZ(t.difGeral):''},${d?csvNZ(d.tagsLib||0):''},${d?csvNZ(devtagUn):''},${d?csvNZ(d.devsaldo||0):''},${d?csvNZ(aguaVal(d)):''},${d?csvNZ(aguaVal(d)/5):''}\n`;});c+=`TOTAL,,,,${csvNZ(td)?td.toFixed(2):''},${csvNZ(tc)?tc.toFixed(2):''},${csvNZ(tp)?tp.toFixed(2):''},${csvNZ(tpm)?tpm.toFixed(2):''},,${csvNZ(tdinLiq)?tdinLiq.toFixed(2):''},${csvNZ(tcomp)?tcomp.toFixed(2):''},,${csvNZ(tdifGeral)?tdifGeral.toFixed(2):''},,,\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download=`Fechamento_${ev}_${dt}.csv`.replace(/\s+/g,'_');a.click();}
 async function expXLSX(){
