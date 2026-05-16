@@ -244,6 +244,21 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
 
 
 
+
+/* ===== LINHA EYE — valores manuais e comparação ===== */
+.eye-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:6px 12px 6px;border:1px solid #d8b4fe;border-radius:10px;overflow:hidden;}
+.eye-box{padding:8px 10px;text-align:center;border-right:1px solid #e9d5ff;background:#f3e8ff;color:#6d28d9;}
+.eye-box:last-child{border-right:none;}
+.eye-box .gt{font-size:12px;font-weight:900;text-transform:uppercase;margin-bottom:3px;}
+.eye-box .gm{display:block;font-size:9px;text-transform:uppercase;font-weight:800;}
+.eye-box .gm b{display:block;font-size:15px;margin-top:2px;text-transform:none;}
+.eye-box.lilas{background:#f3e8ff;color:#6d28d9;}
+.eye-box.verde{background:#e8f5e9;color:#2e7d32;border-color:#c8e6c9;}
+.eye-box.amarelo{background:#fffde7;color:#b45309;border-color:#fde68a;}
+.eye-box.laranja{background:#fff3e0;color:#e65100;border-color:#ffcc80;}
+.eye-input-lilas{background:#f3e8ff!important;border:2px solid #7c3aed!important;color:#4c1d95!important;font-weight:800!important;}
+.eye-input-laranja{background:#fff3e0!important;border:2px solid #e65100!important;color:#bf360c!important;font-weight:800!important;}
+
 /* ===== LINHA DE DEVOLUÇÕES — TAG / SALDO / ÁGUA ===== */
 .devol-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:6px 12px 6px;border:1px solid #ffcdd2;border-radius:10px;overflow:hidden;}
 .devol-box{padding:8px 10px;text-align:center;border-right:1px solid #ffcdd2;background:#ffebee;color:#b71c1c;}
@@ -339,6 +354,10 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .group-box .gm b{font-size:13.8px!important;margin-top:1px!important;}
 
 
+  .eye-strip{grid-template-columns:repeat(4,1fr)!important;margin:5px 7px 6px!important;border-radius:8px!important;}
+  .eye-box{padding:6px 8px!important;}
+  .eye-box .gt{font-size:9.2px!important;line-height:1.05!important;}
+  .eye-box .gm b{font-size:13.2px!important;}
   .devol-strip{grid-template-columns:repeat(4,1fr)!important;margin:5px 7px 6px!important;border-radius:8px!important;}
   .devol-box{padding:6px 8px!important;background:#ffebee!important;color:#b71c1c!important;}
   .devol-box .gt{font-size:9.2px!important;line-height:1.05!important;}
@@ -426,7 +445,8 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   .sig-label{font-weight:700!important;text-transform:uppercase!important;white-space:nowrap!important;}
 }
 
-/* Ajuste final dashboard: devoluções e 4 grupos */
+/* Ajuste final dashboard: devoluções, EYE e 4 grupos */
+.eye-strip{display:grid!important;grid-template-columns:repeat(4,1fr)!important;}
 .devol-strip{display:grid!important;grid-template-columns:repeat(4,1fr)!important;}
 .group-strip{display:grid!important;grid-template-columns:repeat(4,1fr)!important;}
 
@@ -460,6 +480,16 @@ hr{border:none;border-top:1px solid #eeddd0;margin:14px 0;}
   <div style="display:flex;gap:8px;margin-bottom:10px;">
     <button onclick="bulkTipoLar('D')" style="flex:1;padding:12px;border:2px solid #e65100;border-radius:10px;background:#fff3e0;color:#e65100;font-size:14px;font-weight:700;cursor:pointer;">🟠 Toten 28–37 Dinheiro</button>
     <button onclick="bulkTipoLar('C')" style="flex:1;padding:12px;border:2px solid #e65100;border-radius:10px;background:#fff3e0;color:#e65100;font-size:14px;font-weight:700;cursor:pointer;">🟠 Toten 28–37 Cartão</button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+    <div style="display:flex;align-items:center;gap:8px;background:#f3e8ff;border:1px solid #d8b4fe;border-radius:10px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);">
+      <span style="font-size:14px;font-weight:800;color:#6d28d9;flex:1;">🟣 Valor Eye</span>
+      <input type="number" id="inp-valor-eye" placeholder="Ex: 50000" oninput="salvarLocal()" class="eye-input-lilas" style="width:130px;padding:10px;border-radius:8px;font-size:16px;text-align:right;">
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;background:#fff3e0;border:1px solid #ffcc80;border-radius:10px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);">
+      <span style="font-size:14px;font-weight:800;color:#e65100;flex:1;">🟠 Faturamento 2025</span>
+      <input type="number" id="inp-fat-2025" placeholder="Ex: 45000" oninput="salvarLocal()" class="eye-input-laranja" style="width:130px;padding:10px;border-radius:8px;font-size:16px;text-align:right;">
+    </div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);">
     <span style="font-size:14px;font-weight:600;color:#555;flex:1;">💰 Troco padrão (CX 1,8–14,21)</span>
@@ -528,6 +558,9 @@ const ST={caixas:Array.from({length:TOTAL_CX},(_,i)=>defaultCx(i))};
 let atv=null;
 const fmt=v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const nv=id=>{const el=document.getElementById(id);return el&&el.value!==''?parseFloat(el.value)||0:0;};
+const setInputVal=(id,v)=>{const el=document.getElementById(id);if(el)el.value=(v??'');};
+const valorEye=()=>nv('inp-valor-eye');
+const fat2025=()=>nv('inp-fat-2025');
 function aguaUn(d){return Number((d&&(d.devagua??d.devAgua??d.devolucaoAgua??d.devolucao_agua??d.agua))||0);}
 function aguaVal(d){return aguaUn(d)*5;}
 // Água é apenas informativa: unidade lançada manualmente; valor exibido = unidade x R$ 5; não altera Dif.Geral nem Total Apurado.
@@ -548,8 +581,8 @@ function getCat(cx){
 }
 function grupoLabel(cx){const c=getCat(cx);return c==='normal'?'CX 1–27':c==='toten1'?'Toten 28–37':c==='tarde'?'Tarde 38–58':'Volante 59–80';}
 function isEletronico(cx){return cx.tipo==='V';}
-function salvarLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify({caixas:ST.caixas,data:document.getElementById('inp-data').value,evento:document.getElementById('inp-evento').value}));}catch(e){}}
-function restaurarLocal(){try{const raw=localStorage.getItem(LS_KEY);if(!raw)return;const s=JSON.parse(raw);if(s.caixas&&Array.isArray(s.caixas)){s.caixas.slice(0,TOTAL_CX).forEach((c,i)=>{if(ST.caixas[i])Object.assign(ST.caixas[i],c);});if(s.data)document.getElementById('inp-data').value=s.data;if(s.evento)document.getElementById('inp-evento').value=s.evento;const lc=ST.caixas.filter(c=>c.dados).length;if(lc>0)mostrarToast(`✅ Sessão restaurada — ${lc} caixas recuperados`);}}catch(e){}}
+function salvarLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify({caixas:ST.caixas,data:document.getElementById('inp-data').value,evento:document.getElementById('inp-evento').value,valorEye:valorEye(),fat2025:fat2025()}));}catch(e){}}
+function restaurarLocal(){try{const raw=localStorage.getItem(LS_KEY);if(!raw)return;const s=JSON.parse(raw);if(s.caixas&&Array.isArray(s.caixas)){s.caixas.slice(0,TOTAL_CX).forEach((c,i)=>{if(ST.caixas[i])Object.assign(ST.caixas[i],c);});if(s.data)document.getElementById('inp-data').value=s.data;if(s.evento)document.getElementById('inp-evento').value=s.evento;setInputVal('inp-valor-eye',s.valorEye||'');setInputVal('inp-fat-2025',s.fat2025||'');const lc=ST.caixas.filter(c=>c.dados).length;if(lc>0)mostrarToast(`✅ Sessão restaurada — ${lc} caixas recuperados`);}}catch(e){}}
 function mostrarToast(msg){const t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1a3a5c;color:#fff;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.3);';document.body.appendChild(t);setTimeout(()=>t.remove(),3500);}
 function atualizarBarra(){const lc=ST.caixas.filter(c=>c.dados);const count=lc.length;if(count===0){document.getElementById('barra').classList.remove('show');return;}let td=0,tc=0,tp=0,ttot=0;lc.forEach(cx=>{const d=cx.dados,t=calcTot(cx);td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0)+(d.pixManual||0);ttot+=t.totalComprovado;});document.getElementById('b-deb').textContent=fmt(td);document.getElementById('b-cred').textContent=fmt(tc);document.getElementById('b-pix').textContent=fmt(tp);document.getElementById('b-tot').textContent=fmt(ttot);document.getElementById('b-prog').style.width=(count/TOTAL_CX*100)+'%';document.getElementById('b-cnt').textContent=count+'/'+TOTAL_CX;document.getElementById('barra').classList.add('show');}
 function aba(id){document.querySelectorAll('.nav button').forEach((b,i)=>b.classList.toggle('on',['config','lancamento','consolidado'][i]===id));document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));document.getElementById('pnl-'+id).classList.add('on');if(id==='lancamento'){renderGrade();atualizarBarra();}if(id==='consolidado'){renderCons();document.getElementById('barra').classList.remove('show');}if(id==='config')document.getElementById('barra').classList.remove('show');}
@@ -625,11 +658,15 @@ function renderCons(){
   const grupos={g1:{apur:0,tags:0,dif:0},g2:{apur:0,tags:0,dif:0},g3:{apur:0,tags:0,dif:0},g4:{apur:0,tags:0,dif:0}};
   lc.forEach(cx=>{const d=cx.dados,t=calcTot(cx);td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;ttag+=(d.tag||0);tdevtag+=(d.devtag||0);tlib+=(d.tagsLib||0);tdevol+=(d.devtag||0)+(d.devsaldo||0);tdevsaldo+=(d.devsaldo||0);tdevagua+=aguaVal(d);const cat=getCat(cx);const g=cat==='normal'?'g1':cat==='toten1'?'g2':cat==='tarde'?'g3':'g4';grupos[g].apur+=t.totalComprovado;grupos[g].tags+=(d.tagsLib||0);grupos[g].dif+=t.difGeral;});
   const tFilipeta=lc.reduce((s,cx)=>s+(cx.dados.totalFilipeta||0),0);
+  const vEye=valorEye(),vFat2025=fat2025();
+  const totalLiquido=tcomp-ttag+tdevsaldo;
+  const difEye=vEye-totalLiquido;
   const dt=reportDate(),ev=reportEvento(),gerado=new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
   const kpi=(cls,ico,lb,vl)=>`<div class="kpi-card ${cls||''}"><div class="ico">${ico}</div><div><div class="lb">${lb}</div><div class="vl">${vl}</div></div></div>`;
   const group=(cls,title,g)=>`<div class="group-box ${cls}"><div class="gt">${title}</div><div class="gm"><b>${fmtNZ(g.apur)}</b></div></div>`;
   const devolBox=(title,val)=>`<div class="devol-box"><div class="gt">${title}</div><div class="gm"><b>${val}</b></div></div>`;
-  const resumo=`<div class="report-wrap"><div class="report-head"><div class="report-brand"><img src="${LOGO_OFICIAL_DIVINO}" alt="Festa do Divino 2026"><div><div class="report-title">Festa do Divino 2026</div><div class="report-sub">14 A 24 DE MAIO</div><div class="report-city">MOGI DAS CRUZES - SP</div></div></div><div class="report-datebox"><div class="label">DATA DO RELATÓRIO</div><div class="date">${dt}</div><div class="gen">Gerado em: ${gerado}</div></div></div><div class="kpi-grid">${kpi('main','💰','Total Apurado',fmtNZ(tcomp))}${kpi(tdifGeral>=0?'ok':'bad','⚖️','Diferença Geral',fmtNZ(tdifGeral))}${kpi('bad','↩️','Total Devoluções',fmtNZ(tdevol))}${kpi('tag','🏷️','TAGs Liberadas',fmtUnNZ(tlib))}${kpi('ok','💵','Dinheiro Apurado',fmtNZ(tdinLiq))}${kpi('',`<img src="${PIX_ICON_OFICIAL}" class="pix-ico" alt="PIX">`,'Total PIX',fmtNZ(tp+tpm))}${kpi('','💳','Total Débito',fmtNZ(td))}${kpi('','💳','Total Crédito',fmtNZ(tc))}</div><div class="devol-strip">${devolBox('Total de TAG Devolvida',fmtNZ(tdevtag))}${devolBox('Resgate de Saldo',fmtNZ(tdevsaldo))}${devolBox('Dev. Água',fmtNZ(tdevagua))}${devolBox('Água Unidade',fmtIntNZ(tdevagua/5))}</div><div class="group-strip">${group('g1','🟡 CX 1–27',grupos.g1)}${group('g2','🟠 Toten 28–37',grupos.g2)}${group('g3','🔵 Tarde 38–58',grupos.g3)}${group('g4','🟣 Volante 59–80',grupos.g4)}</div></div>`;
+  const eyeBox=(cls,title,val)=>`<div class="eye-box ${cls}"><div class="gt">${title}</div><div class="gm"><b>${val}</b></div></div>`;
+  const resumo=`<div class="report-wrap"><div class="report-head"><div class="report-brand"><img src="${LOGO_OFICIAL_DIVINO}" alt="Festa do Divino 2026"><div><div class="report-title">Festa do Divino 2026</div><div class="report-sub">14 A 24 DE MAIO</div><div class="report-city">MOGI DAS CRUZES - SP</div></div></div><div class="report-datebox"><div class="label">DATA DO RELATÓRIO</div><div class="date">${dt}</div><div class="gen">Gerado em: ${gerado}</div></div></div><div class="kpi-grid">${kpi('main','💰','Total Apurado',fmtNZ(tcomp))}${kpi(tdifGeral>=0?'ok':'bad','⚖️','Diferença Geral',fmtNZ(tdifGeral))}${kpi('bad','↩️','Total Devoluções',fmtNZ(tdevol))}${kpi('tag','🏷️','TAGs Liberadas',fmtUnNZ(tlib))}${kpi('ok','💵','Dinheiro Apurado',fmtNZ(tdinLiq))}${kpi('',`<img src="${PIX_ICON_OFICIAL}" class="pix-ico" alt="PIX">`,'Total PIX',fmtNZ(tp+tpm))}${kpi('','💳','Total Débito',fmtNZ(td))}${kpi('','💳','Total Crédito',fmtNZ(tc))}</div><div class="eye-strip">${eyeBox('lilas','Valor Eye',fmtNZ(vEye))}${eyeBox('verde','Total Líquido',fmtNZ(totalLiquido))}${eyeBox('amarelo','Dif Eye',fmtNZ(difEye))}${eyeBox('laranja','Faturamento 2025',fmtNZ(vFat2025))}</div><div class="devol-strip">${devolBox('Total de TAG Devolvida',fmtNZ(tdevtag))}${devolBox('Resgate de Saldo',fmtNZ(tdevsaldo))}${devolBox('Dev. Água',fmtNZ(tdevagua))}${devolBox('Água Unidade',fmtIntNZ(tdevagua/5))}</div><div class="group-strip">${group('g1','🟡 CX 1–27',grupos.g1)}${group('g2','🟠 Toten 28–37',grupos.g2)}${group('g3','🔵 Tarde 38–58',grupos.g3)}${group('g4','🟣 Volante 59–80',grupos.g4)}</div></div>`;
   document.getElementById('cards').innerHTML=resumo;
   const rows=lc.map(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const isV=cx.tipo==='V';const lib=d?(d.tagsLib||0):0;const cdGeral=!d?'':t.difGeral>=0?'dok':'derr';const rowBg=cat==='toten2'?'background:#faf5ff;':cat==='toten1'?'background:#fff8f0;':cat==='tarde'?'background:#f4fbff;':'';const cxTag=cat==='toten1'?'<span class="tag-lar">T</span>':cat==='tarde'?'<span class="tag-lar" style="background:#1976d2;">Tarde</span>':cat==='toten2'?'<span class="tag-lar" style="background:#7c3aed;">T</span>':'';const cxLbl=isV?'CX':'CX';return`<tr style="${rowBg}"><td><b>${cxLbl} ${cx.num}</b>${cxTag}</td><td>${cx.nome||'—'}</td><td class="n">${d?fmtNZ(d.deb||0):'—'}</td><td class="n">${d?fmtNZ(d.cred||0):'—'}</td><td class="n">${d?fmtNZ((d.pix||0)+(d.pixManual||0)):'—'}</td><td class="n">${cx.tipo==='D'&&d?fmtNZ(t.dinLiquido):'—'}</td><td class="n">${d?fmtNZ(t.totalComprovado):'—'}</td><td class="n ${cdGeral}">${d?fmtNZ(t.difGeral):'—'}</td><td class="n">${d?fmtNZ((d.devtag||0)+(d.devsaldo||0)):'—'}</td><td class="n">${d?fmtUnNZ(lib):'—'}</td></tr>`;}).join('');
   const totalRow=`<tfoot><tr><td colspan="2">Total</td><td class="n">${fmtNZ(td)}</td><td class="n">${fmtNZ(tc)}</td><td class="n">${fmtNZ(tp+tpm)}</td><td class="n">${fmtNZ(tdinLiq)}</td><td class="n">${fmtNZ(tcomp)}</td><td class="n ${tdifGeral>=0?'dok':'derr'}">${fmtNZ(tdifGeral)}</td><td class="n">${fmtNZ(tdevol)}</td><td class="n">${fmtUnNZ(tlib)}</td></tr></tfoot>`;
@@ -1142,7 +1179,7 @@ function bulkTipo(tipo){ST.caixas.slice(0,GRUPO1_END).forEach(cx=>{cx.tipo=tipo;
 function bulkTipoLar(tipo){ST.caixas.slice(TARDE_START-1,TARDE_END).forEach(cx=>{cx.tipo=tipo;});renderCfg();}
 const TROCO_CX=TROCO_AUTO_NUMS.map(n=>n-1);
 function bulkTroco(){const v=parseFloat(document.getElementById('inp-bulk-troco').value)||0;TROCO_CX.forEach(i=>{if(ST.caixas[i])ST.caixas[i].troco=v;});renderCfg();}
-function novoEvento(){if(!confirm('Apagar todos os dados?'))return;ST.caixas.forEach(cx=>{cx.dados=null;});atv=null;document.getElementById('inp-data').value='';document.getElementById('inp-evento').value='';document.getElementById('form-cx').innerHTML=`<p style="font-size:13px;color:#888;text-align:center;padding:20px 0;">Selecione um caixa acima</p>`;document.getElementById('barra').classList.remove('show');try{localStorage.removeItem(LS_KEY);}catch(e){}renderGrade();renderCfg();aba('config');}
+function novoEvento(){if(!confirm('Apagar todos os dados?'))return;ST.caixas.forEach(cx=>{cx.dados=null;});atv=null;document.getElementById('inp-data').value='';document.getElementById('inp-evento').value='';setInputVal('inp-valor-eye','');setInputVal('inp-fat-2025','');document.getElementById('form-cx').innerHTML=`<p style="font-size:13px;color:#888;text-align:center;padding:20px 0;">Selecione um caixa acima</p>`;document.getElementById('barra').classList.remove('show');try{localStorage.removeItem(LS_KEY);}catch(e){}renderGrade();renderCfg();aba('config');}
 restaurarLocal();
 renderCfg();
 document.getElementById('inp-data').addEventListener('change',salvarLocal);
