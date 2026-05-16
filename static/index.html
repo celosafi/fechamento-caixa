@@ -659,7 +659,7 @@ function renderCons(){
   lc.forEach(cx=>{const d=cx.dados,t=calcTot(cx);td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;ttag+=(d.tag||0);tdevtag+=(d.devtag||0);tlib+=(d.tagsLib||0);tdevol+=(d.devtag||0)+(d.devsaldo||0);tdevsaldo+=(d.devsaldo||0);tdevagua+=aguaVal(d);const cat=getCat(cx);const g=cat==='normal'?'g1':cat==='toten1'?'g2':cat==='tarde'?'g3':'g4';grupos[g].apur+=t.totalComprovado;grupos[g].tags+=(d.tagsLib||0);grupos[g].dif+=t.difGeral;});
   const tFilipeta=lc.reduce((s,cx)=>s+(cx.dados.totalFilipeta||0),0);
   const vEye=valorEye(),vFat2025=fat2025();
-  const totalLiquido=tcomp-ttag+tdevsaldo;
+  const totalLiquido=tcomp+tdevol-(tlib*5);
   const difEye=vEye-totalLiquido;
   const dt=reportDate(),ev=reportEvento(),gerado=new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
   const kpi=(cls,ico,lb,vl)=>`<div class="kpi-card ${cls||''}"><div class="ico">${ico}</div><div><div class="lb">${lb}</div><div class="vl">${vl}</div></div></div>`;
@@ -675,7 +675,7 @@ function renderCons(){
   if(p){p.className='report-actions';p.querySelector('span').className='ttl';p.querySelector('span').textContent='Por caixa';}
 }
 
-function expCSV(){syncCamposAbertos();const ev=document.getElementById('inp-evento').value||'Evento',dt=document.getElementById('inp-data').value||'';let c=`FECHAMENTO — ${ev} — ${dt}\n`;c+='Caixa,Grupo,Tipo,Nome,Débito,Crédito,PIX,PIX Manual,Ajuste,Din.Líquido,Total Apurado,Total Filipeta,Dif.Geral,TAG lib(un),TAG dev(R$),Resgate Saldo,Dev Água (R$),Água unidade\n';let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0;ST.caixas.forEach(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const grupo=grupoLabel(cx);const tipoLabel=cx.tipo==='V'?'Somente Eletrônico':cx.tipo==='D'?'Din+Cartão':'Somente Cartão';if(d){td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;}const devtagUn=d?Math.round((d.devtag||0)/5):0;c+=`${cx.num},${grupo},${tipoLabel},${cx.nome||''},${d?csvNZ(d.deb||0):''},${d?csvNZ(d.cred||0):''},${d?csvNZ(d.pix||0):''},${d?csvNZ(d.pixManual||0):''},${d?csvNZ(d.ajuste||0):''},${cx.tipo==='D'&&d?csvNZ(t.dinLiquido):''},${d?csvNZ(t.totalComprovado):''},${d?csvNZ(d.totalFilipeta||0):''},${d?csvNZ(t.difGeral):''},${d?csvNZ(d.tagsLib||0):''},${d?csvNZ(devtagUn):''},${d?csvNZ(d.devsaldo||0):''},${d?csvNZ(aguaVal(d)):''},${d?csvNZ(aguaUn(d)):''}\n`;});c+=`TOTAL,,,,${csvNZ(td)?td.toFixed(2):''},${csvNZ(tc)?tc.toFixed(2):''},${csvNZ(tp)?tp.toFixed(2):''},${csvNZ(tpm)?tpm.toFixed(2):''},,${csvNZ(tdinLiq)?tdinLiq.toFixed(2):''},${csvNZ(tcomp)?tcomp.toFixed(2):''},,${csvNZ(tdifGeral)?tdifGeral.toFixed(2):''},,,\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download=`Fechamento_${ev}_${dt}.csv`.replace(/\s+/g,'_');a.click();}
+function expCSV(){syncCamposAbertos();const ev=document.getElementById('inp-evento').value||'Evento',dt=document.getElementById('inp-data').value||'';let c=`FECHAMENTO — ${ev} — ${dt}\n`;c+='Caixa,Grupo,Tipo,Nome,Débito,Crédito,PIX,PIX Manual,Ajuste,Din.Líquido,Total Apurado,Total Filipeta,Dif.Geral,TAG lib(un),TAG dev(R$),Resgate Saldo,Dev Água (R$),Água unidade\n';let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0;ST.caixas.forEach(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const grupo=grupoLabel(cx);const tipoLabel=cx.tipo==='V'?'Somente Eletrônico':cx.tipo==='D'?'Din+Cartão':'Somente Cartão';if(d){td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;}const devtagUn=d?Math.round((d.devtag||0)/5):0;c+=`${cx.num},${grupo},${tipoLabel},${cx.nome||''},${d?csvNZ(d.deb||0):''},${d?csvNZ(d.cred||0):''},${d?csvNZ(d.pix||0):''},${d?csvNZ(d.pixManual||0):''},${d?csvNZ(d.ajuste||0):''},${cx.tipo==='D'&&d?csvNZ(t.dinLiquido):''},${d?csvNZ(t.totalComprovado):''},${d?csvNZ(d.totalFilipeta||0):''},${d?csvNZ(t.difGeral):''},${d?csvNZ(d.tagsLib||0):''},${d?csvNZ(devtagUn):''},${d?csvNZ(d.devsaldo||0):''},${d?csvNZ(aguaVal(d)):''},${d?csvNZ(aguaUn(d)):''}\n`;});c+=`TOTAL,,,,${csvNZ(td)?td.toFixed(2):''},${csvNZ(tc)?tc.toFixed(2):''},${csvNZ(tp)?tp.toFixed(2):''},${csvNZ(tpm)?tpm.toFixed(2):''},,${csvNZ(tdinLiq)?tdinLiq.toFixed(2):''},${csvNZ(tcomp)?tcomp.toFixed(2):''},,${csvNZ(tdifGeral)?tdifGeral.toFixed(2):''},,,\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download=`Fechamento_${ev}_${dt}.csv`.replace(/[\\/:*?"<>|]+/g,'_').replace(/\s+/g,'_');a.click();}
 async function expXLSX(){
   syncCamposAbertos();
   if(typeof ExcelJS==='undefined'){alert('Aguarde a biblioteca carregar.');return;}
@@ -1015,7 +1015,7 @@ async function procFoto(file,idx){
   }
 }
 function preencherCampos(p,idx){const cx=ST.caixas[idx];const s=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null&&v!==undefined&&v!==0){el.value=v;el.classList.add('vrd');}};if(cx.tipo==='D')s('f-din',p.dinheiro);s('f-deb',p.debito);s('f-cred',p.credito);s('f-pix',p.pix);if(cx.tipo!=='V')s('f-tag',p.liberacao_tag);s('f-devtag',p.tag_devolvida);s('f-devsaldo',p.resgate_saldo);/* Água Unidade é lançamento manual; não preenche pela filipeta */s('f-total-filipeta',p.total);if(p.liberacao_tag!=null&&p.liberacao_tag>0)s('f-tags-lib',Math.round(p.liberacao_tag/5));calc();}
-function expCSV(){syncCamposAbertos();const ev=document.getElementById('inp-evento').value||'Evento',dt=document.getElementById('inp-data').value||'';let c=`FECHAMENTO — ${ev} — DATA DO RELATÓRIO: ${dt||'NÃO INFORMADA'}\n`;c+='Caixa,Grupo,Tipo,Nome,Débito,Crédito,PIX,PIX Manual,Ajuste,Din.Líquido,Total Apurado,Total Filipeta,Dif.Geral,TAG lib(un),TAG dev(R$),Resgate Saldo,Dev Água (R$),Água unidade\n';let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0;ST.caixas.forEach(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const grupo=grupoLabel(cx);const tipoLabel=cx.tipo==='V'?'Somente Eletrônico':cx.tipo==='D'?'Din+Cartão':'Somente Cartão';if(d){td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;}const devtagUn=d?Math.round((d.devtag||0)/5):0;c+=`${cx.num},${grupo},${tipoLabel},${cx.nome||''},${d?csvNZ(d.deb||0):''},${d?csvNZ(d.cred||0):''},${d?csvNZ(d.pix||0):''},${d?csvNZ(d.pixManual||0):''},${d?csvNZ(d.ajuste||0):''},${cx.tipo==='D'&&d?csvNZ(t.dinLiquido):''},${d?csvNZ(t.totalComprovado):''},${d?csvNZ(d.totalFilipeta||0):''},${d?csvNZ(t.difGeral):''},${d?csvNZ(d.tagsLib||0):''},${d?csvNZ(devtagUn):''},${d?csvNZ(d.devsaldo||0):''},${d?csvNZ(aguaVal(d)):''},${d?csvNZ(aguaUn(d)):''}\n`;});c+=`TOTAL,,,,${csvNZ(td)?td.toFixed(2):''},${csvNZ(tc)?tc.toFixed(2):''},${csvNZ(tp)?tp.toFixed(2):''},${csvNZ(tpm)?tpm.toFixed(2):''},,${csvNZ(tdinLiq)?tdinLiq.toFixed(2):''},${csvNZ(tcomp)?tcomp.toFixed(2):''},,${csvNZ(tdifGeral)?tdifGeral.toFixed(2):''},,,\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download=`Fechamento_${ev}_${dt}.csv`.replace(/\s+/g,'_');a.click();}
+function expCSV(){syncCamposAbertos();const ev=document.getElementById('inp-evento').value||'Evento',dt=document.getElementById('inp-data').value||'';let c=`FECHAMENTO — ${ev} — DATA DO RELATÓRIO: ${dt||'NÃO INFORMADA'}\n`;c+='Caixa,Grupo,Tipo,Nome,Débito,Crédito,PIX,PIX Manual,Ajuste,Din.Líquido,Total Apurado,Total Filipeta,Dif.Geral,TAG lib(un),TAG dev(R$),Resgate Saldo,Dev Água (R$),Água unidade\n';let td=0,tc=0,tp=0,tpm=0,tdinLiq=0,tcomp=0,tdifGeral=0;ST.caixas.forEach(cx=>{const d=cx.dados,t=calcTot(cx);const cat=getCat(cx);const grupo=grupoLabel(cx);const tipoLabel=cx.tipo==='V'?'Somente Eletrônico':cx.tipo==='D'?'Din+Cartão':'Somente Cartão';if(d){td+=(d.deb||0);tc+=(d.cred||0);tp+=(d.pix||0);tpm+=(d.pixManual||0);tdinLiq+=t.dinLiquido;tcomp+=t.totalComprovado;tdifGeral+=t.difGeral;}const devtagUn=d?Math.round((d.devtag||0)/5):0;c+=`${cx.num},${grupo},${tipoLabel},${cx.nome||''},${d?csvNZ(d.deb||0):''},${d?csvNZ(d.cred||0):''},${d?csvNZ(d.pix||0):''},${d?csvNZ(d.pixManual||0):''},${d?csvNZ(d.ajuste||0):''},${cx.tipo==='D'&&d?csvNZ(t.dinLiquido):''},${d?csvNZ(t.totalComprovado):''},${d?csvNZ(d.totalFilipeta||0):''},${d?csvNZ(t.difGeral):''},${d?csvNZ(d.tagsLib||0):''},${d?csvNZ(devtagUn):''},${d?csvNZ(d.devsaldo||0):''},${d?csvNZ(aguaVal(d)):''},${d?csvNZ(aguaUn(d)):''}\n`;});c+=`TOTAL,,,,${csvNZ(td)?td.toFixed(2):''},${csvNZ(tc)?tc.toFixed(2):''},${csvNZ(tp)?tp.toFixed(2):''},${csvNZ(tpm)?tpm.toFixed(2):''},,${csvNZ(tdinLiq)?tdinLiq.toFixed(2):''},${csvNZ(tcomp)?tcomp.toFixed(2):''},,${csvNZ(tdifGeral)?tdifGeral.toFixed(2):''},,,\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));a.download=`Fechamento_${ev}_${dt}.csv`.replace(/[\\/:*?"<>|]+/g,'_').replace(/\s+/g,'_');a.click();}
 async function expXLSX(){
   syncCamposAbertos();
   if(typeof ExcelJS==='undefined'){alert('Aguarde a biblioteca carregar.');return;}
@@ -1262,7 +1262,7 @@ function __safeDownload(blob, filename){
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;
-  a.download=filename.replace(/\s+/g,'_');
+  a.download=String(filename||'relatorio.xlsx').replace(/[\\/:*?"<>|]+/g,'_').replace(/\s+/g,'_');
   document.body.appendChild(a);
   a.click();
   setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1500);
@@ -1300,6 +1300,10 @@ async function expXLSX(){
     });
     const devolFinanceira=totais.tagDev+totais.saldo;
     const aguaUn=totais.devAgua/5;
+    const vEye=valorEye();
+    const vFat2025=fat2025();
+    const totalLiquido=totais.apurado+devolFinanceira-(totais.tagsLib*5);
+    const difEye=vEye-totalLiquido;
 
     // ABA 1 — DASHBOARD
     const ws=wb.addWorksheet('Dashboard',{views:[{showGridLines:false}]});
@@ -1320,21 +1324,29 @@ async function expXLSX(){
     __addKpi(ws,7,7,'TOTAL CRÉDITO',totais.cred,P.branco,P.texto);
 
     ws.mergeCells('A10:H10');
-    ws.getCell('A10').value='DEVOLUÇÕES E CONTROLE OPERACIONAL';
+    ws.getCell('A10').value='CONFERÊNCIA EYE';
     __styleCell(ws.getCell('A10'),{fill:P.vinho,font:{bold:true,color:{argb:'FFFFFFFF'},size:12},alignment:{horizontal:'center'},border:__thinBorder(P.dourado)});
-    __addKpi(ws,11,1,'TOTAL DE TAG DEVOLVIDA',totais.tagDev,P.vermelho,P.vermelhoFonte);
-    __addKpi(ws,11,3,'RESGATE DE SALDO',totais.saldo,P.vermelho,P.vermelhoFonte);
-    __addKpi(ws,11,5,'DEV. ÁGUA',totais.devAgua,P.vermelho,P.vermelhoFonte);
-    __addKpi(ws,11,7,'ÁGUA UNIDADE',aguaUn,P.vermelho,P.vermelhoFonte,__intFmt());
-    ws.getCell('G12').numFmt=__intFmt();
+    __addKpi(ws,11,1,'VALOR EYE',vEye,P.lilas,'FF5B21B6');
+    __addKpi(ws,11,3,'TOTAL LÍQUIDO',totalLiquido,P.verde,P.verdeFonte);
+    __addKpi(ws,11,5,'DIF EYE',difEye,P.amarelo,'FF7A4A00');
+    __addKpi(ws,11,7,'FATURAMENTO 2025',vFat2025,P.laranja,'FFBD4B00');
 
     ws.mergeCells('A14:H14');
-    ws.getCell('A14').value='RESUMO POR GRUPO';
+    ws.getCell('A14').value='DEVOLUÇÕES E CONTROLE OPERACIONAL';
     __styleCell(ws.getCell('A14'),{fill:P.vinho,font:{bold:true,color:{argb:'FFFFFFFF'},size:12},alignment:{horizontal:'center'},border:__thinBorder(P.dourado)});
+    __addKpi(ws,15,1,'TOTAL DE TAG DEVOLVIDA',totais.tagDev,P.vermelho,P.vermelhoFonte);
+    __addKpi(ws,15,3,'RESGATE DE SALDO',totais.saldo,P.vermelho,P.vermelhoFonte);
+    __addKpi(ws,15,5,'DEV. ÁGUA',totais.devAgua,P.vermelho,P.vermelhoFonte);
+    __addKpi(ws,15,7,'ÁGUA UNIDADE',aguaUn,P.vermelho,P.vermelhoFonte,__intFmt());
+    ws.getCell('G16').numFmt=__intFmt();
+
+    ws.mergeCells('A18:H18');
+    ws.getCell('A18').value='RESUMO POR GRUPO';
+    __styleCell(ws.getCell('A18'),{fill:P.vinho,font:{bold:true,color:{argb:'FFFFFFFF'},size:12},alignment:{horizontal:'center'},border:__thinBorder(P.dourado)});
     const gArr=[grupos.g1,grupos.g2,grupos.g3,grupos.g4];
     gArr.forEach((g,i)=>{
       const col=1+i*2;
-      __addKpi(ws,15,col,g.nome,g.apurado,g.fill,g.font);
+      __addKpi(ws,19,col,g.nome,g.apurado,g.fill,g.font);
     });
 
     // ABA 2 — POR CAIXA
@@ -1387,6 +1399,8 @@ async function expXLSX(){
     ws3.getCell('A1').value='Resumo financeiro e operacional';
     __styleCell(ws3.getCell('A1'),{fill:P.vinho,font:{bold:true,color:{argb:'FFFFFFFF'},size:16},alignment:{horizontal:'center'}});
     const resumoRows=[
+      ['Valor Eye',vEye,'Faturamento 2025',vFat2025],
+      ['Total Líquido',totalLiquido,'Dif Eye',difEye],
       ['Total Apurado',totais.apurado,'Diferença Geral',totais.dif],
       ['Total Devoluções Financeiras',devolFinanceira,'Total de TAG Devolvida',totais.tagDev],
       ['Resgate de Saldo',totais.saldo,'Dev. Água (não financeira)',totais.devAgua],
