@@ -1299,7 +1299,7 @@ async function expXLSX(){
       grupos[cat.tag].apurado+=t.totalComprovado||0;
     });
     const devolFinanceira=totais.tagDev+totais.saldo;
-    const aguaUn=totais.devAgua/5;
+    const totalAguaUn=totais.devAgua/5;
     const vEye=valorEye();
     const vFat2025=fat2025();
     const totalLiquido=totais.apurado+devolFinanceira-(totais.tagsLib*5);
@@ -1337,7 +1337,7 @@ async function expXLSX(){
     __addKpi(ws,15,1,'TOTAL DE TAG DEVOLVIDA',totais.tagDev,P.vermelho,P.vermelhoFonte);
     __addKpi(ws,15,3,'RESGATE DE SALDO',totais.saldo,P.vermelho,P.vermelhoFonte);
     __addKpi(ws,15,5,'DEV. ÁGUA',totais.devAgua,P.vermelho,P.vermelhoFonte);
-    __addKpi(ws,15,7,'ÁGUA UNIDADE',aguaUn,P.vermelho,P.vermelhoFonte,__intFmt());
+    __addKpi(ws,15,7,'ÁGUA UNIDADE',totalAguaUn,P.vermelho,P.vermelhoFonte,__intFmt());
     ws.getCell('G16').numFmt=__intFmt();
 
     ws.mergeCells('A18:H18');
@@ -1383,7 +1383,7 @@ async function expXLSX(){
         if(col===14 || col===18) cell.numFmt=__intFmt();
       }
     });
-    const totalRow=ws2.addRow(['Total','','','',totais.deb,totais.cred,totais.pix,totais.pixManual,null,totais.dinLiq,totais.apurado,totais.filipeta,totais.dif,totais.tagsLib,totais.tagDev,totais.saldo,totais.devAgua,aguaUn]);
+    const totalRow=ws2.addRow(['Total','','','',totais.deb,totais.cred,totais.pix,totais.pixManual,null,totais.dinLiq,totais.apurado,totais.filipeta,totais.dif,totais.tagsLib,totais.tagDev,totais.saldo,totais.devAgua,totalAguaUn]);
     for(let col=1; col<=headers.length; col++){
       const cell=totalRow.getCell(col);
       __styleCell(cell,{fill:P.creme,font:{bold:true,color:{argb:P.texto},size:11},alignment:{horizontal:col<=4?'left':'right'},border:__thinBorder(P.dourado)});
@@ -1404,7 +1404,7 @@ async function expXLSX(){
       ['Total Apurado',totais.apurado,'Diferença Geral',totais.dif],
       ['Total Devoluções Financeiras',devolFinanceira,'Total de TAG Devolvida',totais.tagDev],
       ['Resgate de Saldo',totais.saldo,'Dev. Água (não financeira)',totais.devAgua],
-      ['Água Unidade',aguaUn,'Tags Liberadas',totais.tagsLib],
+      ['Água Unidade',totalAguaUn,'Tags Liberadas',totais.tagsLib],
       ['Total Débito',totais.deb,'Total Crédito',totais.cred],
       ['Total PIX',totais.pix+totais.pixManual,'Dinheiro Apurado',totais.dinLiq]
     ];
